@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="gu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>કચ્છ સત્સંગ</title>
+<meta name="theme-color" content="#6e1f14">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Gujarati:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap">
+<style>
+/* Layout: one centred paper column; sticky language pill; result cards with a saffron rail; player docks to top and bottom. */
+:root{
+  --paper:#f3e9d8; --paper-2:#efe2cc; --card:#fbf5ea; --ink:#2b1a12; --ink-2:#6d5646;
+  --maroon:#6e1f14; --maroon-2:#8a2c1c; --saffron:#c0662a; --rule:#dcc9ad; --mark:#f3d3bb;
+  --gu:"Noto Serif Gujarati","Shruti","Nirmala UI",serif;
+  --latin:"Cormorant Garamond","Georgia",serif;
+}
+@media (prefers-color-scheme: dark){:root{
+  --paper:#1d1410; --paper-2:#241913; --card:#2a1d16; --ink:#f1e4d0; --ink-2:#bfa68e;
+  --maroon:#d98a6a; --maroon-2:#e7a184; --saffron:#e0874a; --rule:#4a382b; --mark:#5a2e1c; color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:linear-gradient(180deg,var(--paper),var(--paper-2)) fixed;color:var(--ink);font-family:var(--gu);
+  padding:env(safe-area-inset-top,0) max(16px,env(safe-area-inset-right,0px)) 120px max(16px,env(safe-area-inset-left,0px));min-height:100vh}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--maroon);z-index:30}
+.wrap{max-width:640px;margin:0 auto}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--saffron);outline-offset:2px}
+
+/* language pill */
+.pill{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:20;display:inline-flex;align-items:center;gap:2px;
+  background:var(--card);border:1px solid var(--rule);border-radius:999px;padding:3px 8px;margin-top:10px;font-family:var(--latin);font-size:14px;box-shadow:0 1px 4px rgba(60,30,10,.08)}
+.pill button{border:0;background:none;padding:2px 7px;cursor:pointer;color:var(--ink-2)}
+.pill button.on{color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.pill .sep{width:1px;height:14px;background:var(--rule);margin:0 4px}
+.pill button.gu{font-family:var(--gu);font-size:13px}
+
+header{text-align:center;padding:26px 0 8px}
+.eyebrow{font-family:var(--latin);letter-spacing:.32em;font-size:12px;color:var(--maroon-2);text-transform:uppercase}
+h1{font-family:var(--gu);font-weight:700;color:var(--maroon);font-size:clamp(40px,11vw,56px);margin:10px 0 4px;line-height:1.2}
+.sub{font-family:var(--latin);font-style:italic;color:var(--ink-2);font-size:17px}
+.orn{display:flex;align-items:center;justify-content:center;gap:14px;color:var(--saffron);margin:22px 0 26px}
+.orn::before,.orn::after{content:"";height:1px;width:80px;background:linear-gradient(90deg,transparent,var(--saffron))}
+.orn::after{transform:scaleX(-1)}
+
+.search{display:flex;gap:8px;background:var(--card);border:1px solid var(--rule);padding:8px;box-shadow:0 0 0 4px rgba(192,102,42,.08)}
+.search input{flex:1;min-width:0;border:0;background:none;font-size:19px;padding:8px 6px;outline:none}
+.search input::placeholder{font-family:var(--latin);font-style:italic;color:var(--ink-2);opacity:.8}
+.btn{background:var(--maroon);color:#fbf1e4;border:0;padding:0 16px;font-family:var(--latin);letter-spacing:.14em;font-size:13px;font-weight:600;cursor:pointer;text-transform:uppercase}
+@media (prefers-color-scheme: dark){.btn{color:#1d1410}}
+
+.filters{margin-top:22px;display:grid;gap:16px}
+.field label{display:block;font-family:var(--latin);letter-spacing:.24em;font-size:11px;color:var(--ink-2);text-transform:uppercase}
+.field select{width:100%;border:0;border-bottom:1px solid var(--rule);background:none;font-size:17px;padding:8px 0;appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,var(--saffron) 50%),linear-gradient(-45deg,transparent 50%,var(--saffron) 50%);
+  background-position:right 6px center,right 2px center;background-size:4px 4px;background-repeat:no-repeat}
+
+.explore{text-align:center;margin:30px 0 8px}
+.explore h3{font-family:var(--latin);letter-spacing:.22em;font-size:12px;color:var(--maroon-2);margin:0 0 12px;font-weight:600;text-transform:uppercase}
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;align-items:center}
+.chips .fe{font-family:var(--latin);font-style:italic;color:var(--ink-2)}
+.chip{border:1px solid var(--rule);background:transparent;border-radius:999px;padding:5px 14px;font-size:15px;cursor:pointer;color:var(--ink-2)}
+.chip:hover{border-color:var(--saffron);color:var(--ink)}
+.hint{text-align:right;font-family:var(--latin);font-style:italic;color:var(--ink-2);font-size:14px;margin:22px 0 0}
+.stats{text-align:center;font-family:var(--latin);letter-spacing:.12em;font-size:12px;color:var(--ink-2);margin:34px 0 0;font-variant-numeric:tabular-nums}
+
+.count{font-family:var(--latin);letter-spacing:.24em;font-size:12px;color:var(--ink-2);margin:34px 0 14px;text-transform:uppercase}
+.results{display:grid;gap:18px}
+.card{background:var(--card);border-left:3px solid var(--saffron);padding:18px 18px 14px;box-shadow:0 1px 6px rgba(60,30,10,.07)}
+.card h4{margin:0 0 10px;font-family:var(--latin);font-size:17px;font-weight:600;color:var(--maroon)}
+.card .txt{font-size:18px;line-height:1.85;margin:0;overflow-wrap:anywhere}
+mark{background:var(--mark);color:inherit;font-weight:700;padding:0 2px;border-radius:2px}
+.meta{border-top:1px solid var(--rule);margin-top:14px;padding-top:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-family:var(--latin);font-size:13px}
+.tag{border:1px solid var(--rule);border-radius:999px;padding:1px 10px;color:var(--ink-2)}
+.tag.sp{color:var(--maroon-2)}
+.time{margin-left:auto;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.acts{display:flex;gap:16px;align-items:center;margin-top:10px;font-family:var(--latin);font-size:14px;font-weight:600}
+.play{border:1px solid var(--maroon-2);color:var(--maroon-2);background:none;border-radius:999px;padding:4px 14px;cursor:pointer}
+.play.active{background:var(--maroon);color:var(--card)}
+.link{background:none;border:0;color:var(--ink-2);cursor:pointer;padding:0}
+.empty{text-align:center;color:var(--ink-2);padding:30px 0;font-size:16px}
+
+/* player */
+.player{position:fixed;left:0;right:0;top:0;z-index:40;background:#120a06;padding-top:env(safe-area-inset-top,0px)}
+.player .vid{max-width:640px;margin:0 auto;aspect-ratio:16/9;max-height:42vh}
+.player iframe{width:100%;height:100%;border:0;display:block}
+.player .bar{display:flex;justify-content:center;gap:10px;padding:6px 0 8px;flex-wrap:wrap}
+.player .bar button{background:#2a1d16;color:#f1e4d0;border:1px solid #4a382b;border-radius:999px;padding:4px 14px;font-family:var(--latin);font-size:14px;cursor:pointer}
+body.playing{padding-top:calc(min(56.25vw,42vh,360px) + 50px + env(safe-area-inset-top,0px))}
+
+/* transcript overlay */
+.overlay{position:fixed;inset:0;z-index:35;background:var(--paper);overflow:auto;padding:env(safe-area-inset-top,0px) max(16px,env(safe-area-inset-right,0px)) 60px max(16px,env(safe-area-inset-left,0px))}
+body.playing .overlay{top:calc(min(56.25vw,42vh,360px) + 50px + env(safe-area-inset-top,0px))}
+.overlay .top{position:sticky;top:0;background:var(--paper);padding:14px 0 10px;border-bottom:1px solid var(--rule);display:flex;gap:10px;align-items:flex-start}
+.overlay h2{margin:0;font-size:20px;color:var(--maroon);flex:1;font-weight:600}
+.overlay .who{font-family:var(--latin);color:var(--ink-2);font-size:15px}
+.seg{display:grid;grid-template-columns:60px 1fr;gap:10px;padding:12px 0;border-bottom:1px dashed var(--rule)}
+.seg button{background:none;border:0;color:var(--saffron);font-family:var(--latin);font-weight:600;font-size:15px;cursor:pointer;text-align:left;padding:0;font-variant-numeric:tabular-nums}
+.seg p{margin:0;font-size:17px;line-height:1.8;min-width:0;overflow-wrap:anywhere}
+
+/* admin */
+.admin{margin-top:20px;display:grid;gap:14px}
+.admin textarea,.admin input{width:100%;border:1px solid var(--rule);background:var(--card);padding:10px;font-size:15px}
+.admin textarea{min-height:150px;font-family:ui-monospace,monospace;font-size:13px}
+.admin .btn{padding:12px 16px;justify-self:start}
+.admin small{color:var(--ink-2);font-size:13px;line-height:1.6}
+.vrow{background:var(--card);padding:12px;border-left:3px solid var(--rule);display:grid;gap:4px;font-size:14px}
+.vrow.done{border-color:#4f8a3a}.vrow.processing{border-color:var(--saffron)}.vrow.error{border-color:#b3261e}
+.vrow .st{font-family:var(--latin);font-weight:600}
+.vrow .err{color:#b3261e;font-size:12px;overflow-wrap:anywhere}
+.vrow .row{display:flex;gap:12px;flex-wrap:wrap}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--maroon);color:var(--card);padding:8px 16px;border-radius:999px;font-size:14px;z-index:50}
+@media (prefers-reduced-motion:no-preference){.card{animation:in .3s ease both}@keyframes in{from{opacity:.4;transform:translateY(4px)}}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="pill" role="group" aria-label="Language">
+    <button class="gu" data-ui="gu">ગુજરાતી</button><button data-ui="en">English</button>
+    <span class="sep"></span>
+    <button class="gu" data-sc="gu" title="ગુજરાતી લિપિ">અ</button><button data-sc="ro" title="English letters">ABC</button>
+  </div>
+
+  <main id="home">
+    <header>
+      <div class="eyebrow" data-t="eyebrow">Kutch Satsang · Katha Archive</div>
+      <h1>કચ્છ સત્સંગ</h1>
+      <div class="sub" data-t="sub">— a searchable archive of the kathas —</div>
+      <div class="orn">❖</div>
+    </header>
+
+    <form class="search" id="sform">
+      <input id="q" type="search" autocomplete="off" enterkeyhint="search" aria-label="Search">
+      <button class="btn" type="submit" data-t="search">Search</button>
+    </form>
+
+    <div class="filters">
+      <div class="field"><label for="fseries" data-t="series">Katha series</label><select id="fseries"><option value="" data-t="allseries">All series</option></select></div>
+      <div class="field"><label for="fspeaker" data-t="speaker">Speaker</label><select id="fspeaker"><option value="" data-t="allspeakers">All speakers</option></select></div>
+    </div>
+
+    <section class="explore" id="explore">
+      <h3 data-t="see">See what's in the archive</h3>
+      <div class="chips"><span class="fe" data-t="fe">For example</span>
+        <button class="chip" type="button">મંત્ર</button><button class="chip" type="button">સત્સંગ</button><button class="chip" type="button">ભગવાન</button><button class="chip" type="button">bhakti</button>
+      </div>
+      <p class="hint" data-t="hint">Press enter to search the archive</p>
+    </section>
+
+    <div id="out"></div>
+    <p class="stats" id="stats">&nbsp;</p>
+  </main>
+
+  <main id="adminView" hidden>
+    <header><div class="eyebrow">Admin</div><h1 style="font-size:36px">કથા ઉમેરો</h1></header>
+    <div class="admin" id="login">
+      <label for="apass">પાસવર્ડ</label><input id="apass" type="password" autocomplete="current-password">
+      <button class="btn" id="alogin" type="button">ખોલો</button>
+    </div>
+    <div class="admin" id="panel" hidden>
+      <label for="links">YouTube લિંક — દરેક લાઇનમાં એક:</label>
+      <textarea id="links" placeholder="https://youtu.be/xxxx | વક્તાનું નામ | કથા સિરીઝ"></textarea>
+      <small>ફોર્મેટ: <b>લિંક | વક્તા | સિરીઝ</b>. વક્તા અને સિરીઝ ખાલી રાખવા હોય તો નીચેના ખાનામાં એક વાર લખો, એ બધી લિંક માટે વપરાશે.</small>
+      <input id="dspeaker" placeholder="વક્તા (બધી લિંક માટે)">
+      <input id="dseries" placeholder="કથા સિરીઝ (બધી લિંક માટે)">
+      <button class="btn" id="addBtn" type="button">ઉમેરો</button>
+      <small>દરેક કથાનું લખાણ બનતાં થોડી મિનિટ લાગે. આ પેજ ખુલ્લું રાખશો તો સ્થિતિ આપમેળે બદલાશે.</small>
+      <div id="vlist" class="admin" style="margin-top:6px"></div>
+      <a href="#" class="link" style="font-family:var(--latin)">← સર્ચ પેજ પર જાઓ</a>
+    </div>
+  </main>
+</div>
+
+<div class="player" id="player" hidden>
+  <div class="vid" id="vid"></div>
+  <div class="bar"><button type="button" id="share">⟲ moment</button><button type="button" id="openyt">YouTube</button><button type="button" id="closeP">✕ Close</button></div>
+</div>
+
+<div class="overlay" id="ov" hidden>
+  <div class="top"><div style="flex:1;min-width:0"><h2 id="ovTitle"></h2><div class="who" id="ovWho"></div></div><button class="play" id="ovClose" type="button">✕</button></div>
+  <div id="ovBody"></div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const SB = "https://ootwnvkrnidjhmnhuvfz.supabase.co";
+const KEY = "sb_publishable_wxzr5HiOqgtTXPAp7oTgDw_qFtS7dur";
+const FN = SB + "/functions/v1/katha-admin";
+const $ = (s) => document.querySelector(s);
+const store = { get(k, d) { try { return localStorage.getItem(k) ?? d } catch { return d } }, set(k, v) { try { localStorage.setItem(k, v) } catch {} } };
+
+const T = {
+  en: { eyebrow: "Kutch Satsang · Katha Archive", sub: "— a searchable archive of the kathas —", search: "Search", series: "Katha series", speaker: "Speaker",
+    allseries: "All series", allspeakers: "All speakers", see: "See what's in the archive", fe: "For example", hint: "Press enter to search the archive",
+    ph: "Search the words that were spoken…", matches: (n) => `${n} matches`, none: "No passage contains this word yet.", play: "Play here", read: "Read full transcript →",
+    stats: (k, p) => `${k.toLocaleString()} kathas · ${p.toLocaleString()} passages · jump straight to the moment`, loading: "Searching…", copied: "Link copied" },
+  gu: { eyebrow: "કચ્છ સત્સંગ · કથા સંગ્રહ", sub: "— બોલાયેલા શબ્દો શોધો —", search: "શોધો", series: "કથા સિરીઝ", speaker: "વક્તા",
+    allseries: "બધી સિરીઝ", allspeakers: "બધા વક્તા", see: "સંગ્રહમાં શું છે તે જુઓ", fe: "ઉદાહરણ", hint: "શોધવા માટે Enter દબાવો",
+    ph: "બોલાયેલો કોઈ પણ શબ્દ શોધો…", matches: (n) => `${n} પરિણામ`, none: "આ શબ્દ હજી કોઈ કથામાં મળ્યો નથી.", play: "અહીં સાંભળો", read: "આખું લખાણ વાંચો →",
+    stats: (k, p) => `${k.toLocaleString()} કથા · ${p.toLocaleString()} ફકરા · સીધું એ ક્ષણ પર`, loading: "શોધી રહ્યા છીએ…", copied: "લિંક કોપી થઈ" },
+};
+let ui = store.get("k_ui", "en"), sc = store.get("k_sc", "gu"), stats = { kathas: 0, passages: 0 }, last = null, cur = null;
+
+function applyUI() {
+  document.querySelectorAll("[data-ui]").forEach((b) => b.classList.toggle("on", b.dataset.ui === ui));
+  document.querySelectorAll("[data-sc]").forEach((b) => b.classList.toggle("on", b.dataset.sc === sc));
+  document.querySelectorAll("[data-t]").forEach((el) => { const v = T[ui][el.dataset.t]; if (typeof v === "string") el.textContent = v; });
+  $("#q").placeholder = T[ui].ph;
+  $("#stats").textContent = T[ui].stats(stats.kathas, stats.passages);
+  if (last) render(last.rows, last.q);
+}
+document.querySelectorAll("[data-ui]").forEach((b) => b.onclick = () => { ui = b.dataset.ui; store.set("k_ui", ui); applyUI(); });
+document.querySelectorAll("[data-sc]").forEach((b) => b.onclick = () => { sc = b.dataset.sc; store.set("k_sc", sc); applyUI(); });
+
+async function rpc(name, body) {
+  const r = await fetch(`${SB}/rest/v1/rpc/${name}`, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + KEY, "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fmt = (s) => { s = Math.max(0, s | 0); const h = s / 3600 | 0, m = (s % 3600) / 60 | 0, x = s % 60; return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(x).padStart(2, "0"); };
+function hl(text, q) {
+  const t = esc(text); if (!q) return t;
+  const re = new RegExp(esc(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi");
+  return t.replace(re, (m) => `<mark>${m}</mark>`);
+}
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.h); toast.h = setTimeout(() => t.hidden = true, 1800); }
+
+async function loadStats() {
+  try {
+    const s = await rpc("katha_stats", {}); stats = s;
+    const fill = (sel, arr) => { const keep = sel.value; while (sel.options.length > 1) sel.remove(1); arr.sort().forEach((v) => { const o = document.createElement("option"); o.value = o.textContent = v; sel.appendChild(o); }); sel.value = keep; };
+    fill($("#fseries"), s.series || []); fill($("#fspeaker"), s.speakers || []);
+  } catch (e) { console.warn(e); }
+  applyUI();
+}
+
+async function search(q) {
+  q = q.trim(); if (!q) return;
+  $("#q").value = q;
+  $("#out").innerHTML = `<p class="empty">${T[ui].loading}</p>`;
+  try {
+    const rows = await rpc("katha_search", { q, p_series: $("#fseries").value || null, p_speaker: $("#fspeaker").value || null, p_limit: 80 });
+    last = { rows, q }; render(rows, q);
+    $("#out").scrollIntoView({ behavior: "smooth", block: "start" });
+  } catch (e) { $("#out").innerHTML = `<p class="empty">Error: ${esc(e.message)}</p>`; }
+}
+function render(rows, q) {
+  if (!rows.length) { $("#out").innerHTML = `<p class="count">${T[ui].matches(0)}</p><p class="empty">${T[ui].none}</p>`; return; }
+  $("#out").innerHTML = `<p class="count">${T[ui].matches(rows.length)}</p><div class="results">` + rows.map((r, i) => {
+    const body = sc === "ro" && r.roman ? r.roman : r.text;
+    const active = cur && cur.yid === r.youtube_id && cur.t === r.start_sec;
+    return `<article class="card"><h4>${esc(r.title || r.series || "Katha")}</h4><p class="txt">${hl(body, q)}</p>
+      <div class="meta">${r.speaker ? `<span class="tag sp">${esc(r.speaker)}</span>` : ""}${r.series ? `<span class="tag">${esc(r.series)}</span>` : ""}<span class="time">${fmt(r.start_sec)}</span></div>
+      <div class="acts"><button class="play${active ? " active" : ""}" data-i="${i}">▶ ${T[ui].play}</button><button class="link" data-r="${i}">${T[ui].read}</button></div></article>`;
+  }).join("") + `</div>`;
+  $("#out").querySelectorAll("[data-i]").forEach((b) => b.onclick = () => { const r = rows[b.dataset.i]; play(r.youtube_id, r.start_sec, r); });
+  $("#out").querySelectorAll("[data-r]").forEach((b) => b.onclick = () => openTranscript(rows[b.dataset.r], q));
+}
+
+function play(yid, t, info) {
+  cur = { yid, t, info };
+  $("#vid").innerHTML = `<iframe src="https://www.youtube.com/embed/${yid}?start=${t}&autoplay=1&playsinline=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Katha"></iframe>`;
+  $("#player").hidden = false; document.body.classList.add("playing");
+  if (last) render(last.rows, last.q);
+}
+$("#closeP").onclick = () => { $("#vid").innerHTML = ""; $("#player").hidden = true; document.body.classList.remove("playing"); cur = null; if (last) render(last.rows, last.q); };
+const ytLink = () => cur ? `https://www.youtube.com/watch?v=${cur.yid}&t=${cur.t}s` : "";
+$("#openyt").onclick = () => { if (cur) window.open(ytLink(), "_blank"); };
+$("#share").onclick = async () => { if (!cur) return; const u = ytLink();
+  try { if (navigator.share) await navigator.share({ title: cur.info?.title || "Katha", url: u }); else { await navigator.clipboard.writeText(u); toast(T[ui].copied); } } catch {} };
+
+async function openTranscript(r, q) {
+  $("#ovTitle").textContent = r.title || r.series || "Katha";
+  $("#ovWho").textContent = [r.speaker, r.series].filter(Boolean).join(" · ");
+  $("#ovBody").innerHTML = `<p class="empty">…</p>`; $("#ov").hidden = false;
+  const res = await fetch(`${SB}/rest/v1/katha_passages?select=start_sec,text,roman&video_id=eq.${r.video_id}&order=start_sec`, { headers: { apikey: KEY, Authorization: "Bearer " + KEY } });
+  const segs = await res.json();
+  $("#ovBody").innerHTML = segs.map((s, i) => `<div class="seg" id="seg${s.start_sec}"><button data-t="${s.start_sec}">${fmt(s.start_sec)}</button><p>${hl(sc === "ro" && s.roman ? s.roman : s.text, q)}</p></div>`).join("");
+  $("#ovBody").querySelectorAll("button[data-t]").forEach((b) => b.onclick = () => play(r.youtube_id, +b.dataset.t, r));
+  const el = document.getElementById("seg" + r.start_sec); if (el) el.scrollIntoView({ block: "center" });
+}
+$("#ovClose").onclick = () => $("#ov").hidden = true;
+
+$("#sform").onsubmit = (e) => { e.preventDefault(); search($("#q").value); };
+document.querySelectorAll(".chip").forEach((c) => c.onclick = () => search(c.textContent));
+$("#fseries").onchange = $("#fspeaker").onchange = () => { if ($("#q").value.trim()) search($("#q").value); };
+
+/* ---------- admin (#admin) ---------- */
+let pass = store.get("k_pass", ""), poll = null;
+async function adm(body) {
+  const r = await fetch(FN, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ pass, ...body }) });
+  const j = await r.json(); if (!r.ok) throw new Error(j.error || r.status); return j;
+}
+async function refreshList() {
+  const { videos } = await adm({ action: "list" });
+  const label = { done: "✔ તૈયાર", processing: "⏳ લખાણ બની રહ્યું છે…", error: "✖ ભૂલ", pending: "રાહ" };
+  $("#vlist").innerHTML = (videos || []).map((v) => `<div class="vrow ${v.status}"><div><b>${esc(v.title || v.youtube_id)}</b></div>
+    <div>${esc(v.speaker || "—")} · ${esc(v.series || "—")}</div>
+    <div class="row"><span class="st">${label[v.status] || v.status}${v.status === "done" ? ` · ${v.passages} ફકરા` : ""}</span>
+    <button class="link" data-retry="${v.id}">ફરી કરો</button><button class="link" data-del="${v.id}">કાઢો</button></div>
+    ${v.error ? `<div class="err">${esc(v.error)}</div>` : ""}</div>`).join("") || "<small>હજી કોઈ કથા ઉમેરી નથી.</small>";
+  $("#vlist").querySelectorAll("[data-retry]").forEach((b) => b.onclick = async () => { await adm({ action: "retry", id: +b.dataset.retry }); refreshList(); });
+  $("#vlist").querySelectorAll("[data-del]").forEach((b) => b.onclick = async () => {
+    if (b.dataset.sure) { await adm({ action: "delete", id: +b.dataset.del }); refreshList(); } else { b.dataset.sure = 1; b.textContent = "ખાતરી? ફરી દબાવો"; } });
+  clearTimeout(poll); if ((videos || []).some((v) => v.status === "processing")) poll = setTimeout(refreshList, 6000);
+}
+async function login() {
+  try { await adm({ action: "check" }); store.set("k_pass", pass); $("#login").hidden = true; $("#panel").hidden = false; refreshList(); }
+  catch (e) { $("#login").hidden = false; $("#panel").hidden = true; if (pass) toast("ખોટો પાસવર્ડ"); }
+}
+$("#alogin").onclick = () => { pass = $("#apass").value.trim(); login(); };
+$("#addBtn").onclick = async () => {
+  const lines = $("#links").value.split("\n").map((l) => l.trim()).filter(Boolean);
+  if (!lines.length) return;
+  $("#addBtn").disabled = true;
+  for (const l of lines) {
+    const [url, sp, se] = l.split("|").map((x) => x && x.trim());
+    try { await adm({ action: "add", url, speaker: sp || $("#dspeaker").value.trim(), series: se || $("#dseries").value.trim() }); }
+    catch (e) { toast(url + ": " + e.message); }
+  }
+  $("#links").value = ""; $("#addBtn").disabled = false; toast("ઉમેરાઈ ગઈ"); refreshList();
+};
+
+function route() {
+  const isAdmin = location.hash === "#admin";
+  $("#home").hidden = isAdmin; $("#adminView").hidden = !isAdmin;
+  if (isAdmin) { $("#apass").value = pass; if (pass) login(); }
+  else loadStats();
+}
+window.addEventListener("hashchange", route);
+applyUI(); route();
+</script>
+</body>
+</html>
