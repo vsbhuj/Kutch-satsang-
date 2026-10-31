@@ -268,13 +268,17 @@ body.lvfull .lv-cur,body.lvfull .lv-nav{display:none}
 .lv-mode{border:1px dashed var(--rule);background:none;color:var(--ink-2);border-radius:99px;padding:3px 10px;font-size:12px;cursor:pointer;min-height:30px}
 .lv-mode.on{border-style:solid;border-color:var(--maroon);color:var(--maroon)}
 .lv-list{flex:1;min-height:0;overflow:auto;margin:8px calc(-1 * max(16px,env(safe-area-inset-right,0px))) 0;padding:0 max(16px,env(safe-area-inset-right,0px)) 40vh;scroll-behavior:smooth;overscroll-behavior:contain}
-.lv-seg{display:grid;grid-template-columns:44px 1fr;gap:8px;padding:10px 4px;border-bottom:1px dashed var(--rule);cursor:pointer;opacity:.55;transition:opacity .25s}
-.lv-seg .tm{font-size:12px;color:var(--saffron);font-variant-numeric:tabular-nums;padding-top:4px}
-.lv-seg p{margin:0;font-size:calc(16px * var(--fs));line-height:calc(1.7 * var(--lhm));overflow-wrap:anywhere;min-width:0}
+.lv-seg{display:grid;grid-template-columns:40px 1fr;gap:6px;padding:8px 4px;border-bottom:1px dashed var(--rule);cursor:pointer;opacity:.55;transition:opacity .25s}
+.lv-seg .tm{font-size:11px;color:var(--saffron);font-variant-numeric:tabular-nums;padding-top:4px}
+.lv-seg p{margin:0;font-size:calc(14px * var(--fs));line-height:calc(1.65 * var(--lhm));overflow-wrap:anywhere;min-width:0}
 .lv-seg.on{opacity:1;background:var(--card);border-left:3px solid var(--saffron);border-bottom-color:transparent;border-radius:0 10px 10px 0;padding:12px 10px;margin:4px 0}
-.lv-seg.on p{font-size:calc(18px * var(--fs));color:var(--ink)}
+.lv-seg.on p{font-size:calc(15.5px * var(--fs));color:var(--ink)}
+.lv-seg .lv-tr{font-size:calc(14px * var(--fs));line-height:1.65}
 .lv-seg .lv-tr{grid-column:1/-1;max-height:none;overflow:visible;margin:4px 0 0}
-.lv-seg.only p{display:none}.lv-seg.only .lv-tr{grid-column:2;margin:0;border:0;padding:0;background:none;font-size:calc(18px * var(--fs))}
+.lv-seg.only p{display:none}.lv-seg.only .lv-tr{grid-column:2;margin:0;border:0;padding:0;background:none;font-size:calc(15.5px * var(--fs))}
+/* translation only: just the paragraph being spoken, no Gujarati below it; ‹ › to step */
+.lv-list.only{padding-bottom:12px}.lv-list.only .lv-seg:not(.on){display:none}
+body.lvfull .live.only .lv-nav{display:flex;flex:none;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
 .lv-back{position:absolute;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--maroon);color:var(--on-accent);border:0;border-radius:99px;padding:7px 16px;font-size:13px;box-shadow:0 4px 12px rgba(0,0,0,.25);cursor:pointer;z-index:2}
 body.lvfull .live{position:relative}
 .lv-nav{display:flex;justify-content:space-between;gap:8px;margin-top:6px}
@@ -1413,6 +1417,7 @@ function drawLive() {
   $("#lvPrev").onclick = () => prev && liveSeek(prev.start_sec); $("#lvNext").onclick = () => next && liveSeek(next.start_sec);
   $("#lvList").querySelectorAll(".lv-seg.on").forEach((d) => d.classList.remove("on", "only"));
   const row = $("#lvList").querySelector(`[data-k="${live.idx}"]`);
+  const onlyMode = only && pref.lvl !== "orig"; $("#lvList").classList.toggle("only", onlyMode); $("#live").classList.toggle("only", onlyMode);
   if (row) { row.classList.add("on"); row.classList.toggle("only", only && pref.lvl !== "orig"); row.appendChild($("#lvTr")); requestAnimationFrame(lvFollow); }
   liveTr(s);
 }
