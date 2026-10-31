@@ -12,9 +12,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <script>
 /* fonts load in the background so the page opens at once; Rasa/Hind only when chosen */
-window.loadFont = function (k) { var f = { base: "Noto+Serif+Gujarati:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500", rasa: "Rasa:wght@400;600;700", hind: "Hind+Vadodara:wght@400;600" }[k];
+window.loadFont = function (k) { var f = { base: "Noto+Serif+Gujarati:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500", rasa: "Rasa:wght@400;600;700", hind: "Hind+Vadodara:wght@400;600", dev: "Noto+Serif+Devanagari:wght@400;600" }[k];
   if (!f || document.getElementById("gf-" + k)) return; var l = document.createElement("link"); l.id = "gf-" + k; l.rel = "stylesheet"; l.href = "https://fonts.googleapis.com/css2?family=" + f + "&display=swap"; document.head.appendChild(l); };
-loadFont("base"); try { var _f = localStorage.getItem("k_font"); if (_f) loadFont(_f); } catch (e) {}
+loadFont("base"); try { var _f = localStorage.getItem("k_font"); if (_f) loadFont(_f); var _u = localStorage.getItem("k_ui"), _s = localStorage.getItem("k_sc"), _l = localStorage.getItem("k_lvl");
+  if (/hi|sa/.test(_u + _l) || _s === "dev") loadFont("dev"); } catch (e) {}
 </script>
 <style>
 /* Layout: one centred paper column; sticky language pill; result cards with a saffron rail; player docks to top and bottom. */
@@ -258,6 +259,24 @@ body.playing .overlay,body.mini.playing .overlay{top:var(--ph,calc(min(56.25vw,4
 .lv-cur{margin:8px 0 0;font-size:calc(17px * var(--fs));line-height:calc(1.75 * var(--lhm));max-height:22vh;overflow:auto;overflow-wrap:anywhere}
 .lv-tr{margin:6px 0 0;padding:6px 10px;border-left:2px solid var(--gold);background:var(--card);font-size:calc(15px * var(--fs));line-height:1.7;max-height:16vh;overflow:auto;overflow-wrap:anywhere}
 .lv-tr.dv{font-family:"Noto Serif Devanagari",serif}
+/* ---------- live view v2: video on top, the whole katha below it, current paragraph lit ---------- */
+body.lvfull .player{bottom:0;display:flex;flex-direction:column}
+body.lvfull .player .vid,body.lvfull .player .bar{flex:none}
+body.lvfull .live{flex:1;min-height:0;display:flex;box-shadow:none}
+body.lvfull .live .in{flex:1;min-height:0;display:flex;flex-direction:column;width:100%;padding-bottom:0}
+body.lvfull .lv-cur,body.lvfull .lv-nav{display:none}
+.lv-mode{border:1px dashed var(--rule);background:none;color:var(--ink-2);border-radius:99px;padding:3px 10px;font-size:12px;cursor:pointer;min-height:30px}
+.lv-mode.on{border-style:solid;border-color:var(--maroon);color:var(--maroon)}
+.lv-list{flex:1;min-height:0;overflow:auto;margin:8px calc(-1 * max(16px,env(safe-area-inset-right,0px))) 0;padding:0 max(16px,env(safe-area-inset-right,0px)) 40vh;scroll-behavior:smooth;overscroll-behavior:contain}
+.lv-seg{display:grid;grid-template-columns:44px 1fr;gap:8px;padding:10px 4px;border-bottom:1px dashed var(--rule);cursor:pointer;opacity:.55;transition:opacity .25s}
+.lv-seg .tm{font-size:12px;color:var(--saffron);font-variant-numeric:tabular-nums;padding-top:4px}
+.lv-seg p{margin:0;font-size:calc(16px * var(--fs));line-height:calc(1.7 * var(--lhm));overflow-wrap:anywhere;min-width:0}
+.lv-seg.on{opacity:1;background:var(--card);border-left:3px solid var(--saffron);border-bottom-color:transparent;border-radius:0 10px 10px 0;padding:12px 10px;margin:4px 0}
+.lv-seg.on p{font-size:calc(18px * var(--fs));color:var(--ink)}
+.lv-seg .lv-tr{grid-column:1/-1;max-height:none;overflow:visible;margin:4px 0 0}
+.lv-seg.only p{display:none}.lv-seg.only .lv-tr{grid-column:2;margin:0;border:0;padding:0;background:none;font-size:calc(18px * var(--fs))}
+.lv-back{position:absolute;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--maroon);color:var(--on-accent);border:0;border-radius:99px;padding:7px 16px;font-size:13px;box-shadow:0 4px 12px rgba(0,0,0,.25);cursor:pointer;z-index:2}
+body.lvfull .live{position:relative}
 .lv-nav{display:flex;justify-content:space-between;gap:8px;margin-top:6px}
 .lv-nav button{background:none;border:0;color:var(--ink-2);font-size:13px;cursor:pointer;padding:4px 0;max-width:48%;text-align:left;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .lv-nav button:last-child{text-align:right}
@@ -499,6 +518,7 @@ body.playing .gear{display:none}
     <p class="lv-cur" id="lvCur"></p>
     <div class="lv-tr" id="lvTr" hidden></div>
     <div class="lv-nav"><button type="button" id="lvPrev"></button><button type="button" id="lvNext"></button></div>
+    <div class="lv-list" id="lvList"></div><button type="button" class="lv-back" id="lvBack" hidden></button>
   </div></div>
 </div>
 
@@ -605,6 +625,8 @@ function applyUI() {
   if (typeof drawThemes === "function") drawThemes();
   if (typeof applyPrefs === "function") applyPrefs();
   if (typeof syncF === "function") syncF();
+  if (ui === "hi" || ui === "sa" || sc === "dev") loadFont("dev");
+  try { if (live.segs.length) { drawList(); live.idx = -1; liveTick(live.t); } } catch {}
 }
 
 async function rpc(name, body) {
@@ -1332,10 +1354,10 @@ function page2State() {
 page2State();
 
 /* ---------- live text under the video ---------- */
-Object.assign(T.gu, { lvNow: "હમણાં બોલાઈ રહ્યું છે", lvOrig: "મૂળ", s_live: "વીડિયો સાથે ચાલુ લખાણ", s_live2: "વક્તા જે બોલે છે તે વીડિયો નીચે સાથે-સાથે દેખાય", s_cc: "YouTube ના subtitle", s_cc2: "વીડિયોમાં YouTube ના પોતાના subtitle (હોય તો)" });
-Object.assign(T.en, { lvNow: "Now speaking", lvOrig: "Original", s_live: "Live text with the video", s_live2: "What the speaker is saying appears under the video as it plays", s_cc: "YouTube subtitles", s_cc2: "YouTube's own subtitles in the video, when available" });
-Object.assign(T.hi, { lvNow: "अभी बोला जा रहा है", lvOrig: "मूल", s_live: "वीडियो के साथ चलता पाठ", s_live2: "वक्ता जो बोलते हैं वह वीडियो के नीचे साथ-साथ दिखे", s_cc: "YouTube के सबटाइटल", s_cc2: "वीडियो में YouTube के अपने सबटाइटल (हों तो)" });
-Object.assign(T.sa, { lvNow: "इदानीम् उच्यते", lvOrig: "मूलम्", s_live: "चलच्चित्रेण सह पाठः", s_live2: "वक्ता यत् वदति तत् चलच्चित्रस्य अधः सह दृश्यते", s_cc: "YouTube-उपशीर्षकाणि", s_cc2: "चलच्चित्रे YouTube-स्य स्वकीयानि उपशीर्षकाणि (यदि सन्ति)" });
+Object.assign(T.gu, { lvOnly: "ફક્ત અનુવાદ", lvNow: "હમણાં બોલાઈ રહ્યું છે", lvOrig: "મૂળ", s_live: "વીડિયો સાથે ચાલુ લખાણ", s_live2: "વક્તા જે બોલે છે તે વીડિયો નીચે સાથે-સાથે દેખાય", s_cc: "YouTube ના subtitle", s_cc2: "વીડિયોમાં YouTube ના પોતાના subtitle (હોય તો)" });
+Object.assign(T.en, { lvOnly: "Translation only", lvNow: "Now speaking", lvOrig: "Original", s_live: "Live text with the video", s_live2: "What the speaker is saying appears under the video as it plays", s_cc: "YouTube subtitles", s_cc2: "YouTube's own subtitles in the video, when available" });
+Object.assign(T.hi, { lvOnly: "केवल अनुवाद", lvNow: "अभी बोला जा रहा है", lvOrig: "मूल", s_live: "वीडियो के साथ चलता पाठ", s_live2: "वक्ता जो बोलते हैं वह वीडियो के नीचे साथ-साथ दिखे", s_cc: "YouTube के सबटाइटल", s_cc2: "वीडियो में YouTube के अपने सबटाइटल (हों तो)" });
+Object.assign(T.sa, { lvOnly: "केवलम् अनुवादः", lvNow: "इदानीम् उच्यते", lvOrig: "मूलम्", s_live: "चलच्चित्रेण सह पाठः", s_live2: "वक्ता यत् वदति तत् चलच्चित्रस्य अधः सह दृश्यते", s_cc: "YouTube-उपशीर्षकाणि", s_cc2: "चलच्चित्रे YouTube-स्य स्वकीयानि उपशीर्षकाणि (यदि सन्ति)" });
 // one short word per language; tapping one shows only that translation
 const LV_LANGS = [["orig", null], ["gu", "ગુજરાતી"], ["hi", "हिन्दी"], ["sa", "संस्कृत"], ["en", "English"]];
 let live = { vid: null, segs: [], idx: -1, t: 0 };
@@ -1343,7 +1365,7 @@ async function startLive(info, t) {
   live.t = t;
   if (typeof armSleep === "function") armSleep();
   if (!pref.live || !info?.video_id) { $("#live").hidden = true; return; }
-  $("#live").hidden = false;
+  $("#live").hidden = false; document.body.classList.add("lvfull");
   if (live.vid !== info.video_id) {
     live = { vid: info.video_id, segs: [], idx: -1, t };
     $("#lvCur").textContent = "…"; $("#lvTr").hidden = true; $("#lvPrev").textContent = $("#lvNext").textContent = "";
@@ -1352,9 +1374,9 @@ async function startLive(info, t) {
       live.segs = await r.json();
     } catch { live.segs = []; }
   }
-  live.idx = -1; liveTick(t);
+  drawList(); live.idx = -1; liveTick(t);
 }
-function stopLive() { $("#live").hidden = true; live.idx = -1; }
+function stopLive() { $("#live").hidden = true; live.idx = -1; document.body.classList.remove("lvfull"); }
 function liveTick(t) {
   live.t = t;
   if (!pref.live || !live.segs.length) return;
@@ -1362,17 +1384,36 @@ function liveTick(t) {
   for (let k = 0; k < live.segs.length; k++) { if (live.segs[k].start_sec <= t + 0.5) i = k; else break; }
   if (i !== live.idx) { live.idx = i; drawLive(); }
 }
+function drawList() {
+  $("#lvList").innerHTML = live.segs.map((x, i) => `<div class="lv-seg" data-k="${i}"><span class="tm">${fmt(x.start_sec)}</span><p>${esc(scText(x.text, x.roman))}</p></div>`).join("");
+  $("#lvList").querySelectorAll(".lv-seg").forEach((d) => d.onclick = () => liveSeek(live.segs[d.dataset.k].start_sec));
+}
+let lvHold = 0;   // the listener scrolled by hand: stop following for a while
+["touchstart", "wheel"].forEach((ev) => $("#lvList").addEventListener(ev, () => { lvHold = Date.now() + 8000; setTimeout(lvBackBtn, 400); }, { passive: true }));
+function lvFollow() {
+  const el = $("#lvList").querySelector(".lv-seg.on"); if (!el) return;
+  if (Date.now() < lvHold) { lvBackBtn(); return; }
+  $("#lvList").scrollTop = el.offsetTop - $("#lvList").offsetTop - 6; $("#lvBack").hidden = true;
+}
+function lvBackBtn() { $("#lvBack").textContent = "↓ " + T[ui].lvNow; $("#lvBack").hidden = false; }
+$("#lvBack").onclick = () => { lvHold = 0; lvFollow(); };
 function drawLive() {
   const s = live.segs[live.idx]; if (!s) return;
   const src = isDev(s.text) ? "dev" : "gu";
   const langs = LV_LANGS.filter(([k]) => !(k === "gu" && src === "gu"));
   if (!langs.some(([k]) => k === pref.lvl)) pref.lvl = "orig";
-  $("#lvLangs").innerHTML = langs.map(([k, w]) => `<button type="button" class="lv-lang${k === pref.lvl ? " on" : ""}${k === "hi" || k === "sa" ? " dv" : ""}" data-lv="${k}">${w || T[ui].lvOrig}</button>`).join(" ");
-  $("#lvLangs").querySelectorAll("[data-lv]").forEach((b) => b.onclick = () => { pref.lvl = b.dataset.lv; store.set("k_lvl", pref.lvl); drawLive(); });
+  const only = store.get("k_lvo", "0") === "1";
+  $("#lvLangs").innerHTML = langs.map(([k, w]) => `<button type="button" class="lv-lang${k === pref.lvl ? " on" : ""}${k === "hi" || k === "sa" ? " dv" : ""}" data-lv="${k}">${w || T[ui].lvOrig}</button>`).join(" ")
+    + (pref.lvl !== "orig" ? ` <button type="button" class="lv-mode${only ? " on" : ""}" id="lvOnly">${only ? "✓ " : ""}${T[ui].lvOnly}</button>` : "");
+  $("#lvLangs").querySelectorAll("[data-lv]").forEach((b) => b.onclick = () => { pref.lvl = b.dataset.lv; store.set("k_lvl", pref.lvl); if (b.dataset.lv === "hi" || b.dataset.lv === "sa") loadFont("dev"); drawLive(); });
+  if ($("#lvOnly")) $("#lvOnly").onclick = () => { store.set("k_lvo", only ? "0" : "1"); drawLive(); };
   $("#lvCur").textContent = scText(s.text, s.roman);
   const prev = live.segs[live.idx - 1], next = live.segs[live.idx + 1];
   $("#lvPrev").textContent = prev ? "‹ " + fmt(prev.start_sec) : ""; $("#lvNext").textContent = next ? fmt(next.start_sec) + " ›" : "";
   $("#lvPrev").onclick = () => prev && liveSeek(prev.start_sec); $("#lvNext").onclick = () => next && liveSeek(next.start_sec);
+  $("#lvList").querySelectorAll(".lv-seg.on").forEach((d) => d.classList.remove("on", "only"));
+  const row = $("#lvList").querySelector(`[data-k="${live.idx}"]`);
+  if (row) { row.classList.add("on"); row.classList.toggle("only", only && pref.lvl !== "orig"); row.appendChild($("#lvTr")); requestAnimationFrame(lvFollow); }
   liveTr(s);
 }
 async function liveTr(s) {
