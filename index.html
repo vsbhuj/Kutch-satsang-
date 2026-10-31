@@ -324,6 +324,23 @@ body.playing .gear{display:none}
 .tg:has(input:checked){background:var(--maroon);border-color:var(--maroon);color:var(--on-accent)}
 .tg:has(input:checked)::after{border-color:var(--on-accent);background:var(--on-accent);box-shadow:inset 0 0 0 3px var(--maroon)}
 .tg:has(input:focus-visible){outline:2px solid var(--saffron);outline-offset:2px}
+
+/* ---------- settings as a full page ---------- */
+.sheet{inset:0;max-height:none;height:100%;border-radius:0;border-top:0;box-shadow:none;overflow:hidden;
+  padding:calc(env(safe-area-inset-top,0px) + 10px) max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 12px) max(16px,env(safe-area-inset-left,0px));
+  background:linear-gradient(180deg,var(--paper),var(--paper-2))}
+.sheet .grab{display:none}
+.sheet .in{height:100%;display:flex;flex-direction:column}
+.sheet .pg:not([hidden]){display:flex;flex-direction:column;flex:1;min-height:0}
+.sheet .pg-hd{border-bottom:1px solid var(--rule);padding-bottom:8px;margin-bottom:4px}
+.sheet .pg-hd h2{font-size:22px}
+.sheet .pg[data-page="home"] .tiles{grid-template-columns:repeat(2,1fr);gap:10px;margin-top:8px;flex:1;max-height:520px;grid-auto-rows:1fr}
+.sheet .pg[data-page="home"] .tile{min-height:0;border-radius:16px;gap:4px}
+.sheet .pg[data-page="home"] .tile .ic{font-size:30px}
+.sheet .pg[data-page="home"] .tile b{font-size:15px}
+.sheet .pg[data-page="home"] .tile small{font-size:12px}
+.sheet .tiles.t2{grid-template-columns:repeat(3,1fr)}
+.sheet .tiles.t2 .tile{min-height:104px}
 </style>
 </head>
 <body>
