@@ -9,9 +9,8 @@ for r in sample:
 
 head, body = s.split('</head>')
 title = '<title>કચ્છ સત્સંગ પ્રિવ્યૂ</title>'
-fonts = re.search(r'<link rel="stylesheet" href="https://fonts.googleapis.com[^>]+>', head).group(0)
-if 'Noto+Serif+Devanagari' not in fonts:
-    fonts = fonts.replace('family=Rasa', 'family=Noto+Serif+Devanagari:wght@400;600&family=Rasa')
+fonts = re.search(r'<script>\n/\* fonts load.*?</script>', head, re.S).group(0)
+fonts += '\n<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;600&display=swap">'
 style = head[head.index('<style>'):head.index('</style>') + 8]
 body = body.replace('<body>', '').replace('</body>', '').replace('</html>', '')
 banner = ('<div style="margin:10px 60px 0 0;padding:8px 12px;border:1px dashed var(--gold);font-size:14px;line-height:1.6;'

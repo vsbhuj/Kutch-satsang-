@@ -10,7 +10,12 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Gujarati:wght@400;600;700&family=Rasa:wght@400;600;700&family=Hind+Vadodara:wght@400;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap">
+<script>
+/* fonts load in the background so the page opens at once; Rasa/Hind only when chosen */
+window.loadFont = function (k) { var f = { base: "Noto+Serif+Gujarati:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500", rasa: "Rasa:wght@400;600;700", hind: "Hind+Vadodara:wght@400;600" }[k];
+  if (!f || document.getElementById("gf-" + k)) return; var l = document.createElement("link"); l.id = "gf-" + k; l.rel = "stylesheet"; l.href = "https://fonts.googleapis.com/css2?family=" + f + "&display=swap"; document.head.appendChild(l); };
+loadFont("base"); try { var _f = localStorage.getItem("k_font"); if (_f) loadFont(_f); } catch (e) {}
+</script>
 <style>
 /* Layout: one centred paper column; sticky language pill; result cards with a saffron rail; player docks to top and bottom. */
 :root{
@@ -57,6 +62,15 @@ h1{font-family:var(--gu);font-weight:700;color:var(--maroon);font-size:clamp(40p
   background-image:linear-gradient(45deg,transparent 50%,var(--saffron) 50%),linear-gradient(-45deg,transparent 50%,var(--saffron) 50%);
   background-position:right 6px center,right 2px center;background-size:4px 4px;background-repeat:no-repeat}
 
+.field{position:relative}
+.field select{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;padding:0}
+.fsel{width:100%;display:flex;align-items:center;gap:8px;border:0;border-bottom:1px solid var(--rule);background:none;color:var(--ink);font-family:var(--gu);font-size:calc(17px * var(--fs));padding:8px 2px;cursor:pointer;text-align:left}
+.fsel span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fsel i{font-style:normal;font-size:10px;color:var(--saffron);transition:transform .15s}
+.fsel[aria-expanded="true"]{border-bottom-color:var(--maroon)}.fsel[aria-expanded="true"] i{transform:rotate(180deg)}
+.fpop{position:absolute;left:0;right:0;top:100%;margin-top:4px;z-index:6;background:var(--paper);border:1px solid var(--rule);border-radius:12px;padding:5px;box-shadow:0 10px 26px rgba(40,15,5,.28);display:grid;gap:4px;max-height:260px;overflow:auto}
+.fpop button{display:flex;align-items:center;gap:8px;border:1px solid var(--rule);background:var(--card);color:var(--ink);border-radius:8px;padding:0 12px;min-height:38px;font-family:var(--gu);font-size:calc(15px * var(--fs));cursor:pointer;text-align:left}
+.fpop button.on{background:var(--maroon);border-color:var(--maroon);color:var(--on-accent)}
 .explore{text-align:center;margin:30px 0 8px}
 .explore h3{font-family:var(--latin);letter-spacing:.22em;font-size:12px;color:var(--maroon-2);margin:0 0 12px;font-weight:600;text-transform:uppercase}
 .chips{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;align-items:center}
@@ -590,6 +604,7 @@ function applyUI() {
   if (last) render(last.rows, last.q);
   if (typeof drawThemes === "function") drawThemes();
   if (typeof applyPrefs === "function") applyPrefs();
+  if (typeof syncF === "function") syncF();
 }
 
 async function rpc(name, body) {
@@ -715,6 +730,24 @@ $("#ovClose").onclick = () => $("#ov").hidden = true;
 $("#sform").onsubmit = (e) => { e.preventDefault(); search($("#q").value); };
 document.querySelectorAll(".chip").forEach((c) => c.onclick = () => search(c.textContent));
 $("#fseries").onchange = $("#fspeaker").onchange = () => { if ($("#q").value.trim()) search($("#q").value); };
+/* series / speaker: list opens under the button in the site's own colours (no black phone picker) */
+["fseries", "fspeaker"].forEach((id) => {
+  const sel = $("#" + id), b = document.createElement("button");
+  b.type = "button"; b.className = "fsel"; b.dataset.for = id; b.setAttribute("aria-expanded", "false"); b.innerHTML = "<span></span><i>▼</i>";
+  sel.after(b); sel.tabIndex = -1;
+  sel.parentElement.querySelector("label").onclick = (e) => { e.preventDefault(); b.click(); };
+  b.onclick = (e) => { e.stopPropagation(); const open = b.getAttribute("aria-expanded") === "true"; closeF(); if (!open) openF(b, sel); };
+});
+function syncF() { document.querySelectorAll(".fsel").forEach((b) => { const sel = $("#" + b.dataset.for), o = sel.options[sel.selectedIndex]; b.firstChild.textContent = o ? o.textContent : ""; }); }
+function closeF() { document.querySelectorAll(".fpop").forEach((p) => p.remove()); document.querySelectorAll(".fsel").forEach((b) => b.setAttribute("aria-expanded", "false")); }
+function openF(b, sel) {
+  const pop = document.createElement("div"); pop.className = "fpop";
+  [...sel.options].forEach((o, i) => { const x = document.createElement("button"); x.type = "button"; x.textContent = o.textContent; if (i === sel.selectedIndex) x.className = "on";
+    x.onclick = (e) => { e.stopPropagation(); sel.selectedIndex = i; closeF(); syncF(); sel.onchange && sel.onchange(); }; pop.appendChild(x); });
+  b.after(pop); b.setAttribute("aria-expanded", "true");
+}
+document.addEventListener("click", (e) => { if (!e.target.closest(".fpop")) closeF(); });
+syncF();
 
 /* ---------- admin (#admin) ---------- */
 let pass = store.get("k_pass", ""), poll = null;
@@ -787,6 +820,7 @@ function applyLook() {
   const theme = pref.night && isNight() ? "ratri" : pref.theme;
   if (theme === "sadi") el.removeAttribute("data-look"); else el.dataset.look = theme;
   el.dataset.fs = pref.fs; el.dataset.font = pref.font;
+  loadFont(pref.font);
   const t = THEMES.find((x) => x[0] === theme) || THEMES[0];
   const tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.content = theme === "ratri" ? "#17110c" : t[2];
   document.querySelectorAll("#themes .sw").forEach((b) => b.classList.toggle("on", b.dataset.th === pref.theme));
@@ -1167,6 +1201,7 @@ function drawSettings() {
 function closeDD() { $("#ddPop").hidden = true; document.querySelectorAll("#ddGrid [data-dd], #ddGrid2 [data-dd]").forEach((b) => b.setAttribute("aria-expanded", "false")); }
 function toggleDD(btn) {
   const k = btn.dataset.dd, pop = $("#ddPop");
+  if (k === "font") { loadFont("rasa"); loadFont("hind"); }
   if (!pop.hidden && pop.dataset.k === k) { closeDD(); return; }
   const st = SETS.find((x) => x.k === k);
   pop.dataset.k = k;
