@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Gujarati:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Gujarati:wght@400;600;700&family=Rasa:wght@400;600;700&family=Hind+Vadodara:wght@400;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap">
 <style>
 /* Layout: one centred paper column; sticky language pill; result cards with a saffron rail; player docks to top and bottom. */
 :root{
@@ -113,6 +113,101 @@ body.playing .overlay{top:calc(min(56.25vw,42vh,360px) + 50px + env(safe-area-in
 .vrow .row{display:flex;gap:12px;flex-wrap:wrap}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--maroon);color:var(--card);padding:8px 16px;border-radius:999px;font-size:14px;z-index:50}
 @media (prefers-reduced-motion:no-preference){.card{animation:in .3s ease both}@keyframes in{from{opacity:.4;transform:translateY(4px)}}}
+
+/* ---------- settings: text size + font ---------- */
+:root{--fs:1;--gold:#b8892f;--on-accent:#fbf1e4}
+html[data-fs="s"]{--fs:.9} html[data-fs="l"]{--fs:1.18} html[data-fs="xl"]{--fs:1.4}
+html[data-font="rasa"]{--gu:"Rasa","Noto Serif Gujarati",serif}
+html[data-font="hind"]{--gu:"Hind Vadodara","Noto Sans Gujarati",sans-serif}
+.card .txt{font-size:calc(18px * var(--fs))} .seg p{font-size:calc(17px * var(--fs))} .search input{font-size:calc(19px * var(--fs))}
+.chip,.field select{font-size:calc(16px * var(--fs))}
+.btn{color:var(--on-accent)}
+.card{position:relative}
+
+/* ---------- themes (sadi = the :root palette above) ---------- */
+/* 1 રાજવી પોથી: maroon + gold, double frame, carved corners, wax-seal search button */
+html[data-look="rajvi"]{--paper:#f0dfbd;--paper-2:#e6cfa3;--card:#f8ecd2;--ink:#2a160c;--ink-2:#6b4a30;--maroon:#6a1a10;--maroon-2:#7f2414;--saffron:#b8892f;--rule:#d2b27a;--mark:#ecc98a;--gold:#b8892f}
+html[data-look="rajvi"] body{background:radial-gradient(ellipse at 50% 0,rgba(255,248,225,.7),transparent 60%),linear-gradient(180deg,var(--paper),var(--paper-2)) fixed}
+html[data-look="rajvi"] .card{border:3px double var(--gold);border-left-width:3px;padding:22px 22px 16px}
+html[data-look="rajvi"] .search{border:3px double var(--gold);box-shadow:0 0 0 4px rgba(184,137,47,.12)}
+html[data-look="rajvi"] .search .btn{border-radius:50%;width:58px;height:58px;padding:0;align-self:center;font-size:12px;letter-spacing:.04em;
+  background:radial-gradient(circle at 35% 30%,#9b3324,#6a1a10 60%,#4b0f08);box-shadow:inset 0 0 0 3px rgba(255,220,170,.18),0 2px 4px rgba(60,20,5,.35)}
+html[data-look="rajvi"] h1{text-shadow:0 1px 0 #f8e6b8,0 2px 3px rgba(106,26,16,.25)}
+
+/* 2 સાદી વેલ: brown ink, a vine line under the title */
+html[data-look="vel"]{--paper:#f4ecdc;--paper-2:#ece0c8;--card:#fbf6ea;--ink:#33241a;--ink-2:#755c47;--maroon:#5a3a22;--maroon-2:#6e4a2c;--saffron:#8a6a3a;--rule:#dccbae;--mark:#ead7b2;--gold:#8a6a3a}
+html[data-look="vel"] .card{border-left:0;border-top:2px solid var(--gold)}
+html[data-look="vel"] .orn::before,html[data-look="vel"] .orn::after{height:12px;width:96px;background:var(--gold);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 12'%3E%3Cpath d='M0 6c6-6 10 6 16 0s10 6 16 0 10 6 16 0' fill='none' stroke='%23000' stroke-width='1.3'/%3E%3Ccircle cx='8' cy='3' r='1.6'/%3E%3Ccircle cx='24' cy='9' r='1.6'/%3E%3Ccircle cx='40' cy='3' r='1.6'/%3E%3C/svg%3E") repeat-x center/48px 12px;
+          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 12'%3E%3Cpath d='M0 6c6-6 10 6 16 0s10 6 16 0 10 6 16 0' fill='none' stroke='%23000' stroke-width='1.3'/%3E%3Ccircle cx='8' cy='3' r='1.6'/%3E%3Ccircle cx='24' cy='9' r='1.6'/%3E%3Ccircle cx='40' cy='3' r='1.6'/%3E%3C/svg%3E") repeat-x center/48px 12px}
+
+/* 3 મરૂન કિનાર: thick maroon border round the page and the cards */
+html[data-look="kinar"]{--paper:#f6eee0;--paper-2:#f1e5d0;--card:#fffaf1;--ink:#2b1a12;--ink-2:#6d5646;--maroon:#7a1f17;--maroon-2:#8f2a1d;--saffron:#7a1f17;--rule:#e0cdb2;--mark:#f2cfc2;--gold:#7a1f17}
+html[data-look="kinar"] body::after{content:"";position:fixed;inset:0;border:7px solid var(--maroon);box-shadow:inset 0 0 0 2px var(--paper),inset 0 0 0 4px var(--maroon);pointer-events:none;z-index:25}
+html[data-look="kinar"] .card{border:2px solid var(--maroon);border-left-width:6px}
+html[data-look="kinar"] .search{border:2px solid var(--maroon);box-shadow:none}
+
+/* 4 લીલી પોથી: deep green + gold */
+html[data-look="leeli"]{--paper:#eef0e2;--paper-2:#e3e7d2;--card:#f8f8ee;--ink:#17261b;--ink-2:#4d5d4e;--maroon:#1f4d2b;--maroon-2:#2b6239;--saffron:#b28b2e;--rule:#cbd3b6;--mark:#e9dca4;--gold:#b28b2e}
+html[data-look="leeli"] .card{border:1px solid var(--rule);border-left:4px solid var(--maroon);box-shadow:inset 0 0 0 4px var(--card),inset 0 0 0 5px rgba(178,139,46,.45)}
+html[data-look="leeli"] .search{border:1px solid var(--gold)}
+
+/* 5 રાત્રિ ગ્રંથ: dark page, gold letters */
+html[data-look="ratri"]{--paper:#17110c;--paper-2:#100b07;--card:#221912;--ink:#efdfbf;--ink-2:#b39c7c;--maroon:#d6a74c;--maroon-2:#e0b45e;--saffron:#c9963f;--rule:#3d2e21;--mark:#5a4219;--gold:#c9963f;--on-accent:#1a120b;color-scheme:dark}
+html[data-look="ratri"] .card{border:1px solid var(--rule);border-left:3px solid var(--gold);box-shadow:0 2px 10px rgba(0,0,0,.4)}
+html[data-look="ratri"] .search{box-shadow:0 0 0 4px rgba(201,150,63,.1)}
+html[data-look="ratri"] mark{color:#f6e2b5}
+
+/* carved corners for the vintage themes that have a frame */
+html[data-look="rajvi"] .card::before,html[data-look="rajvi"] .card::after,
+html[data-look="leeli"] .card::before,html[data-look="leeli"] .card::after,
+html[data-look="ratri"] .card::before,html[data-look="ratri"] .card::after{content:"";position:absolute;width:22px;height:22px;background:var(--gold);pointer-events:none;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Cpath d='M2 20V9c0-4 3-7 7-7h11' fill='none' stroke='%23000' stroke-width='1.4'/%3E%3Cpath d='M6 20v-8c0-3 3-6 6-6h8' fill='none' stroke='%23000' stroke-width='.9'/%3E%3Ccircle cx='6' cy='6' r='2'/%3E%3C/svg%3E") no-repeat center/contain;
+          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Cpath d='M2 20V9c0-4 3-7 7-7h11' fill='none' stroke='%23000' stroke-width='1.4'/%3E%3Cpath d='M6 20v-8c0-3 3-6 6-6h8' fill='none' stroke='%23000' stroke-width='.9'/%3E%3Ccircle cx='6' cy='6' r='2'/%3E%3C/svg%3E") no-repeat center/contain}
+html[data-look] .card::before{top:4px;left:4px}
+html[data-look] .card::after{bottom:4px;right:4px;transform:rotate(180deg)}
+
+/* Gujarati/Hindi labels: no wide letter-spacing (it breaks conjuncts apart) */
+html[data-ui="gu"] :is(.eyebrow,.field label,.explore h3,.count,.sheet h3,.btn,.stats){letter-spacing:.02em;font-family:var(--gu);text-transform:none}
+html[data-ui="gu"] .eyebrow{font-size:14px}
+
+/* ---------- ⚙️ button + bottom sheet ---------- */
+.gear{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:max(12px,env(safe-area-inset-right,0px));z-index:22;width:44px;height:44px;border-radius:50%;
+  border:1px solid var(--rule);background:var(--card);color:var(--maroon);font-size:22px;line-height:1;cursor:pointer;box-shadow:0 1px 6px rgba(60,30,10,.15);display:grid;place-items:center}
+body.playing .gear{display:none}
+.scrim{position:fixed;inset:0;background:rgba(20,10,4,.45);z-index:60}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:61;max-height:88vh;overflow:auto;background:var(--paper);color:var(--ink);border-radius:18px 18px 0 0;
+  padding:8px max(18px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));box-shadow:0 -6px 24px rgba(0,0,0,.25);border-top:3px solid var(--gold)}
+.sheet .in{max-width:560px;margin:0 auto}
+.sheet .grab{width:44px;height:5px;border-radius:9px;background:var(--rule);margin:2px auto 10px}
+.sheet .hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.sheet .hd h2{margin:0;font-size:22px;color:var(--maroon)}
+.sheet .x{border:0;background:none;font-size:22px;color:var(--ink-2);cursor:pointer;width:40px;height:40px}
+.sheet h3{font-family:var(--latin);letter-spacing:.22em;font-size:12px;text-transform:uppercase;color:var(--maroon-2);margin:18px 0 4px;font-weight:600;display:flex;align-items:center;gap:10px}
+.sheet h3::after{content:"";flex:1;height:1px;background:var(--rule)}
+.sheet .lbl{font-size:16px;margin:16px 0 10px;font-weight:600}
+.themes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.sw{border:2px solid transparent;border-radius:10px;background:none;padding:4px;cursor:pointer;text-align:center}
+.sw.on{border-color:var(--maroon)}
+.sw .pv{height:74px;border-radius:6px;position:relative;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.sw .pv i{position:absolute;left:0;right:0;top:0;height:16px}
+.sw .pv b{position:absolute;left:10px;right:10px;top:24px;bottom:10px;border-radius:2px}
+.sw .pv u{position:absolute;left:18px;right:30px;top:34px;height:4px;border-radius:2px;opacity:.55;box-shadow:0 10px 0 currentColor}
+.sw span{display:block;font-size:13px;margin-top:6px;color:var(--ink)}
+.seg4{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--rule);border-radius:10px;overflow:hidden;background:var(--card)}
+.seg4 button,.fonts button{border:0;background:none;padding:10px 4px;cursor:pointer;color:var(--ink-2)}
+.seg4 button+button{border-left:1px solid var(--rule)}
+.seg4 button.on,.fonts button.on{background:var(--maroon);color:var(--on-accent)}
+.sample{margin:10px 2px 0;padding:12px 14px;background:var(--card);border-left:3px solid var(--gold);font-size:calc(18px * var(--fs));line-height:1.8}
+.fonts{display:grid;gap:8px}
+.fonts button{border:1px solid var(--rule);border-radius:10px;background:var(--card);display:flex;justify-content:space-between;align-items:center;padding:10px 14px;text-align:left}
+.fonts button em{font-style:normal;font-size:20px;color:inherit}
+.fonts button small{font-family:var(--latin);font-size:13px;opacity:.85}
+.tgl{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:12px 14px;margin-top:12px;cursor:pointer}
+.tgl div{flex:1}.tgl small{display:block;color:var(--ink-2);font-size:13px;margin-top:2px}
+.tgl input{appearance:none;width:46px;height:26px;border-radius:99px;background:var(--rule);position:relative;cursor:pointer;flex:none;transition:background .2s}
+.tgl input::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 2px rgba(0,0,0,.3)}
+.tgl input:checked{background:var(--maroon)}.tgl input:checked::after{transform:translateX(20px)}
 </style>
 </head>
 <body>
@@ -184,6 +279,35 @@ body.playing .overlay{top:calc(min(56.25vw,42vh,360px) + 50px + env(safe-area-in
 </div>
 <div class="toast" id="toast" hidden></div>
 
+<button class="gear" id="gear" type="button" aria-label="Settings">⚙︎</button>
+<div class="scrim" id="scrim" hidden></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="setTitle" hidden>
+  <div class="in">
+    <div class="grab"></div>
+    <div class="hd"><h2 id="setTitle" data-t="settings">સેટિંગ</h2><button class="x" id="setClose" type="button" aria-label="Close">✕</button></div>
+
+    <h3 data-t="s_look">દેખાવ</h3>
+    <div class="lbl" data-t="s_theme">થીમ</div>
+    <div class="themes" id="themes"></div>
+
+    <div class="lbl" data-t="s_size">અક્ષરનું કદ</div>
+    <div class="seg4" id="sizes">
+      <button type="button" data-fs="s" style="font-size:14px">અ</button><button type="button" data-fs="m" style="font-size:17px">અ</button>
+      <button type="button" data-fs="l" style="font-size:21px">અ</button><button type="button" data-fs="xl" style="font-size:26px">અ</button>
+    </div>
+    <p class="sample">મહારાજે આચાર્યને <mark>ગુરુમંત્ર</mark> આપ્યો અને દીક્ષા આપવાનો અધિકાર આપ્યો.</p>
+
+    <div class="lbl" data-t="s_font">ફોન્ટ</div>
+    <div class="fonts" id="fonts">
+      <button type="button" data-font="noto"><em style="font-family:'Noto Serif Gujarati'">કચ્છ સત્સંગ</em><small data-t="f_noto">પોથી જેવા</small></button>
+      <button type="button" data-font="rasa"><em style="font-family:'Rasa'">કચ્છ સત્સંગ</em><small data-t="f_rasa">છાપેલા પુસ્તક જેવા</small></button>
+      <button type="button" data-font="hind"><em style="font-family:'Hind Vadodara'">કચ્છ સત્સંગ</em><small data-t="f_hind">સાદા, સ્પષ્ટ</small></button>
+    </div>
+
+    <label class="tgl"><div><span data-t="s_night">રાત્રે આપમેળે ઘેરી થીમ</span><small data-t="s_night2">સાંજે 7 થી સવારે 6 સુધી "રાત્રિ ગ્રંથ"</small></div><input type="checkbox" id="autoNight"></label>
+  </div>
+</div>
+
 <script>
 const SB = "https://ootwnvkrnidjhmnhuvfz.supabase.co";
 const KEY = "sb_publishable_wxzr5HiOqgtTXPAp7oTgDw_qFtS7dur";
@@ -195,21 +319,29 @@ const T = {
   en: { eyebrow: "Kutch Satsang · Katha Archive", sub: "— a searchable archive of the kathas —", search: "Search", series: "Katha series", speaker: "Speaker",
     allseries: "All series", allspeakers: "All speakers", see: "See what's in the archive", fe: "For example", hint: "Press enter to search the archive",
     ph: "Search the words that were spoken…", matches: (n) => `${n} matches`, none: "No passage contains this word yet.", play: "Play here", read: "Read full transcript →",
-    stats: (k, p) => `${k.toLocaleString()} kathas · ${p.toLocaleString()} passages · jump straight to the moment`, loading: "Searching…", copied: "Link copied" },
+    stats: (k, p) => `${k.toLocaleString()} kathas · ${p.toLocaleString()} passages · jump straight to the moment`, loading: "Searching…", copied: "Link copied",
+    settings: "Settings", s_look: "Appearance", s_theme: "Theme", s_size: "Text size", s_font: "Gujarati font", s_night: "Dark theme at night automatically", s_night2: "\u201cRaatri Granth\u201d from 7 pm to 6 am",
+    f_noto: "Manuscript style", f_rasa: "Printed book", f_hind: "Plain and clear",
+    th: { sadi: "Simple", rajvi: "Royal Pothi", vel: "Vine", kinar: "Maroon Border", leeli: "Green Pothi", ratri: "Night Granth" } },
   gu: { eyebrow: "કચ્છ સત્સંગ · કથા સંગ્રહ", sub: "— બોલાયેલા શબ્દો શોધો —", search: "શોધો", series: "કથા સિરીઝ", speaker: "વક્તા",
     allseries: "બધી સિરીઝ", allspeakers: "બધા વક્તા", see: "સંગ્રહમાં શું છે તે જુઓ", fe: "ઉદાહરણ", hint: "શોધવા માટે Enter દબાવો",
     ph: "બોલાયેલો કોઈ પણ શબ્દ શોધો…", matches: (n) => `${n} પરિણામ`, none: "આ શબ્દ હજી કોઈ કથામાં મળ્યો નથી.", play: "અહીં સાંભળો", read: "આખું લખાણ વાંચો →",
-    stats: (k, p) => `${k.toLocaleString()} કથા · ${p.toLocaleString()} ફકરા · સીધું એ ક્ષણ પર`, loading: "શોધી રહ્યા છીએ…", copied: "લિંક કોપી થઈ" },
+    stats: (k, p) => `${k.toLocaleString()} કથા · ${p.toLocaleString()} ફકરા · સીધું એ ક્ષણ પર`, loading: "શોધી રહ્યા છીએ…", copied: "લિંક કોપી થઈ",
+    settings: "સેટિંગ", s_look: "દેખાવ", s_theme: "થીમ", s_size: "અક્ષરનું કદ", s_font: "ફોન્ટ", s_night: "રાત્રે આપમેળે ઘેરી થીમ", s_night2: "સાંજે 7 થી સવારે 6 સુધી \u201cરાત્રિ ગ્રંથ\u201d",
+    f_noto: "પોથી જેવા", f_rasa: "છાપેલા પુસ્તક જેવા", f_hind: "સાદા, સ્પષ્ટ",
+    th: { sadi: "સાદી", rajvi: "રાજવી પોથી", vel: "સાદી વેલ", kinar: "મરૂન કિનાર", leeli: "લીલી પોથી", ratri: "રાત્રિ ગ્રંથ" } },
 };
 let ui = store.get("k_ui", "en"), sc = store.get("k_sc", "gu"), stats = { kathas: 0, passages: 0 }, last = null, cur = null;
 
 function applyUI() {
+  document.documentElement.dataset.ui = ui;
   document.querySelectorAll("[data-ui]").forEach((b) => b.classList.toggle("on", b.dataset.ui === ui));
   document.querySelectorAll("[data-sc]").forEach((b) => b.classList.toggle("on", b.dataset.sc === sc));
   document.querySelectorAll("[data-t]").forEach((el) => { const v = T[ui][el.dataset.t]; if (typeof v === "string") el.textContent = v; });
   $("#q").placeholder = T[ui].ph;
   $("#stats").textContent = T[ui].stats(stats.kathas, stats.passages);
   if (last) render(last.rows, last.q);
+  if (typeof drawThemes === "function") drawThemes();
 }
 document.querySelectorAll("[data-ui]").forEach((b) => b.onclick = () => { ui = b.dataset.ui; store.set("k_ui", ui); applyUI(); });
 document.querySelectorAll("[data-sc]").forEach((b) => b.onclick = () => { sc = b.dataset.sc; store.set("k_sc", sc); applyUI(); });
@@ -323,6 +455,46 @@ $("#addBtn").onclick = async () => {
   }
   $("#links").value = ""; $("#addBtn").disabled = false; toast("ઉમેરાઈ ગઈ"); refreshList();
 };
+
+/* ---------- ⚙️ settings: section 1 (appearance) ---------- */
+const THEMES = [ // id, page, header, card, line, frame
+  ["sadi", "#f3e9d8", "#6e1f14", "#fbf5ea", "#2b1a12", "#c0662a"],
+  ["rajvi", "#ecd8b0", "#6a1a10", "#f8ecd2", "#2a160c", "#b8892f"],
+  ["vel", "#f4ecdc", "#5a3a22", "#fbf6ea", "#33241a", "#8a6a3a"],
+  ["kinar", "#f6eee0", "#7a1f17", "#fffaf1", "#2b1a12", "#7a1f17"],
+  ["leeli", "#eef0e2", "#1f4d2b", "#f8f8ee", "#17261b", "#b28b2e"],
+  ["ratri", "#17110c", "#d6a74c", "#221912", "#efdfbf", "#c9963f"],
+];
+const pref = { theme: store.get("k_theme", "sadi"), fs: store.get("k_fs", "m"), font: store.get("k_font", "noto"), night: store.get("k_night", "0") === "1" };
+const isNight = () => { const h = new Date().getHours(); return h >= 19 || h < 6; };
+function applyLook() {
+  const el = document.documentElement;
+  const theme = pref.night && isNight() ? "ratri" : pref.theme;
+  if (theme === "sadi") el.removeAttribute("data-look"); else el.dataset.look = theme;
+  el.dataset.fs = pref.fs; el.dataset.font = pref.font;
+  const t = THEMES.find((x) => x[0] === theme) || THEMES[0];
+  const tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.content = theme === "ratri" ? "#17110c" : t[2];
+  document.querySelectorAll("#themes .sw").forEach((b) => b.classList.toggle("on", b.dataset.th === pref.theme));
+  document.querySelectorAll("#sizes [data-fs]").forEach((b) => b.classList.toggle("on", b.dataset.fs === pref.fs));
+  document.querySelectorAll("#fonts [data-font]").forEach((b) => b.classList.toggle("on", b.dataset.font === pref.font));
+  $("#autoNight").checked = pref.night;
+}
+function drawThemes() {
+  $("#themes").innerHTML = THEMES.map(([id, pg, hd, cd, ln, fr]) => `<button type="button" class="sw" data-th="${id}" aria-label="${T[ui].th[id]}">
+    <div class="pv" style="background:${pg}"><i style="background:${hd}"></i><b style="background:${cd};border:${id === "rajvi" ? "3px double" : id === "kinar" ? "2px solid" : "1px solid"} ${fr}${id === "sadi" || id === "kinar" ? `;border-left:4px solid ${fr}` : ""}"></b><u style="background:${ln};color:${ln}"></u></div>
+    <span>${T[ui].th[id]}</span></button>`).join("");
+  $("#themes").querySelectorAll(".sw").forEach((b) => b.onclick = () => { pref.theme = b.dataset.th; store.set("k_theme", pref.theme); applyLook(); });
+  applyLook();
+}
+document.querySelectorAll("#sizes [data-fs]").forEach((b) => b.onclick = () => { pref.fs = b.dataset.fs; store.set("k_fs", pref.fs); applyLook(); });
+document.querySelectorAll("#fonts [data-font]").forEach((b) => b.onclick = () => { pref.font = b.dataset.font; store.set("k_font", pref.font); applyLook(); });
+$("#autoNight").onchange = (e) => { pref.night = e.target.checked; store.set("k_night", pref.night ? "1" : "0"); applyLook(); };
+setInterval(() => { if (pref.night) applyLook(); }, 60000);
+function openSettings(open) { $("#sheet").hidden = $("#scrim").hidden = !open; document.body.style.overflow = open ? "hidden" : ""; }
+$("#gear").onclick = () => openSettings(true);
+$("#setClose").onclick = $("#scrim").onclick = () => openSettings(false);
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#sheet").hidden) openSettings(false); });
+applyLook();
 
 function route() {
   const isAdmin = location.hash === "#admin";
