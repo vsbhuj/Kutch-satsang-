@@ -127,6 +127,9 @@ body.playing .overlay{top:calc(min(56.25vw,42vh,360px) + 50px + env(safe-area-in
 .vrow .st{font-family:var(--latin);font-weight:600}
 .vrow .err{color:#b3261e;font-size:12px;overflow-wrap:anywhere}
 .vrow .row{display:flex;gap:12px;flex-wrap:wrap}
+.lang-chips{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.lang-chips button{border:1px solid var(--rule);border-radius:10px;background:var(--card);color:var(--ink);padding:10px 4px;font-size:15px;cursor:pointer}
+.lang-chips button.on{background:var(--maroon);border-color:var(--maroon);color:var(--on-accent)}
 .pl-pick{background:var(--card);border:1px solid var(--gold);border-radius:12px;padding:12px;display:grid;gap:6px}
 .pl-pick>small{color:var(--ink-2);font-size:13px}
 .pl-row{display:flex;gap:10px;align-items:flex-start;padding:8px 4px;border-top:1px dashed var(--rule);font-size:14px;line-height:1.4;cursor:pointer}
@@ -518,7 +521,8 @@ body.playing .gear{display:none}
       <input id="dspeaker" placeholder="વક્તા (બધી લિંક માટે)">
       <input id="dseries" placeholder="કથા સિરીઝ (બધી લિંક માટે)">
       <label for="dlang">કથા કઈ ભાષામાં બોલાઈ છે?</label>
-      <select id="dlang" style="width:100%;border:1px solid var(--rule);background:var(--card);padding:10px;font-size:15px">
+      <div class="lang-chips" id="dlangChips"></div>
+      <select id="dlang" hidden>
         <option value="gu">ગુજરાતી (લખાણ ગુજરાતી લિપિમાં)</option><option value="hi">હિન્દી (લખાણ દેવનાગરીમાં)</option><option value="sa">સંસ્કૃત (લખાણ દેવનાગરીમાં)</option>
       </select>
       <button class="btn" id="addBtn" type="button">ઉમેરો</button>
@@ -835,6 +839,11 @@ async function login() {
   catch (e) { $("#login").hidden = false; $("#panel").hidden = true; if (pass) toast("ખોટો પાસવર્ડ"); }
 }
 $("#alogin").onclick = () => { pass = $("#apass").value.trim(); login(); };
+// language of the katha: buttons in the site's colours instead of the phone's black list
+(() => { const sel = $("#dlang"), box = $("#dlangChips");
+  const draw = () => { box.innerHTML = [...sel.options].map((o) => `<button type="button" data-v="${o.value}" class="${o.value === sel.value ? "on" : ""}${o.value !== "gu" ? " dev" : ""}">${({ gu: "ગુજરાતી", hi: "हिन्दी", sa: "संस्कृत" })[o.value] || o.textContent}</button>`).join("");
+    box.querySelectorAll("button").forEach((b) => b.onclick = () => { sel.value = b.dataset.v; draw(); }); };
+  draw(); })();
 $("#addBtn").onclick = async () => {
   const lines = $("#links").value.split("\n").map((l) => l.trim()).filter(Boolean);
   if (!lines.length) return;
@@ -1302,7 +1311,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.10.31.4";
+const APP_VER = "2026.10.31.5";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
