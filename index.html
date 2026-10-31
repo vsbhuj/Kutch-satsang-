@@ -506,7 +506,7 @@ body.playing .gear{display:none}
     <div class="admin" id="panel" hidden>
       <label for="links">YouTube લિંક — દરેક લાઇનમાં એક:</label>
       <textarea id="links" placeholder="https://youtu.be/xxxx | વક્તાનું નામ | કથા સિરીઝ"></textarea>
-      <small>ફોર્મેટ: <b>લિંક | વક્તા | સિરીઝ</b>. વક્તા અને સિરીઝ ખાલી રાખવા હોય તો નીચેના ખાનામાં એક વાર લખો, એ બધી લિંક માટે વપરાશે.</small>
+      <small>📋 <b>Playlist ની લિંક</b> પણ ચાલે: એમાંના બધા વીડિયો ઉમેરાશે. વક્તાનું ખાનું ખાલી રાખો તો નામ વીડિયોના શીર્ષકમાંથી ("By … Swami") આપમેળે લેવાશે.<br>ફોર્મેટ: <b>લિંક | વક્તા | સિરીઝ</b>. વક્તા અને સિરીઝ ખાલી રાખવા હોય તો નીચેના ખાનામાં એક વાર લખો, એ બધી લિંક માટે વપરાશે.</small>
       <input id="dspeaker" placeholder="વક્તા (બધી લિંક માટે)">
       <input id="dseries" placeholder="કથા સિરીઝ (બધી લિંક માટે)">
       <label for="dlang">કથા કઈ ભાષામાં બોલાઈ છે?</label>
@@ -554,7 +554,7 @@ body.playing .gear{display:none}
     <div class="pg" data-page="p2" hidden>
     <div class="dd-grid" id="ddGrid2"></div>
     <div class="tg-grid"><label class="tg"><input type="checkbox" id="shTxtTgl"><span class="ic">📝</span><span data-t="t_shtxt">લખાણ સાથે શેર</span></label><label class="tg"><input type="checkbox" id="shNameTgl"><span class="ic">✍️</span><span data-t="t_shname">નામ ઉમેરો</span></label><label class="tg"><input type="checkbox" id="privTgl"><span class="ic">🔒</span><span data-t="t_priv">ખાનગી મોડ</span></label></div>
-    <div class="mini-tiles"><button type="button" class="mt" id="updBtn"><span class="ic">🔄</span><b data-t="t_upd">નવું વર્ઝન</b><small></small></button><button type="button" class="mt" id="helpBtn"><span class="ic">❓</span><b data-t="t_help">મદદ</b><small></small></button><button type="button" class="mt" data-go="p1"><span class="ic">‹</span><b data-t="t_back">પાછળ</b><small></small></button></div>
+    <div class="mini-tiles"><button type="button" class="mt" id="updBtn"><span class="ic">🔄</span><b data-t="t_upd">નવું વર્ઝન</b><small></small></button><button type="button" class="mt" id="helpBtn"><span class="ic">❓</span><b data-t="t_help">મદદ</b><small></small></button><button type="button" class="mt" id="sevakBtn"><span class="ic">🔐</span><b>સેવક</b><small>કથા ઉમેરો</small></button><button type="button" class="mt" data-go="p1"><span class="ic">‹</span><b data-t="t_back">પાછળ</b><small></small></button></div>
     <p class="ver" id="verLine"></p>
     </div>
     <div class="dd-pop" id="ddPop" hidden></div>
@@ -808,8 +808,13 @@ async function refreshList() {
   $("#vlist").innerHTML = (videos || []).map((v) => `<div class="vrow ${v.status}"><div><b>${esc(v.title || v.youtube_id)}</b></div>
     <div>${esc(v.speaker || "—")} · ${esc(v.series || "—")}</div>
     <div class="row"><span class="st">${label[v.status] || v.status}${v.status === "done" ? ` · ${v.passages} ફકરા` : ""} · ${({ gu: "ગુજરાતી", hi: "હિન્દી", sa: "સંસ્કૃત" })[v.lang] || "ગુજરાતી"}</span>
-    <button class="link" data-retry="${v.id}">ફરી કરો</button><button class="link" data-del="${v.id}">કાઢો</button></div>
+    <button class="link" data-ed="${v.id}">✏️ વક્તા</button><button class="link" data-retry="${v.id}">ફરી કરો</button><button class="link" data-del="${v.id}">કાઢો</button></div>
     ${v.error ? `<div class="err">${esc(v.error)}</div>` : ""}</div>`).join("") || "<small>હજી કોઈ કથા ઉમેરી નથી.</small>";
+  $("#vlist").querySelectorAll("[data-ed]").forEach((b) => b.onclick = async () => {
+    const v = videos.find((x) => x.id === +b.dataset.ed);
+    const sp = prompt("વક્તાનું નામ", v.speaker || ""); if (sp === null) return;
+    const se = prompt("કથા સિરીઝ", v.series || ""); if (se === null) return;
+    await adm({ action: "edit", id: v.id, title: v.title, speaker: sp.trim() || null, series: se.trim() || null, lang: v.lang }); refreshList(); });
   $("#vlist").querySelectorAll("[data-retry]").forEach((b) => b.onclick = async () => { await adm({ action: "retry", id: +b.dataset.retry }); refreshList(); });
   $("#vlist").querySelectorAll("[data-del]").forEach((b) => b.onclick = async () => {
     if (b.dataset.sure) { await adm({ action: "delete", id: +b.dataset.del }); refreshList(); } else { b.dataset.sure = 1; b.textContent = "ખાતરી? ફરી દબાવો"; } });
@@ -825,12 +830,20 @@ $("#addBtn").onclick = async () => {
   const lines = $("#links").value.split("\n").map((l) => l.trim()).filter(Boolean);
   if (!lines.length) return;
   $("#addBtn").disabled = true;
+  let n = 0, skip = 0;
   for (const l of lines) {
     const [url, sp, se] = l.split("|").map((x) => x && x.trim());
-    try { await adm({ action: "add", url, speaker: sp || $("#dspeaker").value.trim(), series: se || $("#dseries").value.trim(), lang: $("#dlang").value }); }
-    catch (e) { toast(url + ": " + e.message); }
+    const base = { speaker: sp || $("#dspeaker").value.trim(), series: se || $("#dseries").value.trim(), lang: $("#dlang").value };
+    try {
+      // a playlist link (list= without v=) brings in every video of the playlist
+      if (/[?&]list=/.test(url) && !/[?&]v=/.test(url)) {
+        const pl = await adm({ action: "playlist", url }); skip += pl.already || 0;
+        for (const id of pl.ids) { toast(`ઉમેરાય છે ${++n}…`); await adm({ action: "add", url: id, ...base }); }
+      } else { await adm({ action: "add", url, ...base }); n++; }
+    } catch (e) { toast(url + ": " + e.message); }
   }
-  $("#links").value = ""; $("#addBtn").disabled = false; toast("ઉમેરાઈ ગઈ"); refreshList();
+  $("#links").value = ""; $("#addBtn").disabled = false;
+  toast(`${n} કથા ઉમેરાઈ` + (skip ? ` · ${skip} પહેલેથી હતી` : "")); refreshList();
 };
 
 /* ---------- ⚙️ settings: section 1 (appearance) ---------- */
@@ -1261,7 +1274,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.10.31.2";
+const APP_VER = "2026.10.31.3";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
@@ -1357,6 +1370,7 @@ async function makeCard(r) {
 const bind2 = (id, key) => { $(id).onchange = (e) => { pref[key] = e.target.checked; store.set("k_" + key, pref[key] ? "1" : "0"); }; };
 bind2("#shTxtTgl", "shtxt"); bind2("#shNameTgl", "shname"); bind2("#privTgl", "priv");
 $("#updBtn").onclick = () => { toast(T[ui].updOk); setTimeout(() => location.replace(location.pathname + "?v=" + Date.now() + location.hash), 400); };
+$("#sevakBtn").onclick = () => { openSettings(false); location.hash = "#admin"; };
 $("#helpBtn").onclick = () => showInfo(T[ui].helpTitle, `<div class="about">${T[ui].help.map((h) => `<p>${h}</p>`).join("")}</div>`);
 function page2State() {
   $("#shTxtTgl").checked = pref.shtxt; $("#shNameTgl").checked = pref.shname; $("#privTgl").checked = pref.priv;

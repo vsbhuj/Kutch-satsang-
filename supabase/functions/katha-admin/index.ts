@@ -26,6 +26,24 @@ function ytId(u: string): string | null {
   return m ? m[1] : null;
 }
 
+// "… - By Hariswarup swami  Day 1 Morning" -> "Hariswarup Swami"
+function speakerFromTitle(t: string | null): string | null {
+  const m = (t || "").match(/\bby\s+([^-|,]+?\bswam(?:i|y)\b)/i);
+  if (!m) return null;
+  return m[1].trim().replace(/\s+/g, " ").split(" ").map((w) => w[0].toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+}
+
+// every video of a public playlist, in playlist order (first ~100)
+async function playlistIds(u: string): Promise<string[]> {
+  const list = (u.match(/[?&]list=([\w-]+)/) || [])[1];
+  if (!list) return [];
+  const r = await fetch(`https://www.youtube.com/playlist?list=${list}`, { headers: { "User-Agent": "Mozilla/5.0", "Accept-Language": "en" } });
+  if (!r.ok) throw new Error("Playlist ખૂલ્યું નહીં (" + r.status + ")");
+  const html = await r.text(), seen = new Set<string>(), out: string[] = [];
+  for (const m of html.matchAll(/"videoId":"([\w-]{11})"/g)) if (!seen.has(m[1])) { seen.add(m[1]); out.push(m[1]); }
+  return out;
+}
+
 function toSec(t: unknown): number {
   if (typeof t === "number") return Math.max(0, Math.round(t));
   const parts = String(t).trim().split(":").map((x) => parseFloat(x) || 0);
@@ -418,6 +436,14 @@ Deno.serve(async (req: Request) => {
       return json({ ok: true });
     }
 
+    if (b.action === "playlist") {
+      const ids = await playlistIds(b.url || "");
+      if (!ids.length) return json({ error: "Playlist માં વીડિયો ન મળ્યા" }, 400);
+      const { data: have } = await db.from("katha_videos").select("youtube_id").in("youtube_id", ids);
+      const old = new Set((have ?? []).map((x: any) => x.youtube_id));
+      return json({ ok: true, ids: ids.filter((x) => !old.has(x)), already: ids.filter((x) => old.has(x)).length });
+    }
+
     if (b.action === "add") {
       const yid = ytId(b.url || "");
       if (!yid) return json({ error: "YouTube લિંક બરાબર નથી" }, 400);
@@ -427,7 +453,7 @@ Deno.serve(async (req: Request) => {
         if (o.ok) { const oj = await o.json(); title = title || oj.title; channel = oj.author_name; }
       } catch (_) { /* ignore */ }
       const { data: v, error } = await db.from("katha_videos")
-        .upsert({ youtube_id: yid, title, channel, speaker: b.speaker || null, series: b.series || null, lang: LANG[b.lang] ? b.lang : "gu", status: "processing", error: null }, { onConflict: "youtube_id" })
+        .upsert({ youtube_id: yid, title, channel, speaker: b.speaker || speakerFromTitle(title), series: b.series || null, lang: LANG[b.lang] ? b.lang : "gu", status: "processing", error: null }, { onConflict: "youtube_id" })
         .select("id").single();
       if (error) return json({ error: error.message }, 500);
       bg(enqueue(v.id, yid, b.pass));
