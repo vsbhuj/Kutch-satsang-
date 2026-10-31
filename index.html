@@ -168,8 +168,32 @@ html[data-look] .card::before{top:4px;left:4px}
 html[data-look] .card::after{bottom:4px;right:4px;transform:rotate(180deg)}
 
 /* Gujarati/Hindi labels: no wide letter-spacing (it breaks conjuncts apart) */
-html[data-ui="gu"] :is(.eyebrow,.field label,.explore h3,.count,.sheet h3,.btn,.stats){letter-spacing:.02em;font-family:var(--gu);text-transform:none}
-html[data-ui="gu"] .eyebrow{font-size:14px}
+html:is([data-ui="gu"],[data-ui="hi"]) :is(.eyebrow,.field label,.explore h3,.count,.sheet h3,.btn,.stats){letter-spacing:.02em;font-family:var(--gu);text-transform:none}
+html:is([data-ui="gu"],[data-ui="hi"]) .eyebrow{font-size:14px}
+html[data-ui="hi"]{--gu:"Noto Serif Devanagari","Noto Serif Gujarati",serif}
+html[data-ui="hi"][data-sc="gu"] .txt,html[data-ui="hi"][data-sc="gu"] .seg p,html[data-ui="hi"] h1{font-family:"Noto Serif Gujarati",serif}
+html[data-sc="dev"] :is(.txt,.seg p){font-family:"Noto Serif Devanagari","Tiro Devanagari Hindi",serif}
+
+/* ---------- sections 2-4 ---------- */
+.seg4.n2{grid-template-columns:repeat(2,1fr)} .seg4.n3{grid-template-columns:repeat(3,1fr)}
+.seg4 button{font-size:15px;min-height:44px}
+.rowbtn{display:flex;align-items:center;gap:12px;width:100%;background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:14px;margin-top:10px;cursor:pointer;text-align:left;font-size:16px;color:var(--ink)}
+.rowbtn b{flex:1;font-weight:600}.rowbtn .n{color:var(--ink-2);font-family:var(--latin);font-variant-numeric:tabular-nums}.rowbtn .chev{color:var(--ink-2)}
+.tgl.off{opacity:.55;cursor:default}.soon{font-size:12px;border:1px solid var(--rule);border-radius:99px;padding:2px 9px;color:var(--ink-2)}
+.fav{background:none;border:0;cursor:pointer;font-size:20px;line-height:1;padding:4px 6px;color:var(--maroon-2);margin-left:auto}
+.fav.on{color:#c0392b}
+.seg .fav{font-size:18px;align-self:start}
+.seg{grid-template-columns:60px 1fr auto}
+.mine .item{background:var(--card);border-left:3px solid var(--gold);padding:12px 14px;margin:12px 0;display:grid;gap:6px}
+.mine .item p{margin:0;font-size:calc(17px * var(--fs));line-height:1.75;overflow-wrap:anywhere}
+.mine .item .m{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--ink-2)}
+.mine .item .m .play{font-size:14px}
+.mine .bar2{display:flex;justify-content:space-between;align-items:center;padding:12px 0 0}
+.player .bar .spd{min-width:56px;font-variant-numeric:tabular-nums}
+/* small-video (listen) mode */
+body.mini .player .vid{width:160px;max-width:40vw;aspect-ratio:16/9;margin:6px auto 0}
+body.mini.playing{padding-top:calc(90px + 56px + env(safe-area-inset-top,0px))}
+body.mini.playing .overlay{top:calc(90px + 56px + env(safe-area-inset-top,0px))}
 
 /* ---------- ⚙️ button + bottom sheet ---------- */
 .gear{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:max(12px,env(safe-area-inset-right,0px));z-index:22;width:44px;height:44px;border-radius:50%;
@@ -212,12 +236,6 @@ body.playing .gear{display:none}
 </head>
 <body>
 <div class="wrap">
-  <div class="pill" role="group" aria-label="Language">
-    <button class="gu" data-ui="gu">ગુજરાતી</button><button data-ui="en">English</button>
-    <span class="sep"></span>
-    <button class="gu" data-sc="gu" title="ગુજરાતી લિપિ">અ</button><button data-sc="ro" title="English letters">ABC</button>
-  </div>
-
   <main id="home">
     <header>
       <div class="eyebrow" data-t="eyebrow">Kutch Satsang · Katha Archive</div>
@@ -270,7 +288,7 @@ body.playing .gear{display:none}
 
 <div class="player" id="player" hidden>
   <div class="vid" id="vid"></div>
-  <div class="bar"><button type="button" id="share">⟲ moment</button><button type="button" id="openyt">YouTube</button><button type="button" id="closeP">✕ Close</button></div>
+  <div class="bar"><button type="button" class="spd" id="spd">1×</button><button type="button" id="share">⟲ moment</button><button type="button" id="openyt">YouTube</button><button type="button" id="closeP">✕ Close</button></div>
 </div>
 
 <div class="overlay" id="ov" hidden>
@@ -305,6 +323,28 @@ body.playing .gear{display:none}
     </div>
 
     <label class="tgl"><div><span data-t="s_night">રાત્રે આપમેળે ઘેરી થીમ</span><small data-t="s_night2">સાંજે 7 થી સવારે 6 સુધી "રાત્રિ ગ્રંથ"</small></div><input type="checkbox" id="autoNight"></label>
+
+    <h3 data-t="s_lang">ભાષા અને લિપિ</h3>
+    <div class="lbl" data-t="s_ui">બટન અને મેનુની ભાષા</div>
+    <div class="seg4 n3" data-pref="ui"><button type="button" data-v="gu">ગુજરાતી</button><button type="button" data-v="en">English</button><button type="button" data-v="hi" style="font-family:'Noto Serif Devanagari',serif">हिन्दी</button></div>
+    <div class="lbl" data-t="s_sc">કથાનું લખાણ કઈ લિપિમાં</div>
+    <div class="seg4 n3" data-pref="sc"><button type="button" data-v="gu">ગુજરાતી</button><button type="button" data-v="ro">ABC</button><button type="button" data-v="dev" style="font-family:'Noto Serif Devanagari',serif">देवनागरी</button></div>
+    <p class="sample" id="scSample"></p>
+    <div class="lbl" data-t="s_dig">અંક</div>
+    <div class="seg4 n2" data-pref="dig"><button type="button" data-v="gu">૧:૨૩:૪૫</button><button type="button" data-v="en">1:23:45</button></div>
+
+    <h3 data-t="s_listen">સાંભળવું</h3>
+    <div class="lbl" data-t="s_rate">સ્પીડ</div>
+    <div class="seg4" data-pref="rate"><button type="button" data-v="0.75">0.75×</button><button type="button" data-v="1">1×</button><button type="button" data-v="1.25">1.25×</button><button type="button" data-v="1.5">1.5×</button></div>
+    <div class="lbl" data-t="s_pre">શોધેલા શબ્દથી કેટલું પહેલાં શરૂ કરવું</div>
+    <div class="seg4 n3" data-pref="pre"><button type="button" data-v="0"></button><button type="button" data-v="5"></button><button type="button" data-v="10"></button></div>
+    <label class="tgl"><div><span data-t="s_mini">નાનો વીડિયો (ફક્ત સાંભળવા)</span><small data-t="s_mini2">વીડિયો નાનો રહે, લખાણ વાંચવા વધુ જગ્યા મળે</small></div><input type="checkbox" id="miniTgl"></label>
+    <label class="tgl"><div><span data-t="s_bell">બટનનો અવાજ</span><small data-t="s_bell2">બટન દબાવતાં ધીમો ઘંટનાદ</small></div><input type="checkbox" id="bellTgl"></label>
+
+    <h3 data-t="s_mine">મારું</h3>
+    <button type="button" class="rowbtn" id="openFav"><span>❤️</span><b data-t="s_fav">મનપસંદ ક્ષણો</b><span class="n" id="favN"></span><span class="chev">›</span></button>
+    <button type="button" class="rowbtn" id="openHist"><span>🕘</span><b data-t="s_hist">ઇતિહાસ</b><span class="n" id="histN"></span><span class="chev">›</span></button>
+    <div class="tgl off"><div><span data-t="s_notif">🔔 નવી કથાની સૂચના</span><small data-t="s_notif2">આ સુવિધા જલ્દી આવશે</small></div><span class="soon" data-t="soon">જલ્દી</span></div>
   </div>
 </div>
 
@@ -322,29 +362,53 @@ const T = {
     stats: (k, p) => `${k.toLocaleString()} kathas · ${p.toLocaleString()} passages · jump straight to the moment`, loading: "Searching…", copied: "Link copied",
     settings: "Settings", s_look: "Appearance", s_theme: "Theme", s_size: "Text size", s_font: "Gujarati font", s_night: "Dark theme at night automatically", s_night2: "\u201cRaatri Granth\u201d from 7 pm to 6 am",
     f_noto: "Manuscript style", f_rasa: "Printed book", f_hind: "Plain and clear",
-    th: { sadi: "Simple", rajvi: "Royal Pothi", vel: "Vine", kinar: "Maroon Border", leeli: "Green Pothi", ratri: "Night Granth" } },
+    th: { sadi: "Simple", rajvi: "Royal Pothi", vel: "Vine", kinar: "Maroon Border", leeli: "Green Pothi", ratri: "Night Granth" },
+    s_lang: "Language and script", s_ui: "Language of buttons and menus", s_sc: "Script for the katha text", s_dig: "Numbers",
+    s_listen: "Listening", s_rate: "Speed", s_pre: "Start this much before the searched word", sec: (n) => `${n} sec`,
+    s_mini: "Small video (just listen)", s_mini2: "Keeps the video small so the text has more room", s_bell: "Button sound", s_bell2: "A soft bell when you tap a button",
+    s_mine: "Mine", s_fav: "Favourite moments", s_hist: "History", s_notif: "🔔 New katha alerts", s_notif2: "Coming soon", soon: "Soon",
+    favAdd: "Added to favourites", favDel: "Removed from favourites", favEmpty: "No favourites yet. Tap ♡ on any passage to keep it here.",
+    histEmpty: "Nothing played yet.", clear: "Clear history", sure: "Tap again to clear", cleared: "History cleared", remove: "Remove", },
   gu: { eyebrow: "કચ્છ સત્સંગ · કથા સંગ્રહ", sub: "— બોલાયેલા શબ્દો શોધો —", search: "શોધો", series: "કથા સિરીઝ", speaker: "વક્તા",
     allseries: "બધી સિરીઝ", allspeakers: "બધા વક્તા", see: "સંગ્રહમાં શું છે તે જુઓ", fe: "ઉદાહરણ", hint: "શોધવા માટે Enter દબાવો",
     ph: "બોલાયેલો કોઈ પણ શબ્દ શોધો…", matches: (n) => `${n} પરિણામ`, none: "આ શબ્દ હજી કોઈ કથામાં મળ્યો નથી.", play: "અહીં સાંભળો", read: "આખું લખાણ વાંચો →",
     stats: (k, p) => `${k.toLocaleString()} કથા · ${p.toLocaleString()} ફકરા · સીધું એ ક્ષણ પર`, loading: "શોધી રહ્યા છીએ…", copied: "લિંક કોપી થઈ",
     settings: "સેટિંગ", s_look: "દેખાવ", s_theme: "થીમ", s_size: "અક્ષરનું કદ", s_font: "ફોન્ટ", s_night: "રાત્રે આપમેળે ઘેરી થીમ", s_night2: "સાંજે 7 થી સવારે 6 સુધી \u201cરાત્રિ ગ્રંથ\u201d",
     f_noto: "પોથી જેવા", f_rasa: "છાપેલા પુસ્તક જેવા", f_hind: "સાદા, સ્પષ્ટ",
-    th: { sadi: "સાદી", rajvi: "રાજવી પોથી", vel: "સાદી વેલ", kinar: "મરૂન કિનાર", leeli: "લીલી પોથી", ratri: "રાત્રિ ગ્રંથ" } },
+    th: { sadi: "સાદી", rajvi: "રાજવી પોથી", vel: "સાદી વેલ", kinar: "મરૂન કિનાર", leeli: "લીલી પોથી", ratri: "રાત્રિ ગ્રંથ" },
+    s_lang: "ભાષા અને લિપિ", s_ui: "બટન અને મેનુની ભાષા", s_sc: "કથાનું લખાણ કઈ લિપિમાં", s_dig: "અંક",
+    s_listen: "સાંભળવું", s_rate: "સ્પીડ", s_pre: "શોધેલા શબ્દથી કેટલું પહેલાં શરૂ કરવું", sec: (n) => `${n} સેકન્ડ`,
+    s_mini: "નાનો વીડિયો (ફક્ત સાંભળવા)", s_mini2: "વીડિયો નાનો રહે, લખાણ વાંચવા વધુ જગ્યા મળે", s_bell: "બટનનો અવાજ", s_bell2: "બટન દબાવતાં ધીમો ઘંટનાદ",
+    s_mine: "મારું", s_fav: "મનપસંદ ક્ષણો", s_hist: "ઇતિહાસ", s_notif: "🔔 નવી કથાની સૂચના", s_notif2: "આ સુવિધા જલ્દી આવશે", soon: "જલ્દી",
+    favAdd: "મનપસંદમાં ઉમેર્યું", favDel: "મનપસંદમાંથી કાઢ્યું", favEmpty: "હજી કોઈ મનપસંદ નથી. કોઈ પણ ફકરા પર ♡ દબાવો, એ અહીં સચવાઈ જશે.",
+    histEmpty: "હજી કંઈ સાંભળ્યું નથી.", clear: "ઇતિહાસ સાફ કરો", sure: "ખાતરી? ફરી દબાવો", cleared: "ઇતિહાસ સાફ થયો", remove: "કાઢો", },
+  hi: { eyebrow: "कच्छ सत्संग · कथा संग्रह", sub: "— बोले गए शब्द खोजें —", search: "खोजें", series: "कथा सीरीज़", speaker: "वक्ता",
+    allseries: "सभी सीरीज़", allspeakers: "सभी वक्ता", see: "संग्रह में क्या है देखें", fe: "उदाहरण", hint: "खोजने के लिए Enter दबाएँ",
+    ph: "बोला गया कोई भी शब्द खोजें…", matches: (n) => `${n} परिणाम`, none: "यह शब्द अभी किसी कथा में नहीं मिला।", play: "यहाँ सुनें", read: "पूरा पाठ पढ़ें →",
+    stats: (k, p) => `${k} कथा · ${p} अनुच्छेद · सीधे उसी पल पर`, loading: "खोज रहे हैं…", copied: "लिंक कॉपी हुआ",
+    settings: "सेटिंग", s_look: "रूप", s_theme: "थीम", s_size: "अक्षर का आकार", s_font: "गुजराती फ़ॉन्ट", s_night: "रात में अपने आप गहरी थीम", s_night2: "शाम 7 से सुबह 6 तक \u201cरात्रि ग्रंथ\u201d",
+    f_noto: "पोथी जैसे", f_rasa: "छपी किताब जैसे", f_hind: "सादे, स्पष्ट",
+    th: { sadi: "सादी", rajvi: "राजसी पोथी", vel: "सादी बेल", kinar: "मरून किनारा", leeli: "हरी पोथी", ratri: "रात्रि ग्रंथ" },
+    s_lang: "भाषा और लिपि", s_ui: "बटन और मेनू की भाषा", s_sc: "कथा का पाठ किस लिपि में", s_dig: "अंक",
+    s_listen: "सुनना", s_rate: "गति", s_pre: "खोजे शब्द से कितना पहले शुरू करें", sec: (n) => `${n} सेकंड`,
+    s_mini: "छोटा वीडियो (सिर्फ़ सुनने के लिए)", s_mini2: "वीडियो छोटा रहे, पढ़ने को ज़्यादा जगह मिले", s_bell: "बटन की आवाज़", s_bell2: "बटन दबाने पर धीमी घंटी",
+    s_mine: "मेरा", s_fav: "पसंदीदा पल", s_hist: "इतिहास", s_notif: "🔔 नई कथा की सूचना", s_notif2: "यह सुविधा जल्द आएगी", soon: "जल्द",
+    favAdd: "पसंदीदा में जोड़ा", favDel: "पसंदीदा से हटाया", favEmpty: "अभी कोई पसंदीदा नहीं। किसी भी अनुच्छेद पर ♡ दबाएँ।",
+    histEmpty: "अभी कुछ नहीं सुना।", clear: "इतिहास साफ़ करें", sure: "पक्का? फिर दबाएँ", cleared: "इतिहास साफ़ हुआ", remove: "हटाएँ" },
 };
-let ui = store.get("k_ui", "en"), sc = store.get("k_sc", "gu"), stats = { kathas: 0, passages: 0 }, last = null, cur = null;
+let ui = store.get("k_ui", "gu"), sc = store.get("k_sc", "gu"), stats = { kathas: 0, passages: 0 }, last = null, cur = null;
 
 function applyUI() {
   document.documentElement.dataset.ui = ui;
-  document.querySelectorAll("[data-ui]").forEach((b) => b.classList.toggle("on", b.dataset.ui === ui));
-  document.querySelectorAll("[data-sc]").forEach((b) => b.classList.toggle("on", b.dataset.sc === sc));
+  document.documentElement.dataset.sc = sc;
+  document.documentElement.lang = ui;
   document.querySelectorAll("[data-t]").forEach((el) => { const v = T[ui][el.dataset.t]; if (typeof v === "string") el.textContent = v; });
   $("#q").placeholder = T[ui].ph;
-  $("#stats").textContent = T[ui].stats(stats.kathas, stats.passages);
+  $("#stats").textContent = num(T[ui].stats(stats.kathas, stats.passages));
   if (last) render(last.rows, last.q);
   if (typeof drawThemes === "function") drawThemes();
+  if (typeof applyPrefs === "function") applyPrefs();
 }
-document.querySelectorAll("[data-ui]").forEach((b) => b.onclick = () => { ui = b.dataset.ui; store.set("k_ui", ui); applyUI(); });
-document.querySelectorAll("[data-sc]").forEach((b) => b.onclick = () => { sc = b.dataset.sc; store.set("k_sc", sc); applyUI(); });
 
 async function rpc(name, body) {
   const r = await fetch(`${SB}/rest/v1/rpc/${name}`, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + KEY, "Content-Type": "application/json" }, body: JSON.stringify(body) });
@@ -352,7 +416,14 @@ async function rpc(name, body) {
   return r.json();
 }
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const fmt = (s) => { s = Math.max(0, s | 0); const h = s / 3600 | 0, m = (s % 3600) / 60 | 0, x = s % 60; return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(x).padStart(2, "0"); };
+// Gujarati letters -> Devanagari: the two Unicode blocks line up letter for letter
+const toDev = (s) => String(s ?? "").replace(/[\u0A81-\u0AFF]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0x180));
+const scText = (gu, ro) => sc === "ro" && ro ? ro : sc === "dev" ? toDev(gu) : gu;
+const scQuery = (q) => sc === "dev" ? toDev(q) : q;
+let dig = store.get("k_dig", "en");
+const num = (x) => dig === "gu" ? String(x).replace(/[0-9]/g, (d) => String.fromCharCode(0x0AE6 + +d)) : String(x);
+const fmt0 = (s) => { s = Math.max(0, s | 0); const h = s / 3600 | 0, m = (s % 3600) / 60 | 0, x = s % 60; return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(x).padStart(2, "0"); };
+const fmt = (s) => num(fmt0(s));
 function hl(text, q) {
   const t = esc(text); if (!q) return t;
   const re = new RegExp(esc(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi");
@@ -380,21 +451,26 @@ async function search(q) {
   } catch (e) { $("#out").innerHTML = `<p class="empty">Error: ${esc(e.message)}</p>`; }
 }
 function render(rows, q) {
-  if (!rows.length) { $("#out").innerHTML = `<p class="count">${T[ui].matches(0)}</p><p class="empty">${T[ui].none}</p>`; return; }
-  $("#out").innerHTML = `<p class="count">${T[ui].matches(rows.length)}</p><div class="results">` + rows.map((r, i) => {
-    const body = sc === "ro" && r.roman ? r.roman : r.text;
+  if (!rows.length) { $("#out").innerHTML = `<p class="count">${num(T[ui].matches(0))}</p><p class="empty">${T[ui].none}</p>`; return; }
+  $("#out").innerHTML = `<p class="count">${num(T[ui].matches(rows.length))}</p><div class="results">` + rows.map((r, i) => {
+    const body = scText(r.text, r.roman);
     const active = cur && cur.yid === r.youtube_id && cur.t === r.start_sec;
-    return `<article class="card"><h4>${esc(r.title || r.series || "Katha")}</h4><p class="txt">${hl(body, q)}</p>
+    return `<article class="card"><h4>${esc(r.title || r.series || "Katha")}</h4><p class="txt">${hl(body, scQuery(q))}</p>
       <div class="meta">${r.speaker ? `<span class="tag sp">${esc(r.speaker)}</span>` : ""}${r.series ? `<span class="tag">${esc(r.series)}</span>` : ""}<span class="time">${fmt(r.start_sec)}</span></div>
-      <div class="acts"><button class="play${active ? " active" : ""}" data-i="${i}">▶ ${T[ui].play}</button><button class="link" data-r="${i}">${T[ui].read}</button></div></article>`;
+      <div class="acts"><button class="play${active ? " active" : ""}" data-i="${i}">▶ ${T[ui].play}</button><button class="link" data-r="${i}">${T[ui].read}</button>${heart(r.youtube_id, r.start_sec, `data-f="${i}"`)}</div></article>`;
   }).join("") + `</div>`;
   $("#out").querySelectorAll("[data-i]").forEach((b) => b.onclick = () => { const r = rows[b.dataset.i]; play(r.youtube_id, r.start_sec, r); });
   $("#out").querySelectorAll("[data-r]").forEach((b) => b.onclick = () => openTranscript(rows[b.dataset.r], q));
+  $("#out").querySelectorAll("[data-f]").forEach((b) => b.onclick = () => toggleFav(rows[b.dataset.f], b));
 }
 
 function play(yid, t, info) {
   cur = { yid, t, info };
-  $("#vid").innerHTML = `<iframe src="https://www.youtube.com/embed/${yid}?start=${t}&autoplay=1&playsinline=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Katha"></iframe>`;
+  addHistory(info, yid, t);
+  const from = Math.max(0, t - (+pref.pre || 0));
+  const org = /^https?:/.test(location.origin) ? `&origin=${encodeURIComponent(location.origin)}` : "";
+  $("#vid").innerHTML = `<iframe id="yt" src="https://www.youtube.com/embed/${yid}?start=${from}&autoplay=1&playsinline=1&rel=0&enablejsapi=1${org}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Katha"></iframe>`;
+  $("#yt").addEventListener("load", () => [700, 2000, 4500].forEach((ms) => setTimeout(applyRate, ms)));
   $("#player").hidden = false; document.body.classList.add("playing");
   if (last) render(last.rows, last.q);
 }
@@ -410,8 +486,10 @@ async function openTranscript(r, q) {
   $("#ovBody").innerHTML = `<p class="empty">…</p>`; $("#ov").hidden = false;
   const res = await fetch(`${SB}/rest/v1/katha_passages?select=start_sec,text,roman&video_id=eq.${r.video_id}&order=start_sec`, { headers: { apikey: KEY, Authorization: "Bearer " + KEY } });
   const segs = await res.json();
-  $("#ovBody").innerHTML = segs.map((s, i) => `<div class="seg" id="seg${s.start_sec}"><button data-t="${s.start_sec}">${fmt(s.start_sec)}</button><p>${hl(sc === "ro" && s.roman ? s.roman : s.text, q)}</p></div>`).join("");
-  $("#ovBody").querySelectorAll("button[data-t]").forEach((b) => b.onclick = () => play(r.youtube_id, +b.dataset.t, r));
+  const segRow = (s) => ({ ...r, start_sec: s.start_sec, text: s.text, roman: s.roman });
+  $("#ovBody").innerHTML = segs.map((s, i) => `<div class="seg" id="seg${s.start_sec}"><button data-s="${i}">${fmt(s.start_sec)}</button><p>${hl(scText(s.text, s.roman), scQuery(q))}</p>${heart(r.youtube_id, s.start_sec, `data-sf="${i}"`)}</div>`).join("");
+  $("#ovBody").querySelectorAll("button[data-s]").forEach((b) => b.onclick = () => { const s = segs[b.dataset.s]; play(r.youtube_id, s.start_sec, segRow(s)); });
+  $("#ovBody").querySelectorAll("[data-sf]").forEach((b) => b.onclick = () => toggleFav(segRow(segs[b.dataset.sf]), b));
   const el = document.getElementById("seg" + r.start_sec); if (el) el.scrollIntoView({ block: "center" });
 }
 $("#ovClose").onclick = () => $("#ov").hidden = true;
@@ -465,7 +543,8 @@ const THEMES = [ // id, page, header, card, line, frame
   ["leeli", "#eef0e2", "#1f4d2b", "#f8f8ee", "#17261b", "#b28b2e"],
   ["ratri", "#17110c", "#d6a74c", "#221912", "#efdfbf", "#c9963f"],
 ];
-const pref = { theme: store.get("k_theme", "sadi"), fs: store.get("k_fs", "m"), font: store.get("k_font", "noto"), night: store.get("k_night", "0") === "1" };
+const pref = { theme: store.get("k_theme", "sadi"), fs: store.get("k_fs", "m"), font: store.get("k_font", "noto"), night: store.get("k_night", "0") === "1",
+  rate: store.get("k_rate", "1"), pre: store.get("k_pre", "5"), mini: store.get("k_mini", "0") === "1", bell: store.get("k_bell", "0") === "1" };
 const isNight = () => { const h = new Date().getHours(); return h >= 19 || h < 6; };
 function applyLook() {
   const el = document.documentElement;
@@ -495,6 +574,97 @@ $("#gear").onclick = () => openSettings(true);
 $("#setClose").onclick = $("#scrim").onclick = () => openSettings(false);
 document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#sheet").hidden) openSettings(false); });
 applyLook();
+
+/* ---------- ⚙️ settings: sections 2-4 ---------- */
+const getList = (k) => { try { return JSON.parse(store.get(k, "[]")) || []; } catch { return []; } };
+const setList = (k, a) => store.set(k, JSON.stringify(a));
+const momentId = (yid, t) => yid + ":" + t;
+let favs = getList("k_fav"), hist = getList("k_hist");
+const isFav = (yid, t) => favs.some((f) => f.id === momentId(yid, t));
+const heart = (yid, t, attr) => `<button type="button" class="fav${isFav(yid, t) ? " on" : ""}" ${attr} aria-label="${T[ui].s_fav}">${isFav(yid, t) ? "❤" : "♡"}</button>`;
+const moment = (r, yid, t) => ({ id: momentId(yid, t), yid, vid: r?.video_id, t, title: r?.title || "", speaker: r?.speaker || "", series: r?.series || "", text: r?.text || "", roman: r?.roman || "" });
+function toggleFav(r, btn) {
+  const id = momentId(r.youtube_id, r.start_sec);
+  if (favs.some((f) => f.id === id)) { favs = favs.filter((f) => f.id !== id); toast(T[ui].favDel); }
+  else { favs.unshift(moment(r, r.youtube_id, r.start_sec)); toast(T[ui].favAdd); }
+  setList("k_fav", favs);
+  if (btn) { const on = isFav(r.youtube_id, r.start_sec); btn.classList.toggle("on", on); btn.textContent = on ? "❤" : "♡"; }
+  counts();
+}
+function addHistory(r, yid, t) {
+  const m = { ...moment(r, yid, t), at: Date.now() };
+  hist = [m, ...hist.filter((h) => h.id !== m.id)].slice(0, 60);
+  setList("k_hist", hist); counts();
+}
+function counts() { $("#favN").textContent = favs.length ? num(favs.length) : ""; $("#histN").textContent = hist.length ? num(hist.length) : ""; }
+
+// "Favourites" and "History" open in the transcript overlay
+function showMine(kind) {
+  const list = kind === "fav" ? favs : hist;
+  openSettings(false);
+  $("#ovTitle").textContent = (kind === "fav" ? "❤️ " : "🕘 ") + T[ui][kind === "fav" ? "s_fav" : "s_hist"];
+  $("#ovWho").textContent = list.length ? num(list.length) : "";
+  const when = (at) => { try { return new Date(at).toLocaleDateString(ui === "en" ? "en-IN" : ui + "-IN", { day: "numeric", month: "short" }); } catch { return ""; } };
+  $("#ovBody").innerHTML = `<div class="mine">` + (list.length ? list.map((m, i) => `<div class="item">
+      <p>${esc(scText(m.text, m.roman)) || "—"}</p>
+      <div class="m"><b>${esc(m.title)}</b>${m.speaker ? ` · ${esc(m.speaker)}` : ""}</div>
+      <div class="m"><button type="button" class="play" data-mp="${i}">▶ ${fmt(m.t)}</button>${kind === "hist" ? `<span>${num(when(m.at))}</span>` : ""}
+        <button type="button" class="link" data-mx="${i}" style="margin-left:auto">${kind === "fav" ? T[ui].remove : ""}</button></div></div>`).join("")
+    + (kind === "hist" ? `<div class="bar2"><span></span><button type="button" class="link" id="clearHist">${T[ui].clear}</button></div>` : "")
+    : `<p class="empty">${T[ui][kind === "fav" ? "favEmpty" : "histEmpty"]}</p>`) + `</div>`;
+  $("#ov").hidden = false;
+  $("#ovBody").querySelectorAll("[data-mp]").forEach((b) => b.onclick = () => { const m = list[b.dataset.mp];
+    play(m.yid, m.t, { youtube_id: m.yid, video_id: m.vid, start_sec: m.t, title: m.title, speaker: m.speaker, series: m.series, text: m.text, roman: m.roman }); });
+  $("#ovBody").querySelectorAll("[data-mx]").forEach((b) => { if (kind === "fav") b.onclick = () => { favs.splice(+b.dataset.mx, 1); setList("k_fav", favs); counts(); showMine("fav"); }; });
+  const c = $("#clearHist");
+  if (c) c.onclick = () => { if (!c.dataset.sure) { c.dataset.sure = 1; c.textContent = T[ui].sure; return; } hist = []; setList("k_hist", hist); counts(); toast(T[ui].cleared); showMine("hist"); };
+}
+$("#openFav").onclick = () => showMine("fav");
+$("#openHist").onclick = () => showMine("hist");
+
+// speed goes to the YouTube player through its iframe API
+function sendYT(func, args) { const f = $("#yt"); if (f && f.contentWindow) f.contentWindow.postMessage(JSON.stringify({ event: "command", func, args }), "*"); }
+function applyRate() { sendYT("setPlaybackRate", [+pref.rate]); $("#spd").textContent = num(pref.rate) + "×"; }
+const RATES = ["0.75", "1", "1.25", "1.5"];
+$("#spd").onclick = () => { pref.rate = RATES[(RATES.indexOf(pref.rate) + 1) % RATES.length]; store.set("k_rate", pref.rate); applyRate(); applyPrefs(); };
+
+// soft temple-bell for taps (Web Audio, nothing to download)
+let actx = null;
+function bell() {
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const now = actx.currentTime, g = actx.createGain();
+    g.gain.setValueAtTime(0.0001, now); g.gain.exponentialRampToValueAtTime(0.07, now + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, now + 1.1);
+    g.connect(actx.destination);
+    [[880, 1], [1318, 0.5], [2093, 0.25]].forEach(([f, v]) => { const o = actx.createOscillator(), og = actx.createGain(); o.frequency.value = f; og.gain.value = v; o.connect(og); og.connect(g); o.start(now); o.stop(now + 1.15); });
+  } catch {}
+}
+document.addEventListener("click", (e) => { if (pref.bell && e.target.closest("button")) bell(); }, true);
+
+// one handler for every segmented choice in sections 2-3
+document.querySelectorAll("[data-pref] [data-v]").forEach((b) => b.onclick = () => {
+  const k = b.parentElement.dataset.pref, v = b.dataset.v;
+  if (k === "ui") { ui = v; store.set("k_ui", v); }
+  else if (k === "sc") { sc = v; store.set("k_sc", v); }
+  else if (k === "dig") { dig = v; store.set("k_dig", v); }
+  else { pref[k] = v; store.set("k_" + k, v); if (k === "rate") applyRate(); }
+  applyUI();
+});
+$("#miniTgl").onchange = (e) => { pref.mini = e.target.checked; store.set("k_mini", pref.mini ? "1" : "0"); applyPrefs(); };
+$("#bellTgl").onchange = (e) => { pref.bell = e.target.checked; store.set("k_bell", pref.bell ? "1" : "0"); if (pref.bell) bell(); };
+
+function applyPrefs() {
+  const val = { ui, sc, dig, rate: pref.rate, pre: pref.pre };
+  document.querySelectorAll("[data-pref]").forEach((g) => g.querySelectorAll("[data-v]").forEach((b) => b.classList.toggle("on", b.dataset.v === String(val[g.dataset.pref]))));
+  document.querySelectorAll('[data-pref="pre"] [data-v]').forEach((b) => b.textContent = num(T[ui].sec(b.dataset.v)));
+  document.querySelectorAll('[data-pref="rate"] [data-v]').forEach((b) => b.textContent = num(b.dataset.v) + "×");
+  $("#scSample").textContent = scText("મહારાજે આચાર્યને ગુરુમંત્ર આપ્યો.", "maharaje acharyane gurumantra apyo.");
+  $("#miniTgl").checked = pref.mini; $("#bellTgl").checked = pref.bell;
+  document.body.classList.toggle("mini", pref.mini);
+  $("#spd").textContent = num(pref.rate) + "×";
+  counts();
+}
+applyPrefs();
 
 function route() {
   const isAdmin = location.hash === "#admin";
