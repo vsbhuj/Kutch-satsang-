@@ -357,6 +357,117 @@ async function enqueue(videoId: number, yid: string, pass: string) {
   kick(pass);
 }
 
+// ---------------- ✨ Studio (NotebookLM-style outputs from our own transcripts) ----------------
+const ICONS = ["diya", "lotus", "temple", "kalash", "peacock", "om", "book", "flute", "sun", "hands", "tree", "flag"];
+const PALETTES = ["kesari", "maroon", "leelo", "nilo", "ratri"];
+const FRAMES = ["arch", "simple", "double", "vel"];
+const OUT_LANG: Record<string, string> = { gu: "Gujarati (Gujarati script)", hi: "Hindi (Devanagari)", sa: "simple Sanskrit (Devanagari)", en: "English" };
+
+async function studioSource(ids: number[]) {
+  const { data: vids } = await db.from("katha_videos").select("id,youtube_id,title,speaker,series").in("id", ids);
+  const list = (vids ?? []).sort((a: any, b: any) => ids.indexOf(a.id) - ids.indexOf(b.id));
+  let text = "", budget = 700_000;
+  for (let i = 0; i < list.length; i++) {
+    const v: any = list[i];
+    const { data: ps } = await db.from("katha_passages").select("start_sec,text").eq("video_id", v.id).eq("hidden", false).order("start_sec").limit(5000);
+    text += `\n\n### KATHA ${i + 1}: ${v.title || ""}${v.speaker ? " — " + v.speaker : ""}\n`;
+    for (const p of ps ?? []) {
+      const line = `[K${i + 1} ${p.start_sec}s] ${p.text}\n`;
+      if (budget - line.length < 0) break;
+      budget -= line.length; text += line;
+    }
+  }
+  return { list, text };
+}
+
+function studioPrompt(kind: string, o: any, user: string, n: number) {
+  const lang = OUT_LANG[o.lang] || OUT_LANG.gu;
+  const common = `You are preparing study material from ${n > 1 ? n + " spoken Swaminarayan kathas" : "a spoken Swaminarayan katha"} (religious discourse). The transcript lines are tagged [K<katha number> <seconds>s].
+Write everything in ${lang}. Stay faithful to what the speaker actually said; do not invent stories, shlokas or names that are not in the transcript.
+For every item give "k" (the katha number) and "t" (the seconds) of the moment in the transcript where that point is spoken, so the listener can jump there.
+${user ? "The user's wishes (follow them closely, including audience, focus, number of items, colours and style):\n" + user + "\n" : ""}`;
+  if (kind === "mindmap") {
+    return common + `Make a MIND MAP: a short root title, 4-7 main branches, each with 2-5 children. Titles are short (2-7 words).`;
+  }
+  const len = o.length === "short" ? "5-6" : o.length === "long" ? "12-15" : "8-10";
+  const fmt = o.format === "presenter"
+    ? `PRESENTER SLIDES: each slide has a short title and 2-4 very short points (3-8 words), plus "notes": 2-4 sentences the presenter can say.`
+    : `DETAILED DECK: each slide has a clear title and 3-6 full-sentence points that can be read on their own; "notes" may be empty.`;
+  return common + `Make a SLIDE DECK of ${len} slides (unless the user asked for a different number). ${fmt}
+The first slide is a title slide (deck title + one-line subtitle in "points"). Where the speaker quotes a shloka or kirtan line, you may put it in "quote".
+Design: choose "palette" from ${PALETTES.join(", ")} and "frame" from ${FRAMES.join(", ")} to suit the user's wishes (kesari = saffron and gold, maroon = deep red, leelo = green, nilo = blue, ratri = dark night). For each slide choose one "icon" from ${ICONS.join(", ")} that fits its content.`;
+}
+
+const SCHEMA: Record<string, any> = {
+  slides: {
+    type: "OBJECT",
+    properties: {
+      title: { type: "STRING" }, palette: { type: "STRING", enum: PALETTES }, frame: { type: "STRING", enum: FRAMES },
+      slides: { type: "ARRAY", items: { type: "OBJECT", properties: {
+        title: { type: "STRING" }, points: { type: "ARRAY", items: { type: "STRING" } }, quote: { type: "STRING" }, notes: { type: "STRING" },
+        icon: { type: "STRING", enum: ICONS }, k: { type: "INTEGER" }, t: { type: "INTEGER" },
+      }, required: ["title", "points", "icon", "k", "t"] } },
+    },
+    required: ["title", "palette", "frame", "slides"],
+  },
+  mindmap: {
+    type: "OBJECT",
+    properties: {
+      title: { type: "STRING" },
+      branches: { type: "ARRAY", items: { type: "OBJECT", properties: {
+        title: { type: "STRING" }, k: { type: "INTEGER" }, t: { type: "INTEGER" },
+        children: { type: "ARRAY", items: { type: "OBJECT", properties: { title: { type: "STRING" }, k: { type: "INTEGER" }, t: { type: "INTEGER" } }, required: ["title", "k", "t"] } },
+      }, required: ["title", "k", "t", "children"] } },
+    },
+    required: ["title", "branches"],
+  },
+};
+
+async function studioGemini(c: Record<string, string>, prompt: string, schema: any) {
+  const models = [c.model || "gemini-3.5-flash", "gemini-3.5-flash", "gemini-3.8-flash", "gemini-3.7-flash", "gemini-flash-latest"];
+  const errs: string[] = [];
+  for (const m of [...new Set(models)]) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`, {
+        method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": c.gemini_key },
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.4, maxOutputTokens: 32768, responseMimeType: "application/json", responseSchema: schema } }),
+      });
+      const t = await r.text();
+      if (r.ok) {
+        const out = JSON.parse(t).candidates?.[0]?.content?.parts?.map((p: any) => p.text ?? "").join("") ?? "";
+        try { return JSON.parse(out); } catch (_) { errs.push(m + ": bad JSON"); break; }
+      }
+      const daily = /per day|PerDay/i.test(t);
+      errs.push(`${m}: ${r.status}${daily ? " daily" : ""}`);
+      if (daily || r.status === 404) break;
+      if (r.status === 503 || r.status === 429 || r.status === 500) { await new Promise((ok) => setTimeout(ok, 5000)); continue; }
+      break;
+    }
+  }
+  const quota = errs.length && errs.every((e) => / daily| 404/.test(e));
+  throw new Error(quota ? "⏸ Gemini ની આજની મફત મર્યાદા પૂરી થઈ છે. થોડા કલાક પછી ↻ ફરી બનાવો દબાવો." : "બની શક્યું નહીં: " + errs.join(" | "));
+}
+
+async function studioRun(id: number) {
+  const { data: row } = await db.from("katha_studio").select("*").eq("id", id).single();
+  if (!row) return;
+  try {
+    const c = await cfg();
+    const { list, text } = await studioSource(row.video_ids);
+    if (!text.trim() || !list.length) throw new Error("પસંદ કરેલી કથામાં હજી લખાણ નથી.");
+    const prompt = studioPrompt(row.kind, row.options || {}, row.prompt || "", list.length) + "\n\nTRANSCRIPT:" + text;
+    const out = await studioGemini(c, prompt, SCHEMA[row.kind]);
+    // turn katha numbers into YouTube ids so the site can jump straight there
+    const yt = (k: number) => (list[(k || 1) - 1] || list[0]).youtube_id;
+    const fix = (x: any) => { if (x && typeof x === "object") { if ("k" in x) { x.y = yt(x.k); delete x.k; } Object.values(x).forEach(fix); } };
+    fix(out);
+    out.sources = list.map((v: any) => ({ id: v.id, y: v.youtube_id, title: v.title, speaker: v.speaker }));
+    await db.from("katha_studio").update({ status: "done", error: null, data: out, title: out.title || row.title, updated_at: new Date().toISOString() }).eq("id", id);
+  } catch (e: any) {
+    await db.from("katha_studio").update({ status: "error", error: String(e?.message ?? e).slice(0, 600), updated_at: new Date().toISOString() }).eq("id", id);
+  }
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   try {
@@ -421,6 +532,50 @@ Deno.serve(async (req: Request) => {
 
     if (b.action === "hide_passage") {
       await db.from("katha_passages").update({ hidden: !!b.hidden }).eq("id", b.id);
+      return json({ ok: true });
+    }
+
+    if (b.action === "studio_create") {
+      const ids = (Array.isArray(b.video_ids) ? b.video_ids : []).map((x: any) => +x).filter(Boolean).slice(0, 40);
+      if (!ids.length || !["slides", "mindmap"].includes(b.kind)) return json({ error: "કથા અને પ્રકાર પસંદ કરો" }, 400);
+      const { data: vs } = await db.from("katha_videos").select("series").in("id", ids);
+      const ser = [...new Set((vs ?? []).map((v: any) => v.series || ""))];
+      const o = b.options && typeof b.options === "object" ? b.options : {};
+      const { data: row, error } = await db.from("katha_studio").insert({
+        kind: b.kind, video_ids: ids, series: ser.length === 1 && ser[0] ? ser[0] : null,
+        options: { format: o.format, length: o.length, lang: o.lang, art: o.art }, prompt: String(b.prompt || "").slice(0, 3000) || null,
+      }).select("id").single();
+      if (error) return json({ error: error.message }, 500);
+      bg(studioRun(row.id));
+      return json({ ok: true, id: row.id });
+    }
+
+    if (b.action === "studio_list") {
+      const { data } = await db.from("katha_studio").select("id,kind,title,video_ids,series,options,prompt,status,error,published,created_at").order("created_at", { ascending: false }).limit(200);
+      const since = new Date(Date.now() - 24 * 3600_000).toISOString();
+      const { count: today } = await db.from("katha_studio").select("id", { count: "exact", head: true }).gt("created_at", since);
+      const { data: q } = await db.from("katha_config").select("value").eq("key", "quota_until").maybeSingle();
+      return json({ items: data, today: today ?? 0, quota_until: q?.value || null });
+    }
+
+    if (b.action === "studio_get") {
+      const { data } = await db.from("katha_studio").select("*").eq("id", b.id).single();
+      return json({ item: data });
+    }
+
+    if (b.action === "studio_publish") {
+      await db.from("katha_studio").update({ published: !!b.published }).eq("id", b.id);
+      return json({ ok: true });
+    }
+
+    if (b.action === "studio_retry") {
+      await db.from("katha_studio").update({ status: "processing", error: null, updated_at: new Date().toISOString() }).eq("id", b.id);
+      bg(studioRun(+b.id));
+      return json({ ok: true });
+    }
+
+    if (b.action === "studio_delete") {
+      await db.from("katha_studio").delete().eq("id", b.id);
       return json({ ok: true });
     }
 

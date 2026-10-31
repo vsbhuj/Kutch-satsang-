@@ -503,6 +503,88 @@ body.playing .gear{display:none}
 .player .bar{gap:4px;flex-wrap:nowrap;padding:6px 6px 8px;overflow-x:auto;scrollbar-width:none}
 .player .bar::-webkit-scrollbar{display:none}
 .player .bar button{padding:4px 8px;font-size:13px;flex:none}
+/* ---------- ✨ Studio ---------- */
+.st-big{display:flex;align-items:center;gap:12px;width:100%;border:0;border-radius:14px;padding:12px 14px;background:linear-gradient(135deg,var(--maroon),var(--maroon-2));color:var(--on-accent);text-align:left;font-family:inherit;box-shadow:0 3px 8px rgba(60,20,5,.25);cursor:pointer}
+.st-big .i{font-size:24px}.st-big b{display:block;font-size:16px}.st-big small{font-size:12.5px;opacity:.88;color:inherit!important}.st-big .ar{margin-left:auto;font-size:20px}
+.abtns button.stb{border:2px solid var(--saffron);font-weight:700}
+.st-made{font-size:12.5px;color:#2d5a1e;font-weight:700}
+.st-sheet,.st-view{position:fixed;inset:0;z-index:62;background:var(--paper);display:flex;flex-direction:column}
+.st-sheet[hidden],.st-view[hidden]{display:none!important}
+.st-head{background:var(--maroon);color:var(--on-accent);padding:calc(10px + env(safe-area-inset-top,0px)) 12px 10px;display:flex;gap:10px;align-items:center;font-size:15px;font-weight:700;flex:none}
+.st-head span{flex:1;min-width:0;line-height:1.35}
+.st-head button{background:transparent;border:1px solid rgba(255,255,255,.5);color:inherit;border-radius:9px;height:34px;min-width:40px;font-size:16px;cursor:pointer}
+.st-body{overflow:auto;flex:1;padding:10px 14px 40px}
+.st-sec{margin:14px 0 6px;font-size:13.5px;font-weight:700;color:var(--maroon-2)}
+.st-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.st-tile{background:var(--card);border:1px solid var(--rule);border-radius:13px;padding:9px 10px;display:grid;gap:2px;text-align:left;font-family:inherit;color:var(--ink);cursor:pointer;box-shadow:0 1px 3px rgba(60,30,10,.08)}
+.st-tile .i{font-size:21px}.st-tile b{font-size:14px}.st-tile small{font-size:11.5px;color:var(--ink-2)}
+.st-tile.on{border:2px solid var(--maroon);background:#fbeee6}.st-tile.soon{opacity:.5}
+.st-src{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:2px 10px;max-height:260px;overflow:auto}
+.st-src label{display:flex;gap:9px;align-items:center;padding:7px 0;border-bottom:1px solid var(--rule);font-size:13.5px;cursor:pointer}
+.st-src label:last-child{border:0}.st-src label.grp{font-weight:700;color:var(--maroon)}
+.st-src input{width:18px;height:18px;accent-color:var(--maroon);flex:none}
+.st-fmt{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.st-fmt button{border:1px solid var(--rule);background:var(--card);border-radius:12px;padding:8px 10px;text-align:left;font-family:inherit;color:var(--ink-2);font-size:12px;cursor:pointer}
+.st-fmt button b{display:block;font-size:14px;color:var(--ink)}.st-fmt button.on{border:2px solid var(--maroon);background:#fbeee6}
+.st-chips{display:flex;flex-wrap:wrap;gap:6px}
+.st-chips button{border:1px solid var(--rule);background:var(--card);color:var(--ink);border-radius:10px;padding:6px 11px;font-size:13.5px;font-family:inherit;cursor:pointer}
+.st-chips button.on{background:var(--maroon);border-color:var(--maroon);color:var(--on-accent)}
+.st-chips button.off{opacity:.5}
+.st-body textarea{width:100%;min-height:96px;border:1px solid var(--rule);background:var(--card);color:var(--ink);border-radius:12px;padding:10px;font-size:14.5px;font-family:inherit;line-height:1.6}
+.st-meter{margin-top:10px;font-size:12.5px;color:var(--ink-2)}
+.st-go{width:100%;margin-top:10px;border:0;border-radius:12px;padding:12px;background:var(--maroon);color:var(--on-accent);font-size:15px;font-weight:700;font-family:inherit;cursor:pointer}
+.st-go:disabled{opacity:.6}
+.st-out{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:9px 11px;margin-bottom:8px;display:grid;gap:6px;font-size:14px}
+.st-out small{color:var(--ink-2);font-size:12px}.st-out .err{color:#b3261e;font-size:12.5px}
+.st-out .abtns button.pub{border:2px solid #4f8a3a;background:#eef6e8;color:#2d5a1e;font-weight:700}
+/* viewer */
+.st-tabs{display:flex;gap:6px;padding:9px 12px 4px;overflow-x:auto;scrollbar-width:none;flex:none}
+.st-tabs::-webkit-scrollbar{display:none}
+.st-tabs button{flex:none;border:1px solid var(--rule);background:var(--card);color:var(--ink);border-radius:16px;padding:4px 11px;font-size:13px;font-family:inherit;cursor:pointer}
+.st-tabs button.on{background:var(--maroon);color:var(--on-accent);border-color:var(--maroon)}
+.sd-wrap{max-width:900px;margin:0 auto}
+.sd{--b1:#fff7e8;--b2:#f7e3c2;--bd:#b8892f;--ac:#c0662a;--ti:#6e1f14;--tx:#2b1a12;position:relative;aspect-ratio:16/10;border-radius:14px;background:linear-gradient(160deg,var(--b1),var(--b2));border:3px solid var(--bd);overflow:hidden;color:var(--tx);box-shadow:0 4px 14px rgba(60,30,10,.22);container-type:inline-size}
+.sd.p-maroon{--b1:#fbeee6;--b2:#f0d0c2;--bd:#6e1f14;--ac:#8a2c1c;--ti:#6e1f14}
+.sd.p-leelo{--b1:#f2f8ea;--b2:#d9eac6;--bd:#3f7a35;--ac:#5d8f2e;--ti:#24521d}
+.sd.p-nilo{--b1:#eef4fb;--b2:#d3e2f3;--bd:#2c5d93;--ac:#3f78b5;--ti:#1d3f66}
+.sd.p-ratri{--b1:#221d36;--b2:#2f2747;--bd:#c9963f;--ac:#e0b05a;--ti:#f3d9a4;--tx:#efe6d6}
+.sd.f-double{border-style:double;border-width:7px}
+.sd.f-simple:before,.sd.f-vel:before{content:"";position:absolute;inset:7px;border:1px solid var(--ac);border-radius:9px;pointer-events:none}
+.sd.f-vel:before{border:0;background:repeating-linear-gradient(90deg,var(--ac) 0 6px,transparent 6px 12px) top/100% 2px no-repeat,repeating-linear-gradient(90deg,var(--ac) 0 6px,transparent 6px 12px) bottom/100% 2px no-repeat,repeating-linear-gradient(0deg,var(--ac) 0 6px,transparent 6px 12px) left/2px 100% no-repeat,repeating-linear-gradient(0deg,var(--ac) 0 6px,transparent 6px 12px) right/2px 100% no-repeat}
+.sd .arch{position:absolute;left:4%;right:4%;top:3%;height:36%;border:2px solid var(--ac);border-bottom:0;border-radius:50% 50% 0 0/100% 100% 0 0;pointer-events:none}
+.sd .in{position:absolute;inset:0;padding:8cqw 6cqw 6cqw;display:flex;flex-direction:column}
+.sd h3{margin:0 0 2.2cqw;text-align:center;color:var(--ti);font-size:5.2cqw;line-height:1.3}
+.sd ul{margin:0;padding:0 0 0 26cqw;font-size:3.3cqw;line-height:1.55;overflow:hidden}
+.sd li{margin-bottom:.8cqw}
+.sd blockquote{margin:1.5cqw 0 0 26cqw;font-size:3.1cqw;font-style:italic;color:var(--ti);border-left:2px solid var(--ac);padding-left:2cqw}
+.sd .art{position:absolute;left:5cqw;bottom:6cqw;width:19cqw;height:19cqw}
+.sd .tm{position:absolute;right:3.5cqw;bottom:3.5cqw;border:1px solid var(--ti);color:var(--ti);background:rgba(255,255,255,.75);border-radius:20px;padding:.4cqw 2.2cqw;font-size:3cqw;cursor:pointer;font-family:inherit}
+.sd.p-ratri .tm{background:rgba(0,0,0,.3)}
+.sd.cover .in{justify-content:center;align-items:center;text-align:center}
+.sd.cover h3{font-size:7.4cqw}.sd.cover ul{padding:0;list-style:none;font-size:3.8cqw;font-style:italic}
+.sd.cover .art{left:50%;transform:translateX(-50%);bottom:4cqw;width:15cqw;height:15cqw}
+.sd-nav{display:flex;justify-content:center;align-items:center;gap:5px;padding:9px;font-size:13px;color:var(--ink-2)}
+.sd-nav i{width:7px;height:7px;border-radius:50%;background:var(--rule)}.sd-nav i.on{background:var(--maroon);width:18px;border-radius:4px}
+.sd-acts{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}
+.sd-acts button{border:1px solid var(--rule);background:var(--card);color:var(--ink);border-radius:10px;padding:7px 12px;font-size:13.5px;font-family:inherit;cursor:pointer}
+.sd-notes{margin:10px auto 0;max-width:900px;background:var(--card);border:1px dashed var(--saffron);border-radius:10px;padding:9px 11px;font-size:14px;line-height:1.7}
+.sd-wrap:fullscreen{background:#000;display:flex;align-items:center;justify-content:center;max-width:none}
+.sd-wrap:fullscreen .sd{width:min(100vw,160vh);border-radius:0}
+.mm-root{background:var(--maroon);color:var(--on-accent);border-radius:12px;padding:10px;text-align:center;font-weight:700;font-size:16px}
+.mm-br{margin:9px 0 0 10px;border-left:2px solid var(--saffron);padding-left:10px;display:grid;gap:6px}
+.mm-node{display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:8px 10px;font-size:14.5px;cursor:pointer;width:100%;text-align:left;font-family:inherit;color:var(--ink)}
+.mm-node b{flex:1}.mm-node .c{color:var(--saffron);font-size:11px}
+.mm-kids{display:grid;gap:5px;margin:2px 0 4px 16px}
+.mm-kids[hidden]{display:none!important}
+.mm-leaf{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--ink-2);padding:2px 0}
+.mm-leaf span{flex:1}
+.st-play{flex:none;border:1px solid var(--maroon);color:var(--maroon);background:transparent;border-radius:16px;padding:1px 9px;font-size:12.5px;font-family:inherit;cursor:pointer;white-space:nowrap}
+.st-mark{margin-left:6px;vertical-align:middle;border:1px solid var(--saffron);background:#fff3e6;color:var(--maroon);border-radius:10px;padding:0 7px;font-size:12px;font-family:inherit;cursor:pointer}
+.st-strip{margin-top:8px;border-radius:14px;background:linear-gradient(135deg,var(--maroon),var(--maroon-2));color:var(--on-accent);padding:9px 11px}
+.st-strip[hidden]{display:none!important}
+.st-strip b{font-size:14px}.st-strip .r{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.st-strip .r button{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);color:inherit;border-radius:10px;padding:5px 10px;font-size:13.5px;font-family:inherit;cursor:pointer}
+#stBtn[hidden]{display:none!important}
 /* main page, compact (1 Nov): results come up near the top */
 header{padding:6px 54px 2px;text-align:center}
 header .eyebrow,header .sub,header .orn{display:none}
@@ -513,6 +595,7 @@ header h1{font-size:30px;margin:0;line-height:1.3}
 .recent small,.recent .r{flex:none}
 .recent .r{padding:2px 11px;font-size:13.5px}
 .filters{margin-top:8px;grid-template-columns:1fr 1fr;gap:8px}
+.filters .field{min-width:0}
 .field label{display:none}
 .fsel{border:1px solid var(--rule);border-radius:10px;background:var(--card);padding:8px 10px;font-size:calc(15px * var(--fs));box-shadow:0 1px 2px rgba(60,30,10,.08)}
 .fsel[aria-expanded="true"]{border-color:var(--maroon)}
@@ -548,6 +631,8 @@ header h1{font-size:30px;margin:0;line-height:1.3}
       <div class="field"><label data-t="speaker">Speaker</label><select id="fspeaker"><option value="" data-t="allspeakers">All speakers</option></select></div>
     </div>
 
+    <div id="stStrip" class="st-strip" hidden></div>
+
     <section class="explore" id="explore">
       <h3 data-t="see">See what's in the archive</h3>
       <div class="chips"><span class="fe" data-t="fe">For example</span>
@@ -567,6 +652,7 @@ header h1{font-size:30px;margin:0;line-height:1.3}
       <button class="btn" id="alogin" type="button">ખોલો</button>
     </div>
     <div class="admin" id="panel" hidden>
+      <button type="button" class="st-big" id="stOpen"><span class="i">✨</span><span><b>Studio</b><small>સ્લાઈડ, Mind Map… એક કથા, ઘણી કથા કે આખી સિરીઝમાંથી</small></span><span class="ar">›</span></button>
       <label for="links">YouTube લિંક — દરેક લાઇનમાં એક:</label>
       <textarea id="links" placeholder="https://youtu.be/xxxx | વક્તાનું નામ | કથા સિરીઝ"></textarea>
       <small>📋 <b>Playlist ની લિંક</b> પણ ચાલે: એમાંના બધા વીડિયો ઉમેરાશે. વક્તાનું ખાનું ખાલી રાખો તો નામ વીડિયોના શીર્ષકમાંથી ("By … Swami") આપમેળે લેવાશે.<br>ફોર્મેટ: <b>લિંક | વક્તા | સિરીઝ</b>. વક્તા અને સિરીઝ ખાલી રાખવા હોય તો નીચેના ખાનામાં એક વાર લખો, એ બધી લિંક માટે વપરાશે.</small>
@@ -590,7 +676,7 @@ header h1{font-size:30px;margin:0;line-height:1.3}
 
 <div class="player" id="player" hidden>
   <div class="vid" id="vid"></div>
-  <div class="bar"><span id="lvLangs" class="lv-pick" hidden></span><button type="button" class="spd" id="spd">1×</button><button type="button" id="back10" aria-label="Back">⏪ 10</button><button type="button" id="fwd10" aria-label="Forward">10 ⏩</button><button type="button" id="sleepBtn" hidden>⏲</button><button type="button" id="share" aria-label="Share">📤</button><button type="button" id="openyt">YouTube</button><button type="button" id="closeP" aria-label="Close">✕</button></div>
+  <div class="bar"><button type="button" id="stBtn" aria-label="Studio" hidden>✨</button><span id="lvLangs" class="lv-pick" hidden></span><button type="button" class="spd" id="spd">1×</button><button type="button" id="back10" aria-label="Back">⏪ 10</button><button type="button" id="fwd10" aria-label="Forward">10 ⏩</button><button type="button" id="sleepBtn" hidden>⏲</button><button type="button" id="share" aria-label="Share">📤</button><button type="button" id="openyt">YouTube</button><button type="button" id="closeP" aria-label="Close">✕</button></div>
   <div class="live" id="live" hidden><div class="in">
     <div class="lv-top"><span class="lv-now" data-t="lvNow">હમણાં બોલાઈ રહ્યું છે</span></div>
     <p class="lv-cur" id="lvCur"></p>
@@ -628,6 +714,8 @@ header h1{font-size:30px;margin:0;line-height:1.3}
   </div>
 </div>
 
+<div id="stSheet" class="st-sheet" hidden><div class="st-head"><span>✨ Studio</span><button type="button" id="stClose" aria-label="બંધ">✕</button></div><div class="st-body" id="stBody"></div></div>
+<div id="stView" class="st-view" hidden><div class="st-head"><span id="stvTitle"></span><button type="button" id="stvClose" aria-label="બંધ">✕</button></div><div class="st-tabs" id="stvTabs"></div><div class="st-body" id="stvBody"></div></div>
 <script>
 const SB = "https://ootwnvkrnidjhmnhuvfz.supabase.co";
 const KEY = "sb_publishable_wxzr5HiOqgtTXPAp7oTgDw_qFtS7dur";
@@ -781,7 +869,7 @@ function render(rows, q) {
   $("#out").innerHTML = `<p class="count">${num(T[ui].matches(rows.length))}</p><div class="results">` + rows.map((r, i) => {
     const body = scText(r.text, r.roman);
     const active = cur && cur.yid === r.youtube_id && cur.t === r.start_sec;
-    return `<article class="card"><h4>${esc(r.title || r.series || "Katha")}</h4><p class="txt">${hl(body, scQuery(q))}</p>${dualLine(r.text, r.roman, q)}
+    return `<article class="card"><h4>${esc(r.title || r.series || "Katha")}${stForVid(r.video_id).length ? `<button type="button" class="st-mark" data-stv="${r.video_id}">✨ Studio</button>` : ""}</h4><p class="txt">${hl(body, scQuery(q))}</p>${dualLine(r.text, r.roman, q)}
       <div class="meta">${r.speaker ? `<span class="tag sp">${esc(r.speaker)}</span>` : ""}${r.series ? `<span class="tag">${esc(r.series)}</span>` : ""}<span class="time">${fmt(r.start_sec)}</span></div>
       <div class="acts"><button class="play${active ? " active" : ""}" data-i="${i}">▶ ${T[ui].play}</button><button class="link" data-r="${i}">${T[ui].read}</button><button type="button" class="link rep" data-sh="${i}" aria-label="Share">📤</button><button type="button" class="link rep" data-rp="${i}" aria-label="${T[ui].s_rep}">⚑</button>${heart(r.youtube_id, r.start_sec, `data-f="${i}"`)}</div>${trButton(r.passage_id, r.text, "")}</article>`;
   }).join("") + `</div>`;
@@ -791,6 +879,7 @@ function render(rows, q) {
   $("#out").querySelectorAll(".trb").forEach((b) => b.onclick = () => showTr(b));
   $("#out").querySelectorAll("[data-rp]").forEach((b) => b.onclick = () => showReport(rows[b.dataset.rp]));
   $("#out").querySelectorAll("[data-sh]").forEach((b) => b.onclick = () => showShare(rows[b.dataset.sh]));
+  $("#out").querySelectorAll("[data-stv]").forEach((b) => b.onclick = () => stOpen(stForVid(b.dataset.stv)));
 }
 
 // parts the sevak hid in Admin: the player jumps over them without a word
@@ -823,9 +912,10 @@ function play(yid, t, info) {
   $("#yt").addEventListener("load", () => [700, 2000, 4500].forEach((ms) => setTimeout(() => { applyRate(); ytListen(); }, ms)));
   $("#player").hidden = false; document.body.classList.add("playing");
   startLive(info, from);
+  if (typeof stBarBtn === "function") stBarBtn();
   if (last) render(last.rows, last.q);
 }
-$("#closeP").onclick = () => { $("#vid").innerHTML = ""; stopLive(); clearInterval(sleepTick); $("#sleepBtn").hidden = true; $("#player").hidden = true; document.body.classList.remove("playing"); cur = null; if (last) render(last.rows, last.q); };
+$("#closeP").onclick = () => { $("#vid").innerHTML = ""; $("#stView").hidden = true; $("#stView").style.top = ""; stopLive(); clearInterval(sleepTick); $("#sleepBtn").hidden = true; $("#player").hidden = true; document.body.classList.remove("playing"); cur = null; if (last) render(last.rows, last.q); };
 const ytLink = () => cur ? `https://www.youtube.com/watch?v=${cur.yid}&t=${cur.t}s` : "";
 $("#openyt").onclick = () => { if (cur) window.open(ytLink(), "_blank"); };
 $("#share").onclick = () => { if (!cur) return;
@@ -863,7 +953,7 @@ function closeF() { document.querySelectorAll(".fpop").forEach((p) => p.remove()
 function openF(b, sel) {
   const pop = document.createElement("div"); pop.className = "fpop";
   [...sel.options].forEach((o, i) => { const x = document.createElement("button"); x.type = "button"; x.textContent = o.textContent; if (i === sel.selectedIndex) x.className = "on";
-    x.onclick = (e) => { e.stopPropagation(); sel.selectedIndex = i; closeF(); syncF(); sel.onchange && sel.onchange(); }; pop.appendChild(x); });
+    x.onclick = (e) => { e.stopPropagation(); sel.selectedIndex = i; closeF(); syncF(); sel.dispatchEvent(new Event("change")); }; pop.appendChild(x); });
   b.after(pop); b.setAttribute("aria-expanded", "true");
 }
 document.addEventListener("click", (e) => { if (!e.target.closest(".fpop")) closeF(); });
@@ -897,7 +987,7 @@ async function refreshList() {
     <div class="vmeta">🎙 ${esc(v.speaker || "વક્તા નથી")} · 📚 ${esc(v.series || "સિરીઝ નથી")}</div>
     <div class="st">${label[v.status] || v.status}${v.status === "done" ? ` · ${v.passages} ફકરા` : ""} · ${({ gu: "ગુજરાતી", hi: "હિન્દી", sa: "સંસ્કૃત" })[v.lang] || "ગુજરાતી"}</div>
     ${v.hidden ? `<span class="hid-pill">🙈 છુપાયેલી · સાઈટ પર નથી દેખાતી</span>` : ""}
-    <div class="abtns"><button type="button" data-ed="${v.id}">✏️ વક્તા</button>${v.passages ? `<button type="button" data-tx="${v.id}">📄 લખાણ</button>` : ""}<button type="button" data-hide="${v.id}" class="${v.hidden ? "show" : ""}">${v.hidden ? "👁 બતાવો" : "🙈 છુપાવો"}</button><button type="button" data-retry="${v.id}">↻ ફરી કરો</button><button type="button" class="danger" data-del="${v.id}">🗑 કાઢો</button></div>
+    <div class="abtns"><button type="button" data-ed="${v.id}">✏️ વક્તા</button>${v.passages ? `<button type="button" data-tx="${v.id}">📄 લખાણ</button><button type="button" class="stb" data-st="${v.id}">✨ Studio</button>` : ""}<button type="button" data-hide="${v.id}" class="${v.hidden ? "show" : ""}">${v.hidden ? "👁 બતાવો" : "🙈 છુપાવો"}</button><button type="button" data-retry="${v.id}">↻ ફરી કરો</button><button type="button" class="danger" data-del="${v.id}">🗑 કાઢો</button></div>
     ${v.error ? `<div class="err">${esc(v.error)}</div>` : ""}</div>`).join("") || "<small>હજી કોઈ કથા ઉમેરી નથી.</small>";
   // ✏️ opens a themed box right under the buttons (never the phone's black prompt)
   const known = (k) => [...new Set((videos || []).map((x) => (x[k] || "").trim()).filter(Boolean))].sort();
@@ -927,6 +1017,9 @@ async function refreshList() {
     const v = videos.find((x) => x.id === +b.dataset.hide);
     await adm({ action: "hide", id: v.id, hidden: !v.hidden }); toast(v.hidden ? "👁 કથા ફરી સાઈટ પર દેખાશે" : "🙈 કથા સાઈટ પરથી છુપાવી"); refreshList(); });
   $("#vlist").querySelectorAll("[data-tx]").forEach((b) => b.onclick = () => openTx(videos.find((x) => x.id === +b.dataset.tx)));
+  window.__admVideos = videos || [];
+  $("#vlist").querySelectorAll("[data-st]").forEach((b) => b.onclick = () => stAdmOpen([+b.dataset.st]));
+  if (!refreshList.stOnce) { refreshList.stOnce = 1; stAdmRefresh(); } else stMarksAdmin();
   $("#vlist").querySelectorAll("[data-retry]").forEach((b) => b.onclick = async () => { await adm({ action: "retry", id: +b.dataset.retry }); refreshList(); });
   $("#vlist").querySelectorAll("[data-del]").forEach((b) => b.onclick = async () => {
     if (b.dataset.sure) { await adm({ action: "delete", id: +b.dataset.del }); refreshList(); } else { b.dataset.sure = 1; b.classList.add("sure"); b.textContent = "⚠️ ખાતરી? ફરી દબાવો";
@@ -1430,7 +1523,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.11.01.3";
+const APP_VER = "2026.11.01.4";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
@@ -1645,6 +1738,179 @@ function route() {
 }
 window.addEventListener("hashchange", route);
 applyUI(); route();
+
+/* ---------- ✨ Studio: NotebookLM-style slides and mind maps made from our own transcripts ---------- */
+const ST_KINDS = [
+  ["slides", "🖼", "Slide Deck", "સ્લાઈડ, ચિત્ર સાથે"], ["mindmap", "🧠", "Mind Map", "મુદ્દાનું ઝાડ"],
+  ["report", "📄", "અહેવાલ", "જલદી"], ["quiz", "❓", "Quiz", "જલદી"], ["cards", "🃏", "Flashcards", "જલદી"],
+  ["info", "📊", "Infographic", "જલદી"], ["table", "📋", "Data Table", "જલદી"], ["audio", "🎧", "Audio", "જલદી"], ["video", "🎬", "Video", "પછી"],
+];
+const ST_ICON = { slides: "🖼", mindmap: "🧠" };
+// small hand-drawn pictures for slides (free: no image model needed)
+const ST_ART = {
+  diya: '<path d="M32 6c7 9 10 15 10 21a10 10 0 0 1-20 0c0-6 3-12 10-21z" fill="#f2a33a"/><path d="M32 16c3 5 5 8 5 11a5 5 0 0 1-10 0c0-3 2-6 5-11z" fill="#ffe08a"/><path d="M7 42h50c-3 10-12 16-25 16S10 52 7 42z" fill="var(--bd)"/><rect x="4" y="39" width="56" height="4" rx="2" fill="var(--ac)"/>',
+  lotus: '<path d="M32 12c6 8 8 16 0 30-8-14-6-22 0-30z" fill="#e87aa0"/><path d="M14 22c10 2 16 9 18 20-12-2-18-9-18-20zM50 22c-10 2-16 9-18 20 12-2 18-9 18-20z" fill="#f29bb8"/><path d="M4 36c12-2 22 2 28 8-12 4-22 2-28-8zM60 36c-12-2-22 2-28 8 12 4 22 2 28-8z" fill="#f7b9cd"/><path d="M10 50h44" stroke="var(--ac)" stroke-width="3" stroke-linecap="round"/>',
+  temple: '<path d="M32 4l4 8h-8z" fill="var(--ac)"/><path d="M20 30c0-10 6-16 12-18 6 2 12 8 12 18z" fill="var(--bd)"/><rect x="12" y="30" width="40" height="22" fill="var(--b2)" stroke="var(--bd)" stroke-width="2"/><path d="M26 52V40a6 6 0 0 1 12 0v12" fill="var(--ac)"/><rect x="8" y="52" width="48" height="5" fill="var(--bd)"/>',
+  kalash: '<path d="M22 22c-8 4-12 12-10 20 2 10 10 16 20 16s18-6 20-16c2-8-2-16-10-20z" fill="var(--ac)"/><rect x="22" y="17" width="20" height="6" rx="2" fill="var(--bd)"/><path d="M32 4c-6 4-12 6-14 13h28c-2-7-8-9-14-13z" fill="#5d8f2e"/><circle cx="32" cy="9" r="4" fill="#c0662a"/><path d="M18 38h28" stroke="#fff" stroke-width="2" opacity=".7"/>',
+  peacock: '<ellipse cx="32" cy="24" rx="16" ry="20" fill="#2c7a6b"/><ellipse cx="32" cy="22" rx="9" ry="12" fill="#3f9fd0"/><ellipse cx="32" cy="20" rx="4.5" ry="6" fill="#1d3f66"/><path d="M32 44v16" stroke="var(--bd)" stroke-width="3"/>',
+  om: '<circle cx="32" cy="32" r="27" fill="var(--ac)" opacity=".15"/><text x="32" y="45" text-anchor="middle" font-size="38" fill="var(--ti)" font-family="serif">ॐ</text>',
+  book: '<path d="M6 14c10-3 19-1 26 5v34c-7-6-16-8-26-5z" fill="var(--b1)" stroke="var(--bd)" stroke-width="2"/><path d="M58 14c-10-3-19-1-26 5v34c7-6 16-8 26-5z" fill="var(--b1)" stroke="var(--bd)" stroke-width="2"/><path d="M12 24h14M12 31h14M38 24h14M38 31h14" stroke="var(--ac)" stroke-width="2"/>',
+  flute: '<rect x="4" y="28" width="56" height="7" rx="3.5" fill="#a0602a" transform="rotate(-18 32 32)"/><g fill="#3a2010" transform="rotate(-18 32 32)"><circle cx="22" cy="31.5" r="1.6"/><circle cx="30" cy="31.5" r="1.6"/><circle cx="38" cy="31.5" r="1.6"/><circle cx="46" cy="31.5" r="1.6"/></g><path d="M50 14c4 2 6 6 4 10" stroke="#2c7a6b" stroke-width="3" fill="none"/>',
+  sun: '<circle cx="32" cy="32" r="12" fill="#f2a33a"/><g stroke="#f2a33a" stroke-width="3" stroke-linecap="round"><path d="M32 6v8M32 50v8M6 32h8M50 32h8M13 13l6 6M45 45l6 6M13 51l6-6M45 19l6-6"/></g>',
+  hands: '<path d="M30 58V30c0-8-3-16-6-22-2-4-6-2-5 2l3 18-6-6c-3-3-7 0-5 4l9 14v18z" fill="#e7b48a"/><path d="M34 58V30c0-8 3-16 6-22 2-4 6-2 5 2l-3 18 6-6c3-3 7 0 5 4l-9 14v18z" fill="#d9a074"/><rect x="24" y="56" width="16" height="5" rx="2" fill="var(--ac)"/>',
+  tree: '<rect x="28" y="36" width="8" height="22" fill="#8a5a2c"/><circle cx="32" cy="24" r="16" fill="#5d8f2e"/><circle cx="20" cy="30" r="9" fill="#4f7d27"/><circle cx="44" cy="30" r="9" fill="#4f7d27"/>',
+  flag: '<path d="M14 6v54" stroke="var(--bd)" stroke-width="3"/><path d="M16 8c10 4 18-4 30 2v20c-12-6-20 2-30-2z" fill="var(--ac)"/>',
+};
+const stSvg = (k) => `<svg class="art" viewBox="0 0 64 64" aria-hidden="true">${ST_ART[k] || ST_ART.diya}</svg>`;
+
+var stPub = []; // published items (site)
+async function stLoadPublic() {
+  try {
+    const r = await fetch(`${SB}/rest/v1/katha_studio?select=id,kind,title,video_ids,series,data&order=created_at.desc`, { headers: { apikey: KEY, Authorization: "Bearer " + KEY } });
+    const j = await r.json(); stPub = Array.isArray(j) ? j : [];
+  } catch { stPub = []; }
+  stStrip(); stBarBtn();
+  if (typeof last !== "undefined" && last) render(last.rows, last.q);
+}
+function stForVid(vid) { return (stPub || []).filter((x) => (x.video_ids || []).includes(+vid)); }
+
+// ---- viewer (site and Admin) ----
+let stv = { items: [], i: 0, s: 0 };
+function stOpen(items, i = 0) {
+  if (!items.length) return;
+  stv = { items, i, s: 0 };
+  const v = $("#stView"), bar = document.querySelector("#player .bar");
+  v.style.top = document.body.classList.contains("playing") && bar ? Math.round(bar.getBoundingClientRect().bottom) + "px" : "";
+  v.hidden = false; stDraw();
+}
+function stDraw() {
+  const it = stv.items[stv.i], d = it.data || {};
+  $("#stvTitle").textContent = `${ST_ICON[it.kind] || "✨"} ${it.title || d.title || "Studio"}`;
+  $("#stvTabs").innerHTML = stv.items.length > 1 ? stv.items.map((x, k) => `<button type="button" data-k="${k}" class="${k === stv.i ? "on" : ""}">${ST_ICON[x.kind] || "✨"} ${esc((x.title || "").slice(0, 26))}</button>`).join("") : "";
+  $("#stvTabs").querySelectorAll("button").forEach((b) => b.onclick = () => { stv.i = +b.dataset.k; stv.s = 0; stDraw(); });
+  const box = $("#stvBody");
+  if (it.kind === "mindmap") {
+    box.innerHTML = `<div class="mm-root">${esc(d.title || it.title || "")}</div><div class="mm-br">` + (d.branches || []).map((b, k) =>
+      `<div><button type="button" class="mm-node" data-mm="${k}"><b>${esc(b.title)}</b>${stPlayBtn(b)}<span class="c">▼</span></button>
+      <div class="mm-kids" id="mmk${k}">${(b.children || []).map((c) => `<div class="mm-leaf"><span>• ${esc(c.title)}</span>${stPlayBtn(c)}</div>`).join("")}</div></div>`).join("") + `</div>`;
+    box.querySelectorAll("[data-mm]").forEach((n) => n.onclick = (e) => { if (e.target.closest(".st-play")) return; const kids = $("#mmk" + n.dataset.mm); kids.hidden = !kids.hidden; n.querySelector(".c").textContent = kids.hidden ? "▶" : "▼"; });
+  } else {
+    const sl = d.slides || [], s = sl[stv.s] || {}, cover = stv.s === 0;
+    box.innerHTML = `<div class="sd-wrap" id="sdWrap"><div class="sd p-${esc(d.palette || "kesari")} f-${esc(d.frame || "arch")}${cover ? " cover" : ""}">
+        ${(d.frame || "arch") === "arch" ? '<div class="arch"></div>' : ""}<div class="in"><h3>${esc(s.title || "")}</h3>
+        <ul>${(s.points || []).map((p) => `<li>${esc(p)}</li>`).join("")}</ul>${s.quote ? `<blockquote>${esc(s.quote)}</blockquote>` : ""}</div>
+        ${stSvg(s.icon)}${s.y && !cover ? `<button type="button" class="tm" data-y="${esc(s.y)}" data-t="${+s.t || 0}">▶ ${fmt0(+s.t || 0)}</button>` : ""}</div></div>
+      <div class="sd-nav">${sl.map((_, k) => `<i class="${k === stv.s ? "on" : ""}"></i>`).join("")}<span style="margin-left:6px">${stv.s + 1} / ${sl.length}</span></div>
+      <div class="sd-acts"><button type="button" id="sdPrev">‹ પાછળ</button><button type="button" id="sdFull">⛶ આખી સ્ક્રીન</button><button type="button" id="sdShare">📤 શેર</button><button type="button" id="sdNext">આગળ ›</button></div>
+      ${s.notes ? `<div class="sd-notes">🎤 <b>વક્તા નોંધ:</b> ${esc(s.notes)}</div>` : ""}`;
+    const go = (n) => { stv.s = Math.max(0, Math.min(sl.length - 1, stv.s + n)); stDraw(); };
+    $("#sdPrev").onclick = () => go(-1); $("#sdNext").onclick = () => go(1);
+    $("#sdFull").onclick = () => { const w = $("#sdWrap"); try { document.fullscreenElement ? document.exitFullscreen() : (w.requestFullscreen || w.webkitRequestFullscreen).call(w); } catch { toast("આ ફોનમાં આખી સ્ક્રીન નથી ચાલતી"); } };
+    $("#sdShare").onclick = async () => {
+      const text = `${s.title || ""}\n${(s.points || []).map((p) => "• " + p).join("\n")}\n\n— ${d.title || ""} · કચ્છ સત્સંગ\n${location.origin}${location.pathname}`;
+      try { if (navigator.share) await navigator.share({ title: d.title || "Studio", text }); else { await navigator.clipboard.writeText(text); toast("કોપી થયું"); } } catch {}
+    };
+    let x0 = null; const w = $("#sdWrap");
+    w.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+    w.addEventListener("touchend", (e) => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1); }, { passive: true });
+  }
+  box.querySelectorAll("[data-y]").forEach((b) => b.onclick = (e) => { e.stopPropagation(); stPlay(b.dataset.y, +b.dataset.t, it); });
+}
+const stPlayBtn = (x) => x && x.y ? `<button type="button" class="st-play" data-y="${esc(x.y)}" data-t="${+x.t || 0}">▶ ${fmt0(+x.t || 0)}</button>` : "";
+function stPlay(y, t, it) {
+  const src = ((it.data || {}).sources || []).find((s) => s.y === y) || {};
+  if (location.hash === "#admin") { window.open(`https://www.youtube.com/watch?v=${y}&t=${t}s`, "_blank"); return; }
+  play(y, t, { video_id: src.id, youtube_id: y, title: src.title, speaker: src.speaker, start_sec: t });
+  stOpen(stv.items, stv.i); // stay open, now sitting under the video
+}
+$("#stvClose").onclick = () => { $("#stView").hidden = true; };
+
+// ---- entry points on the site ----
+function stBarBtn() { const b = $("#stBtn"); if (!b) return; const vid = cur && cur.info && cur.info.video_id; b.hidden = !(vid && stForVid(vid).length); }
+$("#stBtn").onclick = () => { const vid = cur && cur.info && cur.info.video_id; const its = stForVid(vid); if ($("#stView").hidden) stOpen(its); else $("#stView").hidden = true; };
+function stStrip() {
+  const ser = $("#fseries").value, its = ser ? stPub.filter((x) => x.series === ser) : [], box = $("#stStrip");
+  box.hidden = !its.length;
+  box.innerHTML = its.length ? `<b>✨ આ સિરીઝનું Studio</b><div class="r">${its.map((x, k) => `<button type="button" data-k="${k}">${ST_ICON[x.kind] || "✨"} ${esc((x.title || "").slice(0, 22))}</button>`).join("")}</div>` : "";
+  box.querySelectorAll("button").forEach((b) => b.onclick = () => stOpen(its, +b.dataset.k));
+}
+$("#fseries").addEventListener("change", stStrip);
+
+// ---- Admin: make Studio items ----
+let stAdm = { items: [], today: 0, quota: null, kind: "slides", sel: new Set(), o: { format: "detailed", length: "normal", lang: "gu", art: "svg" }, timer: 0, videos: [] };
+function stAdmOpen(ids) {
+  stAdm.videos = (window.__admVideos || []).filter((v) => v.passages > 0);
+  stAdm.sel = new Set(ids && ids.length ? ids : []);
+  $("#stSheet").hidden = false; stAdmDraw(); stAdmRefresh();
+}
+async function stAdmRefresh() {
+  clearTimeout(stAdm.timer);
+  try { const r = await adm({ action: "studio_list" }); stAdm.items = r.items || []; stAdm.today = r.today || 0; stAdm.quota = r.quota_until; } catch (e) { toast(e.message); }
+  if (!$("#stSheet").hidden) { stAdmList(); stAdmMeter(); if (stAdm.items.some((x) => x.status === "processing")) stAdm.timer = setTimeout(stAdmRefresh, 5000); }
+  if (typeof refreshList === "function" && !editing) stMarksAdmin();
+}
+function stAdmMeter() {
+  const q = stAdm.quota && new Date(stAdm.quota) > new Date() ? new Date(stAdm.quota).toLocaleTimeString("en-GB", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit" }) : "";
+  $("#stMeter").innerHTML = `🔑 છેલ્લા 24 કલાકમાં Studio: <b>${stAdm.today}</b> બન્યાં · આ = 1 Gemini વિનંતી` + (q ? `<br>⏸ Gemini મફત મર્યાદા ભારતના <b>${q}</b> સુધી પૂરી છે, ત્યાં સુધી બનશે નહીં.` : " · Gemini ચાલુ ✓");
+}
+function stAdmDraw() {
+  const o = stAdm.o, k = stAdm.kind;
+  const groups = {}; stAdm.videos.forEach((v) => { (groups[v.series || "સિરીઝ નથી"] ||= []).push(v); });
+  const chip = (key, val, label, extra = "") => `<button type="button" data-o="${key}" data-v="${val}" class="${o[key] === val ? "on" : ""} ${extra}">${label}</button>`;
+  $("#stBody").innerHTML = `<div class="st-sec">1. શું બનાવવું છે?</div><div class="st-grid">${ST_KINDS.map(([id, i, n, s]) => `<button type="button" class="st-tile${id === k ? " on" : ""}${["slides", "mindmap"].includes(id) ? "" : " soon"}" data-kind="${id}"><span class="i">${i}</span><b>${n}</b><small>${s}</small></button>`).join("")}</div>
+    <div class="st-sec">2. 📚 સ્રોત · <span id="stCount"></span></div>
+    <div class="st-src">${stAdm.videos.length ? Object.entries(groups).map(([g, vs]) => `<label class="grp"><input type="checkbox" data-grp="${esc(g)}"> બધી પસંદ કરો · ${esc(g)}</label>` + vs.map((v) => `<label><input type="checkbox" data-id="${v.id}" ${stAdm.sel.has(v.id) ? "checked" : ""}> ${esc(v.title || v.youtube_id)}</label>`).join("")).join("") : "<small style='display:block;padding:8px 0'>હજી કોઈ કથાનું લખાણ તૈયાર નથી.</small>"}</div>
+    ${k === "slides" ? `<div class="st-sec">3. પ્રકાર</div><div class="st-fmt"><button type="button" data-o="format" data-v="detailed" class="${o.format === "detailed" ? "on" : ""}"><b>📑 વિગતવાર</b>પૂરું લખાણ, વાંચવા-મોકલવા</button><button type="button" data-o="format" data-v="presenter" class="${o.format === "presenter" ? "on" : ""}"><b>🎤 વક્તા માટે</b>મોટા મુદ્દા + વક્તા નોંધ</button></div>
+      <div class="st-sec">લંબાઈ</div><div class="st-chips">${chip("length", "short", "ટૂંકું")}${chip("length", "normal", "સામાન્ય")}${chip("length", "long", "લાંબું")}</div>
+      <div class="st-sec">ચિત્ર</div><div class="st-chips">${chip("art", "svg", "🎨 દોરેલાં ચિત્ર")}<button type="button" class="off" data-ai>📸 AI ચિત્ર ₹</button></div>` : ""}
+    <div class="st-sec">ભાષા</div><div class="st-chips">${chip("lang", "gu", "ગુજરાતી")}${chip("lang", "hi", "हिन्दी")}${chip("lang", "sa", "संस्कृत")}${chip("lang", "en", "English")}</div>
+    <div class="st-sec">✍️ ${k === "slides" ? "કેવું deck જોઈએ, તે લખો" : "શેના પર ધ્યાન આપવું, તે લખો"} (ખાલી પણ ચાલે)</div>
+    <textarea id="stPrompt" placeholder="${k === "slides" ? "દા.ત. યુવકો માટે 10 સ્લાઈડ, મંત્રના મહિમા પર ધ્યાન, દરેકમાં એક શ્લોક. કેસરી-સોનેરી રંગ, મંદિરની કમાન જેવી કિનાર." : "દા.ત. ફક્ત ભક્તિના મુદ્દા, બાળકો સમજી શકે એવા સરળ શબ્દોમાં."}">${esc(stAdm.prompt || "")}</textarea>
+    <div class="st-meter" id="stMeter"></div>
+    <button type="button" class="st-go" id="stGo">✨ હમણાં બનાવો</button>
+    <div class="st-sec">બનેલું</div><div id="stList"></div>`;
+  const body = $("#stBody");
+  body.querySelectorAll("[data-kind]").forEach((b) => b.onclick = () => { if (!["slides", "mindmap"].includes(b.dataset.kind)) { toast(`${b.querySelector("b").textContent}: આ પછી આવશે`); return; } stAdm.prompt = $("#stPrompt").value; stAdm.kind = b.dataset.kind; stAdmDraw(); });
+  body.querySelectorAll("[data-o]").forEach((b) => b.onclick = () => { stAdm.prompt = $("#stPrompt").value; stAdm.o[b.dataset.o] = b.dataset.v; stAdmDraw(); });
+  const ai = body.querySelector("[data-ai]"); if (ai) ai.onclick = () => toast("📸 AI ચિત્ર માટે Google billing જોઈએ (≈ ₹3 / ચિત્ર). હમણાં દોરેલાં ચિત્ર વપરાશે.");
+  const cnt = () => { $("#stCount").textContent = `${stAdm.sel.size} પસંદ`; body.querySelectorAll("[data-grp]").forEach((g) => { const ids = (groups[g.dataset.grp] || []).map((v) => v.id); g.checked = ids.length && ids.every((i) => stAdm.sel.has(i)); }); };
+  body.querySelectorAll("[data-id]").forEach((c) => c.onchange = () => { c.checked ? stAdm.sel.add(+c.dataset.id) : stAdm.sel.delete(+c.dataset.id); cnt(); });
+  body.querySelectorAll("[data-grp]").forEach((c) => c.onchange = () => { (groups[c.dataset.grp] || []).forEach((v) => c.checked ? stAdm.sel.add(v.id) : stAdm.sel.delete(v.id)); body.querySelectorAll("[data-id]").forEach((x) => x.checked = stAdm.sel.has(+x.dataset.id)); cnt(); });
+  cnt();
+  $("#stGo").onclick = async () => {
+    if (!stAdm.sel.size) { toast("પહેલાં 📚 સ્રોતમાંથી કથા પસંદ કરો"); return; }
+    const b = $("#stGo"); b.disabled = true; b.textContent = "મોકલાય છે…"; stAdm.prompt = $("#stPrompt").value;
+    try { await adm({ action: "studio_create", kind: stAdm.kind, video_ids: [...stAdm.sel], options: stAdm.o, prompt: stAdm.prompt }); toast("✨ બની રહ્યું છે… 1-2 મિનિટ"); stAdm.prompt = ""; $("#stPrompt").value = ""; }
+    catch (e) { toast(e.message); }
+    b.disabled = false; b.textContent = "✨ હમણાં બનાવો"; stAdmRefresh();
+  };
+  stAdmList(); stAdmMeter();
+}
+function stAdmList() {
+  const box = $("#stList"); if (!box) return;
+  const name = (ids) => ids.length === 1 ? ((stAdm.videos.find((v) => v.id === ids[0]) || (window.__admVideos || []).find((v) => v.id === ids[0]) || {}).title || "1 કથા") : `${ids.length} કથા`;
+  box.innerHTML = stAdm.items.map((x) => `<div class="st-out"><div>${ST_ICON[x.kind] || "✨"} <b>${esc(x.title || (x.kind === "slides" ? "Slide Deck" : "Mind Map"))}</b><br><small>${esc(name(x.video_ids || []))} · ${x.status === "processing" ? "⏳ બની રહ્યું છે…" : x.status === "error" ? "✖ ન બન્યું" : x.published ? "🌐 સાઈટ પર દેખાય છે" : "ફક્ત Admin માં"}</small></div>
+    ${x.status === "error" ? `<div class="err">${esc(x.error || "")}</div>` : ""}
+    <div class="abtns">${x.status === "done" ? `<button type="button" data-see="${x.id}">👁 જુઓ</button><button type="button" data-pub="${x.id}" class="${x.published ? "pub" : ""}">${x.published ? "🌐 સાઈટ પર ✓" : "🌐 સાઈટ પર મૂકો"}</button>` : ""}${x.status === "error" ? `<button type="button" data-re="${x.id}">↻ ફરી બનાવો</button>` : ""}<button type="button" class="danger" data-sdel="${x.id}">🗑</button></div></div>`).join("") || "<small>હજી કંઈ બન્યું નથી.</small>";
+  box.querySelectorAll("[data-see]").forEach((b) => b.onclick = async () => { try { const { item } = await adm({ action: "studio_get", id: +b.dataset.see }); stOpen([item]); } catch (e) { toast(e.message); } });
+  box.querySelectorAll("[data-pub]").forEach((b) => b.onclick = async () => { const x = stAdm.items.find((i) => i.id === +b.dataset.pub); await adm({ action: "studio_publish", id: x.id, published: !x.published }); toast(x.published ? "સાઈટ પરથી હટાવ્યું" : "🌐 હવે સાઈટ પર દેખાશે"); stAdmRefresh(); stLoadPublic(); });
+  box.querySelectorAll("[data-re]").forEach((b) => b.onclick = async () => { await adm({ action: "studio_retry", id: +b.dataset.re }); stAdmRefresh(); });
+  box.querySelectorAll("[data-sdel]").forEach((b) => b.onclick = async () => {
+    if (!b.dataset.sure) { b.dataset.sure = 1; b.classList.add("sure"); b.textContent = "⚠️ ખાતરી? ફરી દબાવો"; setTimeout(() => { if (b.isConnected) { delete b.dataset.sure; b.classList.remove("sure"); b.textContent = "🗑"; } }, 5000); return; }
+    await adm({ action: "studio_delete", id: +b.dataset.sdel }); stAdmRefresh(); stLoadPublic(); });
+}
+// a green line under each katha in Admin: what Studio has made from it
+function stMarksAdmin() {
+  document.querySelectorAll("#vlist [data-st]").forEach((b) => {
+    const id = +b.dataset.st, row = b.closest(".vrow"), mine = stAdm.items.filter((x) => x.status === "done" && (x.video_ids || []).includes(id));
+    let el = row.querySelector(".st-made"); if (!mine.length) { if (el) el.remove(); return; }
+    if (!el) { el = document.createElement("div"); el.className = "st-made"; b.closest(".abtns").after(el); }
+    el.textContent = "✨ " + mine.map((x) => `${ST_ICON[x.kind]} ${x.kind === "slides" ? "સ્લાઈડ" : "Mind Map"}${x.published ? " 🌐" : ""}`).join(" · ") + " તૈયાર";
+  });
+}
+$("#stOpen").onclick = () => stAdmOpen([]);
+$("#stClose").onclick = () => { $("#stSheet").hidden = true; clearTimeout(stAdm.timer); };
+stLoadPublic();
 </script>
 </body>
 </html>
