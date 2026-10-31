@@ -264,7 +264,9 @@ body.lvfull .player{bottom:0;display:flex;flex-direction:column}
 body.lvfull .player .vid,body.lvfull .player .bar{flex:none}
 body.lvfull .live{flex:1;min-height:0;display:flex;box-shadow:none}
 body.lvfull .live .in{flex:1;min-height:0;display:flex;flex-direction:column;width:100%;padding-bottom:0}
-body.lvfull .lv-cur,body.lvfull .lv-nav{display:none}
+body.lvfull .lv-cur,body.lvfull .lv-nav,body.lvfull .lv-top{display:none}
+.lv-seg.on .tm::after{content:"";display:block;width:8px;height:8px;margin:7px 0 0 2px;border-radius:50%;background:#c0392b;animation:lvblink 1.2s ease-in-out infinite}
+@keyframes lvblink{50%{opacity:.15}}
 .lv-pick{flex:none;display:flex}
 .player .bar .lv-pick>button{display:flex;align-items:center;gap:4px;background:#5a1d12;border-color:#9b5a2a;color:#fbe9cf}
 .lv-pick>button i{font-style:normal;font-size:8px;opacity:.8}
@@ -273,7 +275,7 @@ body.lvfull .lv-cur,body.lvfull .lv-nav{display:none}
 .lv-pick .fpop .sep{height:1px;background:var(--rule);margin:2px 4px}
 .lv-mode{border:1px dashed var(--rule);background:none;color:var(--ink-2);border-radius:99px;padding:3px 10px;font-size:12px;cursor:pointer;min-height:30px}
 .lv-mode.on{border-style:solid;border-color:var(--maroon);color:var(--maroon)}
-.lv-list{flex:1;min-height:0;overflow:auto;margin:8px calc(-1 * max(16px,env(safe-area-inset-right,0px))) 0;padding:0 max(16px,env(safe-area-inset-right,0px)) 40vh;scroll-behavior:smooth;overscroll-behavior:contain}
+.lv-list{flex:1;min-height:0;overflow:auto;margin:2px calc(-1 * max(16px,env(safe-area-inset-right,0px))) 0;padding:0 max(16px,env(safe-area-inset-right,0px)) 40vh;scroll-behavior:smooth;overscroll-behavior:contain}
 .lv-seg{display:grid;grid-template-columns:40px 1fr;gap:6px;padding:8px 4px;border-bottom:1px dashed var(--rule);cursor:pointer;opacity:.55;transition:opacity .25s}
 .lv-seg .tm{font-size:11px;color:var(--saffron);font-variant-numeric:tabular-nums;padding-top:4px}
 .lv-seg p{margin:0;font-size:calc(14px * var(--fs));line-height:calc(1.65 * var(--lhm));overflow-wrap:anywhere;min-width:0}
