@@ -64,7 +64,7 @@ h1{font-family:var(--gu);font-weight:700;color:var(--maroon);font-size:clamp(40p
   background-position:right 6px center,right 2px center;background-size:4px 4px;background-repeat:no-repeat}
 
 .field{position:relative}
-.field select{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;padding:0}
+.field select{display:none!important}
 .fsel{width:100%;display:flex;align-items:center;gap:8px;border:0;border-bottom:1px solid var(--rule);background:none;color:var(--ink);font-family:var(--gu);font-size:calc(17px * var(--fs));padding:8px 2px;cursor:pointer;text-align:left}
 .fsel span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fsel i{font-style:normal;font-size:10px;color:var(--saffron);transition:transform .15s}
@@ -481,8 +481,8 @@ body.playing .gear{display:none}
     <div class="recent" id="recent" hidden></div>
 
     <div class="filters">
-      <div class="field"><label for="fseries" data-t="series">Katha series</label><select id="fseries"><option value="" data-t="allseries">All series</option></select></div>
-      <div class="field"><label for="fspeaker" data-t="speaker">Speaker</label><select id="fspeaker"><option value="" data-t="allspeakers">All speakers</option></select></div>
+      <div class="field"><label data-t="series">Katha series</label><select id="fseries"><option value="" data-t="allseries">All series</option></select></div>
+      <div class="field"><label data-t="speaker">Speaker</label><select id="fspeaker"><option value="" data-t="allspeakers">All speakers</option></select></div>
     </div>
 
     <section class="explore" id="explore">
@@ -1261,7 +1261,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.10.31";
+const APP_VER = "2026.10.31.2";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
