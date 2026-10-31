@@ -1,0 +1,69 @@
+<!doctype html><html lang="gu"><head><meta charset="utf-8">
+<style>
+:root{--paper:#f3e9d8;--card:#fbf5ea;--ink:#2b1a12;--ink-2:#6d5646;--maroon:#6e1f14;--maroon-2:#8a2c1c;--saffron:#c0662a;--rule:#dcc9ad;--on:#fbf1e4;--gold:#b8892f}
+*{box-sizing:border-box}body{margin:0;background:#fff;font-family:"Noto Serif Gujarati","Noto Sans Gujarati",serif;color:var(--ink)}
+.row{display:flex;gap:30px}.cap{font-weight:700;text-align:center;padding:10px 0 8px;font-size:17px;color:#2d5a1e}
+.ph{width:390px;background:var(--paper);min-height:844px;position:relative;overflow:hidden}
+.vid{height:200px;background:linear-gradient(160deg,#3a2418,#7a4a2a 60%,#c7934e);position:relative}
+.vid:after{content:"▶";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:40px;opacity:.85}
+.bar{display:flex;gap:4px;padding:6px;background:var(--card);border-bottom:1px solid var(--rule)}
+.bar span{border:1px solid var(--rule);background:var(--paper);border-radius:8px;padding:4px 7px;font-size:12.5px;white-space:nowrap}
+.bar span.st{border:2px solid var(--saffron);background:#fff3e6;font-weight:700}
+.new{outline:3px dashed #2d8a3a;outline-offset:2px}
+.tabs{display:flex;gap:6px;padding:9px 10px 6px}.tabs span{border:1px solid var(--rule);background:var(--card);border-radius:16px;padding:3px 10px;font-size:13px}
+.tabs span.on{background:var(--maroon);color:var(--on);border-color:var(--maroon)}
+.slide{margin:4px 12px;aspect-ratio:16/10;border-radius:14px;background:linear-gradient(#fff7e8,#f7e3c2);border:3px solid var(--gold);position:relative;overflow:hidden;box-shadow:0 4px 12px rgba(80,40,10,.2)}
+.slide .arch{position:absolute;left:10px;right:10px;top:8px;height:58px;border:2px solid var(--saffron);border-bottom:0;border-radius:150px 150px 0 0}
+.slide h3{position:relative;text-align:center;margin:30px 0 4px;color:var(--maroon);font-size:18px}
+.slide ul{position:relative;margin:4px 0 0 0;padding:0 14px 0 100px;font-size:12.5px;line-height:1.55}
+.slide svg{position:absolute;left:14px;bottom:16px}
+.slide .t{position:absolute;right:10px;bottom:8px;border:1px solid var(--maroon);color:var(--maroon);background:#fff;border-radius:14px;padding:1px 9px;font-size:12px}
+.slide .sh{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-size:11px;color:var(--maroon-2);font-style:italic}
+.dots{display:flex;justify-content:center;align-items:center;gap:5px;padding:8px;font-size:13px;color:var(--ink-2)}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--rule)}.dots i.on{background:var(--maroon);width:18px;border-radius:4px}
+.acts{display:flex;gap:8px;justify-content:center}.acts span{border:1px solid var(--rule);background:var(--card);border-radius:10px;padding:6px 12px;font-size:13px}
+.note{margin:10px 12px;font-size:12.5px;line-height:1.7;background:#fff8ee;border:1px dashed var(--saffron);border-radius:10px;padding:8px 10px}
+.top{display:flex;justify-content:center;padding:8px 0 2px}.top h1{margin:0;font-size:26px;color:var(--maroon)}
+.search{margin:6px 14px;background:var(--card);border:1px solid var(--rule);display:flex;padding:6px;gap:6px}.search div{flex:1;padding:6px;font-size:16px}.search b{background:var(--maroon);color:var(--on);padding:6px 12px;font-size:13px}
+.fl{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 14px}.fl span{border:1px solid var(--rule);background:var(--card);border-radius:10px;padding:7px 9px;font-size:13px;white-space:nowrap;overflow:hidden}
+.fl span.on{border:2px solid var(--maroon)}
+.strip{margin:8px 14px;border-radius:14px;background:linear-gradient(135deg,var(--maroon),#9a3a1c);color:var(--on);padding:10px 12px}
+.strip b{font-size:14px}.strip .r{display:flex;gap:6px;margin-top:7px}.strip .r span{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);border-radius:10px;padding:5px 9px;font-size:13px}
+.card{margin:10px 14px;background:var(--card);border-left:3px solid var(--saffron);padding:12px;font-size:14px;line-height:1.7}
+.card h4{margin:0 0 4px;color:var(--maroon);font-size:14px;display:flex;gap:6px}.card h4 em{margin-left:auto;align-self:flex-start;font-style:normal;background:#fff3e6;border:1px solid var(--saffron);border-radius:10px;padding:0 7px;font-size:12px;white-space:nowrap}
+.n{position:absolute;background:#2d8a3a;color:#fff;border-radius:50%;width:24px;height:24px;font-size:13px;display:grid;place-items:center;font-weight:700;font-family:sans-serif;z-index:3}
+mark{background:#f3d3bb}
+</style></head><body>
+<div class="row">
+<div><div class="cap">સાઈટ: વીડિયો પટ્ટીમાં ✨</div>
+<div class="ph">
+  <div class="vid"></div>
+  <div class="bar"><span class="st new">✨</span><span>🌐</span><span>1×</span><span>⏪10</span><span>10⏩</span><span>⏲</span><span>📤</span><span>YouTube</span><span>✕</span></div>
+  <span class="n" style="top:196px;left:2px">3</span>
+  <div class="tabs"><span class="on">🖼 સ્લાઈડ</span><span>🧠 Mind Map</span><span>❓ Quiz</span><span>🃏 Cards</span></div>
+  <div class="slide">
+    <div class="arch"></div>
+    <h3>🕉 મંત્રનો મહિમા</h3>
+    <ul><li>મંત્ર જપથી મન સ્થિર થાય</li><li>આજ્ઞા સાથે જપ એ જ સાચો જપ</li><li>રોજ નિયમથી, ગમે ત્યાં</li></ul>
+    <svg width="74" height="74" viewBox="0 0 74 74"><path d="M37 10c7 9 10 15 10 21a10 10 0 0 1-20 0c0-6 3-12 10-21z" fill="#f2a33a"/><path d="M37 20c3 5 5 8 5 11a5 5 0 0 1-10 0c0-3 2-6 5-11z" fill="#ffe08a"/><path d="M12 48h50c-3 10-12 16-25 16S15 58 12 48z" fill="#b8892f"/><path d="M8 46h58v4H8z" fill="#8a5a1c"/></svg>
+    <span class="t">▶ 48:00</span>
+  </div>
+  <div class="dots"><i></i><i></i><i class="on"></i><i></i><i></i><i></i><span style="margin-left:6px">3 / 10</span></div>
+  <div class="acts"><span>‹ પાછળ</span><span>⛶ આખી સ્ક્રીન</span><span>📤 શેર</span><span>આગળ ›</span></div>
+  <div class="note"><b>3</b> વીડિયો ચાલુ હોય ત્યારે ✨ દબાવો એટલે નીચે લખાણને બદલે Studio ખૂલે. આંગળીથી સરકાવો, ▶ દબાવો એટલે વીડિયો ત્યાં જાય. ⛶ થી સભામાં TV પર.</div>
+</div></div>
+
+<div><div class="cap">સાઈટ: સિરીઝ પટ્ટી અને કાર્ડ પર ✨</div>
+<div class="ph">
+  <div class="top"><h1>કચ્છ સત્સંગ</h1></div>
+  <div class="search"><div>મંત્ર</div><b>શોધો</b></div>
+  <div class="fl"><span class="on">📚 સત્સંગીજીવન – કેરા 36 ▾</span><span>🎙 બધા વક્તા ▾</span></div>
+  <div class="strip new"><b>✨ આ સિરીઝનું Studio</b><div class="r"><span>🖼 સ્લાઈડ</span><span>🧠 Mind Map</span><span>❓ Quiz</span></div></div>
+  <span class="n" style="top:178px;left:4px">5</span>
+  <div style="margin:10px 14px 0;font-size:12.5px;color:var(--ink-2)">3 પરિણામ</div>
+  <div class="card"><h4>Day 5 Afternoon · Hariswarup Swami <em class="new">✨ Studio</em></h4>ભગવાનનો <mark>મંત્ર</mark> જપવાથી મન શાંત થાય છે.<div style="margin-top:6px;font-size:13px;color:var(--maroon)">▶ અહીં સાંભળો · આખું લખાણ · 📤 ⚑ ♡</div></div>
+  <span class="n" style="top:268px;right:4px">4</span>
+  <div class="card"><h4>Day 6 · Narayanpriya Swami</h4>સ્વામિનારાયણ <mark>મંત્ર</mark>નો મહિમા અપાર છે.<div style="margin-top:6px;font-size:13px;color:var(--maroon)">▶ અહીં સાંભળો · આખું લખાણ · 📤 ⚑ ♡</div></div>
+  <div class="note"><b>4</b> જે કથાનું Studio સાઈટ પર મૂક્યું હોય, એના કાર્ડ પર નાનું ✨ — દબાવો એટલે ખૂલે.<br><b>5</b> સિરીઝ પસંદ કરો ત્યારે ઉપર આખી સિરીઝના Studio ની પટ્ટી.<br>જે "🌐 સાઈટ પર મૂકો" ન કર્યું હોય, તે ક્યાંય ન દેખાય.</div>
+</div></div>
+</div></body></html>

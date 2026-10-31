@@ -1,0 +1,82 @@
+<!doctype html><html lang="gu"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{--paper:#f3e9d8;--card:#fbf5ea;--ink:#2b1a12;--ink-2:#6d5646;--maroon:#6e1f14;--maroon-2:#8a2c1c;--saffron:#c0662a;--rule:#dcc9ad;--on:#fbf1e4}
+*{box-sizing:border-box}body{margin:0;background:#fff;font-family:"Noto Serif Gujarati","Noto Sans Gujarati",serif;color:var(--ink)}
+.row{display:flex;gap:30px;padding:0}
+.ph{width:390px;background:var(--paper);min-height:844px}
+.head{background:var(--maroon);color:var(--on);padding:12px 14px;display:flex;gap:10px;align-items:center}
+.head b{flex:1;font-size:15px;line-height:1.35}.head .x{border:1px solid rgba(255,255,255,.5);border-radius:9px;width:38px;height:34px;display:grid;place-items:center}
+.sub{font-size:12.5px;color:var(--ink-2);padding:10px 14px 2px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:10px 14px}
+.tile{background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:10px 11px;display:grid;gap:3px;box-shadow:0 1px 3px rgba(60,30,10,.08);min-height:74px}
+.tile .i{font-size:22px}.tile b{font-size:14.5px}.tile s{text-decoration:none;font-size:12px;color:var(--ink-2)}
+.tile.done{border:2px solid #4f8a3a}.tile.done s{color:#2d5a1e;font-weight:700}
+.tile.busy{border:2px solid var(--saffron)}.tile.busy s{color:var(--saffron);font-weight:700}
+.tile.off{opacity:.5}
+h4{margin:10px 14px 6px;color:var(--maroon-2);font-size:14px}
+.out{margin:0 14px 8px;background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:9px 11px;display:flex;gap:9px;align-items:center;font-size:14px}
+.out .t{flex:1}.out small{display:block;color:var(--ink-2);font-size:12px}
+.b{border:1px solid var(--rule);background:var(--paper);border-radius:9px;height:32px;padding:0 9px;font-size:13px;font-family:inherit;white-space:nowrap}
+.b.pub{border:2px solid #4f8a3a;background:#eef6e8;color:#2d5a1e;font-weight:700}
+.note{margin:6px 14px;font-size:12.5px;color:var(--ink-2);line-height:1.6;background:#fff8ee;border:1px dashed var(--saffron);border-radius:10px;padding:8px 10px}
+.lbl{position:absolute;margin:-30px 0 0 0;font-weight:700;color:#2d5a1e;font-size:15px}
+.mm{padding:12px 10px}
+.node{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:7px 9px;font-size:13.5px;display:flex;gap:6px;align-items:center}
+.node.root{background:var(--maroon);color:var(--on);border:0;font-weight:700;justify-content:center;font-size:15px}
+.br{margin:8px 0 0 10px;border-left:2px solid var(--saffron);padding-left:10px;display:grid;gap:6px}
+.br .node b{flex:1}
+.play{border:1px solid var(--maroon);color:var(--maroon);border-radius:20px;padding:1px 8px;font-size:12px;white-space:nowrap}
+.leaf{margin-left:16px;font-size:13px;color:var(--ink-2);display:flex;gap:6px;align-items:center}
+.leaf span{flex:1}.leaf .play{flex:none}
+.tabs{display:flex;gap:6px;padding:10px 12px 0;overflow:hidden}
+.tabs span{border:1px solid var(--rule);border-radius:16px;padding:3px 10px;font-size:13px;background:var(--card);white-space:nowrap}
+.tabs span.on{background:var(--maroon);color:var(--on);border-color:var(--maroon)}
+.cap{font-weight:700;text-align:center;padding:10px 0 8px;font-size:17px}
+</style></head><body>
+<div class="row">
+<div><div class="cap" style="color:#8a2c1c">① Admin → કથા નીચે ✨ Studio</div>
+<div class="ph">
+  <div class="head"><b>✨ Studio · Day 5 Afternoon · Hariswarup Swami</b><span class="x">✕</span></div>
+  <div class="sub">જે બનાવવું હોય તે દબાવો. એક વાર બને પછી સચવાઈ રહે.</div>
+  <div class="grid">
+    <div class="tile done"><span class="i">📄</span><b>અહેવાલ</b><s>✓ તૈયાર · સાર, નોંધ, FAQ</s></div>
+    <div class="tile done"><span class="i">🧠</span><b>Mind Map</b><s>✓ તૈયાર</s></div>
+    <div class="tile busy"><span class="i">❓</span><b>Quiz</b><s>⏳ બની રહ્યું છે…</s></div>
+    <div class="tile"><span class="i">🃏</span><b>Flashcards</b><s>દબાવો એટલે બને</s></div>
+    <div class="tile"><span class="i">🖼</span><b>Slide Deck</b><s>દબાવો એટલે બને</s></div>
+    <div class="tile"><span class="i">📊</span><b>Infographic</b><s>દબાવો એટલે બને</s></div>
+    <div class="tile"><span class="i">📋</span><b>Data Table</b><s>શ્લોક, દૃષ્ટાંત, નામ</s></div>
+    <div class="tile"><span class="i">🎧</span><b>Audio</b><s>ગુજરાતી અવાજ તપાસવો</s></div>
+    <div class="tile off"><span class="i">🎬</span><b>Video</b><s>પછી</s></div>
+  </div>
+  <h4>બનેલું</h4>
+  <div class="out"><span class="t">📄 અહેવાલ<small>1 નવે · સાઈટ પર દેખાય છે</small></span><span class="b">👁 જુઓ</span><span class="b pub">🌐 સાઈટ પર ✓</span></div>
+  <div class="out"><span class="t">🧠 Mind Map<small>1 નવે · ફક્ત Admin માં</small></span><span class="b">👁 જુઓ</span><span class="b">🌐 સાઈટ પર મૂકો</span></div>
+  <div class="note">🔑 મફત Gemini key: એક વસ્તુ = 1 વિનંતી. લખાણ બનાવવાનું કામ ચાલતું હોય ત્યારે રોજની મર્યાદા વહેંચાય છે.</div>
+</div></div>
+
+<div><div class="cap" style="color:#2d5a1e">② 🧠 Mind Map (નમૂનો)</div>
+<div class="ph">
+  <div class="head"><b>🧠 Mind Map · Day 5 Afternoon</b><span class="x">✕</span></div>
+  <div class="tabs"><span>📄 અહેવાલ</span><span class="on">🧠 Mind Map</span><span>❓ Quiz</span><span>🃏 Cards</span></div>
+  <div class="mm">
+    <div class="node root">શ્રીમદ્ સત્સંગીજીવન · દિવસ 5</div>
+    <div class="br">
+      <div class="node"><b>🙏 ભક્તિનો મહિમા</b><span class="play">▶ 4:10</span></div>
+      <div class="leaf"><span>• નવધા ભક્તિ</span><span class="play">▶ 6:32</span></div>
+      <div class="leaf"><span>• માહાત્મ્યજ્ઞાન સહિત ભક્તિ</span><span class="play">▶ 9:05</span></div>
+      <div class="node"><b>📜 આજ્ઞા અને ધર્મ</b><span class="play">▶ 14:20</span></div>
+      <div class="leaf"><span>• શિક્ષાપત્રીનું પાલન</span><span class="play">▶ 16:48</span></div>
+      <div class="leaf"><span>• ગૃહસ્થ ધર્મ</span><span class="play">▶ 21:15</span></div>
+      <div class="node"><b>👥 સંતનો સમાગમ</b><span class="play">▶ 27:40</span></div>
+      <div class="leaf"><span>• રોજનો સત્સંગ</span><span class="play">▶ 29:02</span></div>
+      <div class="node"><b>📖 દૃષ્ટાંત</b><span class="play">▶ 35:10</span></div>
+      <div class="leaf"><span>• ભક્ત દાદા ખાચરની વાત</span><span class="play">▶ 36:25</span></div>
+      <div class="leaf"><span>• લાડુબાની વાત</span><span class="play">▶ 41:50</span></div>
+      <div class="node"><b>🕉 મંત્રનું બળ</b><span class="play">▶ 48:00</span></div>
+    </div>
+  </div>
+  <div class="note">દરેક ડાળી દબાવો એટલે નીચેની ખૂલે/બંધ થાય. <b>▶</b> દબાવો એટલે વીડિયો એ જ ક્ષણથી ચાલે.</div>
+</div></div>
+</div>
+</body></html>
