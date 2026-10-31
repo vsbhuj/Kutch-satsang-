@@ -127,6 +127,14 @@ body.playing .overlay{top:calc(min(56.25vw,42vh,360px) + 50px + env(safe-area-in
 .vrow .st{font-family:var(--latin);font-weight:600}
 .vrow .err{color:#b3261e;font-size:12px;overflow-wrap:anywhere}
 .vrow .row{display:flex;gap:12px;flex-wrap:wrap}
+.vrow{gap:6px;padding:12px 14px;border-radius:0 10px 10px 0}
+.vrow .vmeta{color:var(--ink-2);font-size:13px}
+.abtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.abtns button{border:1px solid var(--rule);background:var(--paper);color:var(--ink);border-radius:9px;padding:0 12px;height:34px;font-size:13.5px;cursor:pointer;box-shadow:0 1px 2px rgba(60,30,10,.08)}
+.abtns button:active{transform:scale(.97)}
+.abtns button.on{background:var(--maroon);border-color:var(--maroon);color:var(--on-accent)}
+.abtns button.danger{color:#b3261e;border-color:#e2b4ae}
+.abtns button.danger.sure{background:#b3261e;border-color:#b3261e;color:#fff}
 .lang-chips{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .lang-chips button{border:1px solid var(--rule);border-radius:10px;background:var(--card);color:var(--ink);padding:10px 4px;font-size:15px;cursor:pointer}
 .lang-chips button.on{background:var(--maroon);border-color:var(--maroon);color:var(--on-accent)}
@@ -811,7 +819,7 @@ async function refreshReports() {
       <div>${esc(r.message)}</div>
       <div style="color:var(--ink-2);font-size:12px">${esc(r.name || "નામ નથી")} · ${new Date(r.created_at).toLocaleString("gu-IN")} · ${st[r.status] || r.status}
         ${r.youtube_id ? ` · <a href="https://www.youtube.com/watch?v=${r.youtube_id}&t=${r.start_sec || 0}s" target="_blank" rel="noopener">${fmt0(r.start_sec || 0)} પર જુઓ</a>` : ""}</div>
-      <div class="row"><button class="link" data-rs="${r.id}" data-to="seen">જોયું</button><button class="link" data-rs="${r.id}" data-to="fixed">સુધાર્યું</button></div></div>`).join("") || "<small>હજી કોઈ અહેવાલ નથી.</small>");
+      <div class="abtns"><button type="button" data-rs="${r.id}" data-to="seen" class="${r.status === "seen" ? "on" : ""}">👁 જોયું</button><button type="button" data-rs="${r.id}" data-to="fixed" class="${r.status === "fixed" ? "on" : ""}">✔ સુધાર્યું</button></div></div>`).join("") || "<small>હજી કોઈ અહેવાલ નથી.</small>");
     $("#rlist").querySelectorAll("[data-rs]").forEach((b) => b.onclick = async () => { await adm({ action: "report_status", id: +b.dataset.rs, status: b.dataset.to }); refreshReports(); });
   } catch (e) { console.warn(e); }
 }
@@ -819,9 +827,9 @@ async function refreshList() {
   const { videos } = await adm({ action: "list" });
   const label = { done: "✔ તૈયાર", processing: "⏳ લખાણ બની રહ્યું છે…", error: "✖ ભૂલ", pending: "રાહ" };
   $("#vlist").innerHTML = (videos || []).map((v) => `<div class="vrow ${v.status}"><div><b>${esc(v.title || v.youtube_id)}</b></div>
-    <div>${esc(v.speaker || "—")} · ${esc(v.series || "—")}</div>
-    <div class="row"><span class="st">${label[v.status] || v.status}${v.status === "done" ? ` · ${v.passages} ફકરા` : ""} · ${({ gu: "ગુજરાતી", hi: "હિન્દી", sa: "સંસ્કૃત" })[v.lang] || "ગુજરાતી"}</span>
-    <button class="link" data-ed="${v.id}">✏️ વક્તા</button><button class="link" data-retry="${v.id}">ફરી કરો</button><button class="link" data-del="${v.id}">કાઢો</button></div>
+    <div class="vmeta">🎙 ${esc(v.speaker || "વક્તા નથી")} · 📚 ${esc(v.series || "સિરીઝ નથી")}</div>
+    <div class="st">${label[v.status] || v.status}${v.status === "done" ? ` · ${v.passages} ફકરા` : ""} · ${({ gu: "ગુજરાતી", hi: "હિન્દી", sa: "સંસ્કૃત" })[v.lang] || "ગુજરાતી"}</div>
+    <div class="abtns"><button type="button" data-ed="${v.id}">✏️ વક્તા</button><button type="button" data-retry="${v.id}">↻ ફરી કરો</button><button type="button" class="danger" data-del="${v.id}">🗑 કાઢો</button></div>
     ${v.error ? `<div class="err">${esc(v.error)}</div>` : ""}</div>`).join("") || "<small>હજી કોઈ કથા ઉમેરી નથી.</small>";
   $("#vlist").querySelectorAll("[data-ed]").forEach((b) => b.onclick = async () => {
     const v = videos.find((x) => x.id === +b.dataset.ed);
@@ -830,7 +838,8 @@ async function refreshList() {
     await adm({ action: "edit", id: v.id, title: v.title, speaker: sp.trim() || null, series: se.trim() || null, lang: v.lang }); refreshList(); });
   $("#vlist").querySelectorAll("[data-retry]").forEach((b) => b.onclick = async () => { await adm({ action: "retry", id: +b.dataset.retry }); refreshList(); });
   $("#vlist").querySelectorAll("[data-del]").forEach((b) => b.onclick = async () => {
-    if (b.dataset.sure) { await adm({ action: "delete", id: +b.dataset.del }); refreshList(); } else { b.dataset.sure = 1; b.textContent = "ખાતરી? ફરી દબાવો"; } });
+    if (b.dataset.sure) { await adm({ action: "delete", id: +b.dataset.del }); refreshList(); } else { b.dataset.sure = 1; b.classList.add("sure"); b.textContent = "⚠️ ખાતરી? ફરી દબાવો";
+      setTimeout(() => { if (b.isConnected) { delete b.dataset.sure; b.classList.remove("sure"); b.textContent = "🗑 કાઢો"; } }, 5000); } });
   clearTimeout(poll); if ((videos || []).some((v) => v.status === "processing")) poll = setTimeout(refreshList, 6000);
   refreshReports();
 }
@@ -1311,7 +1320,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.10.31.5";
+const APP_VER = "2026.10.31.6";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
