@@ -341,6 +341,68 @@ body.playing .gear{display:none}
 .sheet .pg[data-page="home"] .tile small{font-size:12px}
 .sheet .tiles.t2{grid-template-columns:repeat(3,1fr)}
 .sheet .tiles.t2 .tile{min-height:104px}
+
+/* ---------- settings v3: two dense full pages ---------- */
+.set-hd{display:flex;align-items:center;gap:8px;padding-bottom:6px;border-bottom:1px solid var(--rule);flex:none}
+.set-hd h2{margin:0;font-size:20px;color:var(--maroon);flex:1}
+.set-hd .x{width:34px;height:34px;font-size:18px}
+.pager{display:flex;border:1px solid var(--rule);border-radius:99px;overflow:hidden}
+.pager button{border:0;background:var(--card);width:40px;height:30px;font-size:16px;color:var(--ink-2);cursor:pointer}
+.pager button.on{background:var(--maroon);color:var(--on-accent)}
+.sheet .pg:not([hidden]){overflow:hidden}
+.sec-h{display:flex;align-items:center;gap:6px;margin:10px 0 0;font-size:14px;color:var(--maroon)}
+.sec-h::after{content:"";flex:1;height:1px;background:var(--rule);margin-left:4px}
+.sheet .lbl{font-size:11px;margin:6px 1px 3px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.row2>div{min-width:0}
+.sheet .seg4{border-radius:8px}
+.sheet .seg4 button{min-height:31px;font-size:12.5px;padding:3px 1px}
+.sheet .seg4.n5 button{font-size:11.5px}
+.sheet .themes{grid-template-columns:repeat(6,1fr);gap:4px;margin-top:6px}
+.sheet .sw{padding:2px;border-radius:8px}
+.sheet .sw .pv{height:30px;border-radius:4px}
+.sheet .sw .pv i{height:7px}.sheet .sw .pv b{top:11px;bottom:4px;left:5px;right:5px}.sheet .sw .pv u{display:none}
+.sheet .sw span{font-size:9.5px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sheet .fonts{grid-template-columns:repeat(3,1fr);gap:4px}
+.sheet .fonts button{min-height:31px;padding:2px;border-radius:8px}.sheet .fonts button em{font-size:15px}
+.sheet .sample{margin:6px 0 0;padding:4px 10px;font-size:calc(14px * var(--fs));line-height:1.5}
+.sheet .tg-grid{grid-template-columns:repeat(3,1fr);gap:5px;margin-top:7px}
+.sheet .tg{font-size:11.5px;padding:5px 6px;min-height:34px;gap:5px;border-radius:9px}
+.sheet .tg .ic{font-size:14px}.sheet .tg::after{width:10px;height:10px}
+.sheet .hlsw{gap:4px}.sheet .hlsw button{padding:3px 2px;font-size:14px;min-height:31px;border-radius:8px}
+.mini-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+.mt{border:1px solid var(--rule);border-radius:11px;background:var(--card);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:6px 2px;min-height:58px;cursor:pointer}
+.mt .ic{font-size:18px;line-height:1.2}.mt b{font-size:11px;font-weight:600;line-height:1.2;text-align:center}
+.mt small{font-size:9.5px;color:var(--ink-2);min-height:11px;line-height:1.1}
+.mt.off{opacity:.5;cursor:default}
+.nextpg{margin-top:auto;align-self:flex-end;border:0;background:none;color:var(--maroon-2);font-size:13px;font-weight:600;padding:10px 0 2px;cursor:pointer}
+
+/* ---------- settings v4: one page, each setting a small ▾ button whose list opens right under it ---------- */
+.sheet .in{position:relative}
+.set-pv{display:flex;align-items:flex-end;gap:10px;margin:8px 0 2px;padding:8px 12px;background:var(--card);border-left:3px solid var(--saffron);border-radius:0 8px 8px 0;flex:none}
+.set-pv p{margin:0;flex:1;font-size:calc(15px * var(--fs));line-height:calc(1.6 * var(--lhm));min-width:0;overflow-wrap:anywhere}
+.set-pv span{font-size:11px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.dd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px 6px;margin-top:6px;flex:none}
+.dd{min-width:0}
+.dd label{display:block;font-size:10.5px;font-weight:600;color:var(--ink-2);margin:0 2px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dd button{width:100%;display:flex;align-items:center;gap:4px;border:1px solid var(--rule);background:var(--card);color:var(--ink);border-radius:9px;padding:0 8px;height:32px;font-size:12.5px;cursor:pointer;box-shadow:0 1px 2px rgba(60,30,10,.06)}
+.dd button span{flex:1;min-width:0;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dd button i{font-style:normal;font-size:9px;color:var(--ink-2)}
+.dd button[aria-expanded="true"]{border-color:var(--maroon);box-shadow:0 0 0 2px rgba(110,31,20,.15)}
+.dd-pop{position:absolute;z-index:5;background:var(--paper);border:1px solid var(--rule);border-radius:12px;padding:5px;box-shadow:0 10px 26px rgba(40,15,5,.28);display:grid;gap:4px;min-width:140px}
+.dd-pop button{display:flex;align-items:center;gap:8px;border:1px solid var(--rule);background:var(--card);color:var(--ink);border-radius:8px;padding:0 10px;height:34px;font-size:13.5px;cursor:pointer;text-align:left;white-space:nowrap}
+.dd-pop button.on{background:var(--maroon);border-color:var(--maroon);color:var(--on-accent)}
+.dd-pop .swc{width:26px;height:16px;border-radius:3px;flex:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.sheet .tg-grid{margin-top:10px}
+.sheet .mini-tiles{margin-top:10px}
+
+@media (max-height:720px){
+  .sheet .set-hd{padding-bottom:4px}.sheet .set-hd h2{font-size:18px}
+  .set-pv{margin:5px 0 0;padding:5px 10px}
+  .dd-grid{gap:4px 6px;margin-top:4px}.dd button{height:29px}
+  .sheet .tg-grid{margin-top:7px;gap:4px}.sheet .tg{min-height:30px;padding:3px 6px}
+  .sheet .mini-tiles{margin-top:7px;gap:5px}.mt{min-height:48px;padding:3px 2px}.mt .ic{font-size:16px}
+}
+@media (max-height:600px){ .set-pv{display:none} }
 </style>
 </head>
 <body>
@@ -422,15 +484,12 @@ body.playing .gear{display:none}
 <div class="scrim" id="scrim" hidden></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="setTitle" hidden>
   <div class="in">
-    <div class="grab"></div>
-    <div class="pg" data-page="home"><div class="pg-hd"><h2 id="setTitle" data-t="settings">સેટિંગ</h2><button class="x" type="button" data-close aria-label="Close">✕</button></div><div class="tiles"><button type="button" class="tile" data-go="look"><span class="ic">🎨</span><b data-t="s_look">દેખાવ</b><small id="sum_look"></small></button><button type="button" class="tile" data-go="lang"><span class="ic">🔤</span><b data-t="s_lang">ભાષા</b><small id="sum_lang"></small></button><button type="button" class="tile" data-go="listen"><span class="ic">🎧</span><b data-t="s_listen">સાંભળવું</b><small id="sum_listen"></small></button><button type="button" class="tile" data-go="read"><span class="ic">📖</span><b data-t="s_read">વાંચવું</b><small id="sum_read"></small></button><button type="button" class="tile" data-go="search"><span class="ic">🔍</span><b data-t="s_search">શોધ</b><small id="sum_search"></small></button><button type="button" class="tile" data-go="mine"><span class="ic">❤️</span><b data-t="s_mine">મારું</b><small id="sum_mine"></small></button><button type="button" class="tile" data-go="report"><span class="ic">⚑</span><b data-t="t_report">ભૂલ</b><small id="sum_report"></small></button><button type="button" class="tile" data-go="more"><span class="ic">⋯</span><b data-t="s_more">બીજું</b><small id="sum_more"></small></button></div></div>
-    <div class="pg" data-page="look" hidden><div class="pg-hd"><button type="button" class="bk" data-go="home" aria-label="Back">‹</button><h2 data-t="s_look">દેખાવ</h2><button class="x" type="button" data-close aria-label="Close">✕</button></div><div class="lbl" data-t="l_theme">થીમ</div><div class="themes" id="themes"></div><div class="lbl" data-t="l_size">અક્ષરનું કદ</div><div class="seg4" id="sizes"><button type="button" data-fs="s" style="font-size:13px">અ</button><button type="button" data-fs="m" style="font-size:16px">અ</button><button type="button" data-fs="l" style="font-size:19px">અ</button><button type="button" data-fs="xl" style="font-size:23px">અ</button></div><p class="sample">મહારાજે <mark>ગુરુમંત્ર</mark> આપ્યો.</p><div class="lbl" data-t="l_font">ફોન્ટ</div><div class="fonts" id="fonts"><button type="button" data-font="noto"><em style="font-family:'Noto Serif Gujarati'">કચ્છ</em><small data-t="f_noto">પોથી</small></button><button type="button" data-font="rasa"><em style="font-family:'Rasa'">કચ્છ</em><small data-t="f_rasa">પુસ્તક</small></button><button type="button" data-font="hind"><em style="font-family:'Hind Vadodara'">કચ્છ</em><small data-t="f_hind">સાદા</small></button></div><div class="tg-grid"><label class="tg"><input type="checkbox" id="autoNight"><span class="ic">🌙</span><span data-t="t_night">રાત્રે ઘેરી</span></label></div></div>
-    <div class="pg" data-page="lang" hidden><div class="pg-hd"><button type="button" class="bk" data-go="home" aria-label="Back">‹</button><h2 data-t="s_lang">ભાષા</h2><button class="x" type="button" data-close aria-label="Close">✕</button></div><div class="lbl" data-t="l_ui">મેનુની ભાષા</div><div class="seg4 " data-pref="ui"><button type="button" data-v="gu">ગુજરાતી</button><button type="button" data-v="en">English</button><button type="button" data-v="hi" style="font-family:'Noto Serif Devanagari',serif">हिन्दी</button><button type="button" data-v="sa" style="font-family:'Noto Serif Devanagari',serif">संस्कृतम्</button></div><div class="lbl" data-t="l_sc">કથાની લિપિ</div><div class="seg4 n3" data-pref="sc"><button type="button" data-v="gu">ગુજરાતી</button><button type="button" data-v="ro">ABC</button><button type="button" data-v="dev" style="font-family:'Noto Serif Devanagari',serif">देवनागरी</button></div><p class="sample" id="scSample"></p><div class="lbl" data-t="l_tr">અનુવાદ</div><div class="seg4 n5" data-pref="tr"><button type="button" data-v="off" data-t="off">બંધ</button><button type="button" data-v="gu">ગુજરાતી</button><button type="button" data-v="hi" style="font-family:'Noto Serif Devanagari',serif">हिन्दी</button><button type="button" data-v="sa" style="font-family:'Noto Serif Devanagari',serif">संस्कृत</button><button type="button" data-v="en">English</button></div><div class="lbl" data-t="l_dig">અંક</div><div class="seg4 n2" data-pref="dig"><button type="button" data-v="gu">૧૨:૩૦</button><button type="button" data-v="en">12:30</button></div></div>
-    <div class="pg" data-page="listen" hidden><div class="pg-hd"><button type="button" class="bk" data-go="home" aria-label="Back">‹</button><h2 data-t="s_listen">સાંભળવું</h2><button class="x" type="button" data-close aria-label="Close">✕</button></div><div class="lbl" data-t="l_rate">સ્પીડ</div><div class="seg4 " data-pref="rate"><button type="button" data-v="0.75">0.75×</button><button type="button" data-v="1">1×</button><button type="button" data-v="1.25">1.25×</button><button type="button" data-v="1.5">1.5×</button></div><div class="lbl" data-t="l_pre">શબ્દથી પહેલાં શરૂ</div><div class="seg4 n3" data-pref="pre"><button type="button" data-v="0"></button><button type="button" data-v="5"></button><button type="button" data-v="10"></button></div><div class="tg-grid"><label class="tg"><input type="checkbox" id="liveTgl"><span class="ic">📜</span><span data-t="t_live">ચાલુ લખાણ</span></label><label class="tg"><input type="checkbox" id="ccTgl"><span class="ic">💬</span><span data-t="t_cc">YouTube subtitle</span></label><label class="tg"><input type="checkbox" id="miniTgl"><span class="ic">▫️</span><span data-t="t_mini">નાનો વીડિયો</span></label><label class="tg"><input type="checkbox" id="bellTgl"><span class="ic">🔔</span><span data-t="t_bell">ઘંટનાદ</span></label></div></div>
-    <div class="pg" data-page="read" hidden><div class="pg-hd"><button type="button" class="bk" data-go="home" aria-label="Back">‹</button><h2 data-t="s_read">વાંચવું</h2><button class="x" type="button" data-close aria-label="Close">✕</button></div><div class="lbl" data-t="l_lh">લીટી વચ્ચે જગ્યા</div><div class="seg4 n3" data-pref="lh"><button type="button" data-v="s" data-t="lhS">ઓછી</button><button type="button" data-v="m" data-t="lhM">સામાન્ય</button><button type="button" data-v="l" data-t="lhL">વધુ</button></div><div class="lbl" data-t="l_hlc">શોધેલા શબ્દનો રંગ</div><div class="hlsw" data-pref="hlc"><button type="button" data-v="maroon"><b style="color:var(--maroon);text-decoration:underline 2px">મંત્ર</b></button><button type="button" data-v="theme"><b style="background:var(--mark)">મંત્ર</b></button><button type="button" data-v="gold"><b style="background:#f2d58c;color:#2a1a08">મંત્ર</b></button><button type="button" data-v="green"><b style="background:#cfe6c2;color:#13300f">મંત્ર</b></button></div><div class="tg-grid"><label class="tg"><input type="checkbox" id="dualTgl"><span class="ic">🔡</span><span data-t="t_dual">બંને લિપિ</span></label><label class="tg"><input type="checkbox" id="wakeTgl"><span class="ic">☀️</span><span data-t="t_wake">સ્ક્રીન ચાલુ</span></label><label class="tg"><input type="checkbox" id="hcTgl"><span class="ic">🅰️</span><span data-t="t_hc">જાડા અક્ષર</span></label><label class="tg"><input type="checkbox" id="rmTgl"><span class="ic">🧘</span><span data-t="t_rm">ઓછું હલનચલન</span></label></div></div>
-    <div class="pg" data-page="search" hidden><div class="pg-hd"><button type="button" class="bk" data-go="home" aria-label="Back">‹</button><h2 data-t="s_search">શોધ</h2><button class="x" type="button" data-close aria-label="Close">✕</button></div><div class="lbl" data-t="l_whole">મેળ</div><div class="seg4 n2" data-pref="whole"><button type="button" data-v="0" data-t="wPart">ગુરુ<u>મંત્ર</u> પણ</button><button type="button" data-v="1" data-t="wWhole">ફક્ત <u>મંત્ર</u></button></div><div class="lbl" data-t="l_lim">પરિણામ</div><div class="seg4 n3" data-pref="lim"><button type="button" data-v="20"></button><button type="button" data-v="50"></button><button type="button" data-v="100"></button></div><div class="lbl" data-t="l_ord">ક્રમ</div><div class="seg4 n3" data-pref="ord"><button type="button" data-v="new" data-t="oNew">નવી પહેલાં</button><button type="button" data-v="old" data-t="oOld">જૂની પહેલાં</button><button type="button" data-v="best" data-t="oBest">સારો મેળ</button></div><div class="tg-grid"><label class="tg"><input type="checkbox" id="keepfTgl"><span class="ic">📌</span><span data-t="t_keepf">filter યાદ</span></label><label class="tg"><input type="checkbox" id="rhTgl"><span class="ic">🕘</span><span data-t="t_rh">તાજેતરની શોધ</span></label></div></div>
-    <div class="pg" data-page="mine" hidden><div class="pg-hd"><button type="button" class="bk" data-go="home" aria-label="Back">‹</button><h2 data-t="s_mine">મારું</h2><button class="x" type="button" data-close aria-label="Close">✕</button></div><div class="tiles t2"><button type="button" class="tile" id="openFav"><span class="ic">❤️</span><b data-t="s_fav">મનપસંદ</b><small id="favN"></small></button><button type="button" class="tile" id="openHist"><span class="ic">🕘</span><b data-t="s_hist">ઇતિહાસ</b><small id="histN"></small></button><button type="button" class="tile off" disabled><span class="ic">🔔</span><b data-t="t_notif">સૂચના</b><small data-t="soon">જલ્દી</small></button></div></div>
-    <div class="pg" data-page="more" hidden><div class="pg-hd"><button type="button" class="bk" data-go="home" aria-label="Back">‹</button><h2 data-t="s_more">બીજું</h2><button class="x" type="button" data-close aria-label="Close">✕</button></div><div class="tiles t2"><button type="button" class="tile" id="installBtn"><span class="ic">📲</span><b data-t="t_inst">એપ ઉમેરો</b></button><button type="button" class="tile" id="aboutBtn"><span class="ic">ℹ️</span><b data-t="s_about">અમારા વિશે</b></button><button type="button" class="tile" id="resetBtn"><span class="ic">↺</span><b data-t="t_reset">મૂળ સેટિંગ</b><small></small></button></div></div>
+    <div class="set-hd"><h2 id="setTitle" data-t="settings">સેટિંગ</h2><button class="x" type="button" data-close aria-label="Close">✕</button></div>
+    <div class="set-pv" id="setPv"><p id="pvTxt"></p><span id="pvTime"></span></div>
+    <div class="dd-grid" id="ddGrid"></div>
+    <div class="tg-grid"><label class="tg"><input type="checkbox" id="autoNight"><span class="ic">🌙</span><span data-t="t_night">રાત્રે ઘેરી</span></label><label class="tg"><input type="checkbox" id="liveTgl"><span class="ic">📜</span><span data-t="t_live">ચાલુ લખાણ</span></label><label class="tg"><input type="checkbox" id="ccTgl"><span class="ic">💬</span><span data-t="t_cc">YouTube subtitle</span></label><label class="tg"><input type="checkbox" id="miniTgl"><span class="ic">▫️</span><span data-t="t_mini">નાનો વીડિયો</span></label><label class="tg"><input type="checkbox" id="bellTgl"><span class="ic">🔔</span><span data-t="t_bell">ઘંટનાદ</span></label><label class="tg"><input type="checkbox" id="dualTgl"><span class="ic">🔡</span><span data-t="t_dual">બંને લિપિ</span></label><label class="tg"><input type="checkbox" id="wakeTgl"><span class="ic">☀️</span><span data-t="t_wake">સ્ક્રીન ચાલુ</span></label><label class="tg"><input type="checkbox" id="hcTgl"><span class="ic">🅰️</span><span data-t="t_hc">જાડા અક્ષર</span></label><label class="tg"><input type="checkbox" id="rmTgl"><span class="ic">🧘</span><span data-t="t_rm">ઓછું હલનચલન</span></label><label class="tg"><input type="checkbox" id="keepfTgl"><span class="ic">📌</span><span data-t="t_keepf">filter યાદ</span></label><label class="tg"><input type="checkbox" id="rhTgl"><span class="ic">🕘</span><span data-t="t_rh">તાજેતરની શોધ</span></label></div>
+    <div class="mini-tiles"><button type="button" class="mt" id="openFav"><span class="ic">❤️</span><b data-t="t_fav">મનપસંદ</b><small id="favN"></small></button><button type="button" class="mt" id="openHist"><span class="ic">🕘</span><b data-t="s_hist">ઇતિહાસ</b><small id="histN"></small></button><button type="button" class="mt" data-go="report"><span class="ic">⚑</span><b data-t="t_report">ભૂલ</b><small></small></button><button type="button" class="mt" id="installBtn"><span class="ic">📲</span><b data-t="t_inst">એપ ઉમેરો</b><small></small></button><button type="button" class="mt" id="aboutBtn"><span class="ic">ℹ️</span><b data-t="t_about">વિશે</b><small></small></button><button type="button" class="mt" id="resetBtn"><span class="ic">↺</span><b data-t="t_reset">મૂળ સેટિંગ</b><small></small></button><button type="button" class="mt off" disabled><span class="ic">🔔</span><b data-t="t_notif">સૂચના</b><small data-t="soon">જલ્દી</small></button></div>
+    <div class="dd-pop" id="ddPop" hidden></div>
     <button type="button" id="reportBtn" hidden></button>
   </div>
 </div>
@@ -711,6 +770,7 @@ function applyLook() {
   $("#autoNight").checked = pref.night;
 }
 function drawThemes() {
+  if (!$("#themes")) { applyLook(); if (window.__setsReady) drawSettings(); return; }
   $("#themes").innerHTML = THEMES.map(([id, pg, hd, cd, ln, fr]) => `<button type="button" class="sw" data-th="${id}" aria-label="${T[ui].th[id]}">
     <div class="pv" style="background:${pg}"><i style="background:${hd}"></i><b style="background:${cd};border:${id === "rajvi" ? "3px double" : id === "kinar" ? "2px solid" : "1px solid"} ${fr}${id === "sadi" || id === "kinar" ? `;border-left:4px solid ${fr}` : ""}"></b><u style="background:${ln};color:${ln}"></u></div>
     <span>${T[ui].th[id]}</span></button>`).join("");
@@ -721,14 +781,21 @@ document.querySelectorAll("#sizes [data-fs]").forEach((b) => b.onclick = () => {
 document.querySelectorAll("#fonts [data-font]").forEach((b) => b.onclick = () => { pref.font = b.dataset.font; store.set("k_font", pref.font); applyLook(); });
 $("#autoNight").onchange = (e) => { pref.night = e.target.checked; store.set("k_night", pref.night ? "1" : "0"); applyLook(); };
 setInterval(() => { if (pref.night) applyLook(); }, 60000);
-function openSettings(open) { if (open && typeof goPage === "function") goPage("home"); $("#sheet").hidden = $("#scrim").hidden = !open; document.body.style.overflow = open ? "hidden" : ""; }
+function openSettings(open) { if (typeof closeDD === "function" && $("#ddPop")) closeDD(); if (open && window.__setsReady) drawSettings(); $("#sheet").hidden = $("#scrim").hidden = !open; document.body.style.overflow = open ? "hidden" : ""; }
 $("#gear").onclick = () => openSettings(true);
 document.querySelectorAll("[data-close]").forEach((b) => b.onclick = () => openSettings(false));
 $("#scrim").onclick = () => openSettings(false);
 function goPage(name) {
   if (name === "report") { openSettings(false); showReport(null); return; }
+  if (name === "home") name = "p1";
   document.querySelectorAll("#sheet .pg").forEach((p) => p.hidden = p.dataset.page !== name);
+  document.querySelectorAll(".pager [data-go]").forEach((b) => b.classList.toggle("on", b.dataset.go === name));
 }
+// swipe left/right to change the settings page
+(() => { let x0 = null; const sh = document.getElementById("sheet");
+  sh.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+  sh.addEventListener("touchend", (e) => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if (Math.abs(dx) > 60) goPage(dx < 0 ? "p2" : "p1"); }, { passive: true }); })();
 document.querySelectorAll("#sheet [data-go]").forEach((b) => b.onclick = () => goPage(b.dataset.go));
 document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#sheet").hidden) openSettings(false); });
 applyLook();
@@ -816,7 +883,7 @@ function applyPrefs() {
   document.querySelectorAll("[data-pref]").forEach((g) => g.querySelectorAll("[data-v]").forEach((b) => b.classList.toggle("on", b.dataset.v === String(val[g.dataset.pref]))));
   document.querySelectorAll('[data-pref="pre"] [data-v]').forEach((b) => b.textContent = num(T[ui].sec(b.dataset.v)));
   document.querySelectorAll('[data-pref="rate"] [data-v]').forEach((b) => b.textContent = num(b.dataset.v) + "×");
-  $("#scSample").textContent = scText("મહારાજે આચાર્યને ગુરુમંત્ર આપ્યો.", "maharaje acharyane gurumantra apyo.");
+  if ($("#scSample")) $("#scSample").textContent = scText("મહારાજે આચાર્યને ગુરુમંત્ર આપ્યો.", "maharaje acharyane gurumantra apyo.");
   $("#miniTgl").checked = pref.mini; $("#bellTgl").checked = pref.bell;
   document.body.classList.toggle("mini", pref.mini);
   $("#spd").textContent = num(pref.rate) + "×";
@@ -943,6 +1010,7 @@ function tileSums() {
 }
 function applyPrefs2() {
   tileSums();
+  if (window.__setsReady) drawSettings();
   const el = document.documentElement;
   el.dataset.lh = pref.lh; el.dataset.hlc = pref.hlc;
   el.classList.toggle("hc", pref.hc); el.classList.toggle("rm", pref.rm);
@@ -1018,6 +1086,78 @@ Object.assign(T.sa, { t_report: "दोषः", t_night: "रात्रौ ग
   l_theme: "वर्णविन्यासः", l_size: "अक्षरपरिमाणम्", l_font: "अक्षररूपम्", l_ui: "सूच्याः भाषा", l_sc: "कथालिपिः", l_tr: "अनुवादः", l_dig: "अङ्काः", l_rate: "वेगः", l_pre: "पदात् पूर्वम्",
   l_lh: "पङ्क्त्यन्तरम्", l_hlc: "पदवर्णः", l_whole: "मेलः", l_lim: "फलानि", l_ord: "क्रमः", s_lang: "भाषा", s_more: "अन्यत्",
   f_noto: "पोथी", f_rasa: "ग्रन्थः", f_hind: "सरलम्", wPart: "पदांशः अपि", wWhole: "पूर्णपदम्", oNew: "नूतनम्", oOld: "पुरातनम्", oBest: "उत्तममेलः", sec: (n) => `${n} क्षणाः` });
+
+Object.assign(T.gu, { t_next: "વાંચવું, શોધ, મારું", t_fav: "મનપસંદ", t_about: "વિશે", t_back: "પાછળ", s_mine: "મારું અને બીજું", l_pre: "પહેલાંથી શરૂ", l_hlc: "શબ્દનો રંગ", wPart: "ભાગ પણ", wWhole: "આખો શબ્દ", sec: (n) => `${n} સે.` });
+Object.assign(T.en, { t_next: "Reading, search, mine", t_fav: "Favourites", t_about: "About", t_back: "Back", s_mine: "Mine and more", l_pre: "Start earlier", l_hlc: "Word colour", wPart: "Part too", wWhole: "Whole word", sec: (n) => `${n}s` });
+Object.assign(T.hi, { t_next: "पढ़ना, खोज, मेरा", t_fav: "पसंदीदा", t_about: "परिचय", t_back: "पीछे", s_mine: "मेरा और अन्य", l_pre: "पहले से शुरू", l_hlc: "शब्द का रंग", wPart: "भाग भी", wWhole: "पूरा शब्द", sec: (n) => `${n} से.` });
+Object.assign(T.sa, { t_next: "पठनम्, अन्वेषणम्, मदीयम्", t_fav: "प्रियाणि", t_about: "परिचयः", t_back: "पृष्ठतः", s_mine: "मदीयम् अन्यच्च", l_pre: "पूर्वम् आरम्भः", l_hlc: "पदवर्णः", wPart: "अंशः अपि", wWhole: "पूर्णपदम्", sec: (n) => `${n} क्ष.` });
+
+
+/* ---------- settings v4: dropdown buttons ---------- */
+Object.assign(T.gu, { fsS: "નાના", fsM: "મધ્યમ", fsL: "મોટા", fsXL: "ખૂબ મોટા", hcM: "મરૂન", hcT: "કેસરી", hcG: "સોનેરી", hcN: "લીલો" });
+Object.assign(T.en, { fsS: "Small", fsM: "Medium", fsL: "Large", fsXL: "Extra large", hcM: "Maroon", hcT: "Saffron", hcG: "Gold", hcN: "Green" });
+Object.assign(T.hi, { fsS: "छोटे", fsM: "मध्यम", fsL: "बड़े", fsXL: "बहुत बड़े", hcM: "मरून", hcT: "केसरी", hcG: "सुनहरा", hcN: "हरा" });
+Object.assign(T.sa, { fsS: "लघु", fsM: "मध्यम", fsL: "बृहत्", fsXL: "अतिबृहत्", hcM: "रक्तः", hcT: "काषायः", hcG: "स्वर्णः", hcN: "हरितः" });
+const DVF = "font-family:'Noto Serif Devanagari',serif";
+// each entry: key, label, options [value, text(), extra html], current value, how to save
+const SETS = [
+  { k: "theme", l: "l_theme", o: () => THEMES.map(([id, pg, hd, cd, ln, fr]) => [id, T[ui].th[id], `<span class="swc" style="background:linear-gradient(${hd} 0 35%, ${cd} 35%);outline:2px solid ${fr};outline-offset:-2px"></span>`]),
+    get: () => pref.theme, set: (v) => { pref.theme = v; store.set("k_theme", v); } },
+  { k: "fs", l: "l_size", o: () => [["s", T[ui].fsS, '<b style="font-size:12px">અ</b>'], ["m", T[ui].fsM, '<b style="font-size:15px">અ</b>'], ["l", T[ui].fsL, '<b style="font-size:18px">અ</b>'], ["xl", T[ui].fsXL, '<b style="font-size:21px">અ</b>']],
+    get: () => pref.fs, set: (v) => { pref.fs = v; store.set("k_fs", v); } },
+  { k: "font", l: "l_font", o: () => [["noto", T[ui].f_noto, `<b style="font-family:'Noto Serif Gujarati'">કચ્છ</b>`], ["rasa", T[ui].f_rasa, `<b style="font-family:'Rasa'">કચ્છ</b>`], ["hind", T[ui].f_hind, `<b style="font-family:'Hind Vadodara'">કચ્છ</b>`]],
+    get: () => pref.font, set: (v) => { pref.font = v; store.set("k_font", v); } },
+  { k: "ui", l: "l_ui", o: () => [["gu", "ગુજરાતી"], ["en", "English"], ["hi", "हिन्दी"], ["sa", "संस्कृतम्"]], get: () => ui, set: (v) => { ui = v; store.set("k_ui", v); } },
+  { k: "sc", l: "l_sc", o: () => [["gu", "ગુજરાતી"], ["ro", "ABC"], ["dev", "देवनागरी"]], get: () => sc, set: (v) => { sc = v; store.set("k_sc", v); } },
+  { k: "tr", l: "l_tr", o: () => [["off", T[ui].off], ["gu", "ગુજરાતી"], ["hi", "हिन्दी"], ["sa", "संस्कृत"], ["en", "English"]], get: () => pref.tr },
+  { k: "dig", l: "l_dig", o: () => [["gu", "૧૨:૩૦"], ["en", "12:30"]], get: () => dig, set: (v) => { dig = v; store.set("k_dig", v); } },
+  { k: "rate", l: "l_rate", o: () => RATES.map((r) => [r, num(r) + "×"]), get: () => pref.rate, after: () => applyRate() },
+  { k: "pre", l: "l_pre", o: () => ["0", "5", "10"].map((n) => [n, num(T[ui].sec(n))]), get: () => pref.pre },
+  { k: "lh", l: "l_lh", o: () => [["s", T[ui].lhS], ["m", T[ui].lhM], ["l", T[ui].lhL]], get: () => pref.lh },
+  { k: "hlc", l: "l_hlc", o: () => [["maroon", T[ui].hcM, '<b style="color:#7a1f17;text-decoration:underline 2px">અ</b>'], ["theme", T[ui].hcT, '<b style="background:#f3d3bb;padding:0 4px">અ</b>'], ["gold", T[ui].hcG, '<b style="background:#f2d58c;padding:0 4px">અ</b>'], ["green", T[ui].hcN, '<b style="background:#cfe6c2;padding:0 4px">અ</b>']], get: () => pref.hlc },
+  { k: "whole", l: "l_whole", o: () => [["0", T[ui].wPart], ["1", T[ui].wWhole]], get: () => pref.whole },
+  { k: "lim", l: "l_lim", o: () => ["20", "50", "100"].map((n) => [n, num(n)]), get: () => pref.lim },
+  { k: "ord", l: "l_ord", o: () => [["new", T[ui].oNew], ["old", T[ui].oOld], ["best", T[ui].oBest]], get: () => pref.ord },
+];
+window.__setsReady = true;
+const optStyle = (k, v) => (k === "ui" || k === "sc" || k === "tr") && (v === "hi" || v === "sa" || v === "dev") ? DVF : "";
+function drawSettings() {
+  const g = $("#ddGrid"); if (!g) return;
+  const open = $("#ddPop").hidden ? null : $("#ddPop").dataset.k;
+  g.innerHTML = SETS.map((st) => {
+    const cur = st.o().find(([v]) => v === String(st.get())) || [];
+    return `<div class="dd"><label>${T[ui][st.l] || ""}</label><button type="button" data-dd="${st.k}" aria-expanded="${open === st.k}"><span style="${optStyle(st.k, cur[0])}">${cur[1] ?? ""}</span><i>▼</i></button></div>`;
+  }).join("");
+  g.querySelectorAll("[data-dd]").forEach((b) => b.onclick = (e) => { e.stopPropagation(); toggleDD(b); });
+  // live preview of the current choices
+  $("#pvTxt").innerHTML = hl(scText("મહારાજે આચાર્યને ગુરુમંત્ર આપ્યો.", "maharaje acharyane gurumantra apyo."), scQuery("ગુરુમંત્ર")) + dualLine("મહારાજે આચાર્યને ગુરુમંત્ર આપ્યો.", "maharaje acharyane gurumantra apyo.", "ગુરુમંત્ર", "span");
+  $("#pvTime").textContent = fmt(108);
+}
+function closeDD() { $("#ddPop").hidden = true; $("#ddGrid").querySelectorAll("[data-dd]").forEach((b) => b.setAttribute("aria-expanded", "false")); }
+function toggleDD(btn) {
+  const k = btn.dataset.dd, pop = $("#ddPop");
+  if (!pop.hidden && pop.dataset.k === k) { closeDD(); return; }
+  const st = SETS.find((x) => x.k === k);
+  pop.dataset.k = k;
+  pop.innerHTML = st.o().map(([v, txt, extra]) => `<button type="button" data-v="${v}" class="${v === String(st.get()) ? "on" : ""}">${extra || ""}<span style="${optStyle(k, v)}">${txt}</span></button>`).join("");
+  pop.hidden = false;
+  // open the list right under the button that was tapped, kept inside the page
+  const box = $("#sheet .in").getBoundingClientRect(), r = btn.getBoundingClientRect();
+  const w = Math.max(r.width, 150);
+  let left = r.left - box.left; if (left + w > box.width) left = box.width - w;
+  let top = r.bottom - box.top + 4; const h = pop.offsetHeight;
+  if (top + h > box.height) top = Math.max(0, r.top - box.top - h - 4); // no room below: open above
+  Object.assign(pop.style, { left: left + "px", top: top + "px", width: w + "px" });
+  $("#ddGrid").querySelectorAll("[data-dd]").forEach((b) => b.setAttribute("aria-expanded", String(b === btn)));
+  pop.querySelectorAll("[data-v]").forEach((o) => o.onclick = (e) => {
+    e.stopPropagation();
+    const v = o.dataset.v;
+    if (st.set) st.set(v); else { pref[k] = v; store.set("k_" + k, v); }
+    if (st.after) st.after();
+    closeDD(); applyLook(); applyUI();
+  });
+}
+document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && !pop.hidden && !pop.contains(e.target)) closeDD(); });
 
 /* ---------- live text under the video ---------- */
 Object.assign(T.gu, { lvNow: "હમણાં બોલાઈ રહ્યું છે", lvOrig: "મૂળ", s_live: "વીડિયો સાથે ચાલુ લખાણ", s_live2: "વક્તા જે બોલે છે તે વીડિયો નીચે સાથે-સાથે દેખાય", s_cc: "YouTube ના subtitle", s_cc2: "વીડિયોમાં YouTube ના પોતાના subtitle (હોય તો)" });
