@@ -764,8 +764,28 @@ function render(rows, q) {
   $("#out").querySelectorAll("[data-sh]").forEach((b) => b.onclick = () => showShare(rows[b.dataset.sh]));
 }
 
+// parts the sevak hid in Admin: the player jumps over them without a word
+let skips = { yid: null, list: [] };
+async function loadSkips(yid) {
+  skips = { yid, list: [] };
+  try {
+    const r = await fetch(`${SB}/rest/v1/rpc/katha_skips`, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + KEY, "Content-Type": "application/json" }, body: JSON.stringify({ p_yid: yid }) });
+    const j = await r.json(); if (!Array.isArray(j) || skips.yid !== yid) return;
+    const out = []; // join hidden passages that follow each other into one jump
+    j.forEach((x) => { const l = out[out.length - 1]; if (l && x.start_sec <= l.end_sec) l.end_sec = Math.max(l.end_sec, x.end_sec); else out.push({ ...x }); });
+    skips.list = out;
+  } catch {}
+}
+function skipCheck(t) {
+  if (!cur || skips.yid !== cur.yid) return false;
+  const s = skips.list.find((x) => t >= x.start_sec - 0.3 && t < x.end_sec - 0.5);
+  if (!s) return false;
+  liveSeek(s.end_sec); return true;
+}
+
 function play(yid, t, info) {
   cur = { yid, t, info };
+  if (skips.yid !== yid) loadSkips(yid);
   addHistory(info, yid, t);
   const from = Math.max(0, t - (+pref.pre || 0));
   const org = /^https?:/.test(location.origin) ? `&origin=${encodeURIComponent(location.origin)}` : "";
@@ -1360,7 +1380,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.10.31.7";
+const APP_VER = "2026.11.01.1";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
@@ -1559,7 +1579,7 @@ function ytListen() { const f = $("#yt"); if (f && f.contentWindow) f.contentWin
 window.addEventListener("message", (e) => {
   if (!/(^|\.)youtube(-nocookie)?\.com$/.test((() => { try { return new URL(e.origin).hostname; } catch { return ""; } })())) return;
   let d; try { d = typeof e.data === "string" ? JSON.parse(e.data) : e.data; } catch { return; }
-  if (d && d.event === "infoDelivery" && d.info && typeof d.info.currentTime === "number") liveTick(d.info.currentTime);
+  if (d && d.event === "infoDelivery" && d.info && typeof d.info.currentTime === "number" && !skipCheck(d.info.currentTime)) liveTick(d.info.currentTime);
 });
 // keep the page below the player whatever its height
 try { new ResizeObserver(() => document.body.style.setProperty("--ph", $("#player").offsetHeight + "px")).observe($("#player")); } catch {}
