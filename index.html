@@ -27,6 +27,7 @@ loadFont("base"); try { var _f = localStorage.getItem("k_font"); if (_f) loadFon
   --latin:"Cormorant Garamond","Georgia",serif;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important} /* a closed list, popup or toast must really disappear */
 html,body{margin:0}
 body{background:linear-gradient(180deg,var(--paper),var(--paper-2)) fixed;color:var(--ink);font-family:var(--gu);
   padding:env(safe-area-inset-top,0) max(16px,env(safe-area-inset-right,0px)) 120px max(16px,env(safe-area-inset-left,0px));min-height:100vh}
@@ -1301,7 +1302,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.10.31.3";
+const APP_VER = "2026.10.31.4";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
