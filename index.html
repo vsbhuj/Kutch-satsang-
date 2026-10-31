@@ -168,10 +168,16 @@ html[data-look] .card::before{top:4px;left:4px}
 html[data-look] .card::after{bottom:4px;right:4px;transform:rotate(180deg)}
 
 /* Gujarati/Hindi labels: no wide letter-spacing (it breaks conjuncts apart) */
-html:is([data-ui="gu"],[data-ui="hi"]) :is(.eyebrow,.field label,.explore h3,.count,.sheet h3,.btn,.stats){letter-spacing:.02em;font-family:var(--gu);text-transform:none}
-html:is([data-ui="gu"],[data-ui="hi"]) .eyebrow{font-size:14px}
-html[data-ui="hi"]{--gu:"Noto Serif Devanagari","Noto Serif Gujarati",serif}
-html[data-ui="hi"][data-sc="gu"] .txt,html[data-ui="hi"][data-sc="gu"] .seg p,html[data-ui="hi"] h1{font-family:"Noto Serif Gujarati",serif}
+html:is([data-ui="gu"],[data-ui="hi"],[data-ui="sa"]) :is(.eyebrow,.field label,.explore h3,.count,.sheet h3,.btn,.stats){letter-spacing:.02em;font-family:var(--gu);text-transform:none}
+html:is([data-ui="gu"],[data-ui="hi"],[data-ui="sa"]) .eyebrow{font-size:14px}
+html:is([data-ui="hi"],[data-ui="sa"]){--gu:"Noto Serif Devanagari","Noto Serif Gujarati",serif}
+html:is([data-ui="hi"],[data-ui="sa"])[data-sc="gu"] :is(.txt,.seg p,.mine .item p),html:is([data-ui="hi"],[data-ui="sa"]) h1{font-family:"Noto Serif Gujarati",serif}
+.dev{font-family:"Noto Serif Devanagari",serif}
+.tr{margin:10px 0 0;padding:8px 12px;border-left:2px solid var(--gold);background:color-mix(in srgb,var(--card) 70%,var(--paper));font-size:calc(16px * var(--fs));line-height:1.8;color:var(--ink);overflow-wrap:anywhere}
+.tr small{display:block;font-size:12px;color:var(--ink-2);margin-bottom:2px}
+.trb{background:none;border:0;color:var(--ink-2);cursor:pointer;padding:0;font-size:13px}
+.seg .trb{grid-column:2;justify-self:start;margin-top:4px}.seg .tr{grid-column:2/4;margin-top:4px}
+.seg4.n5{grid-template-columns:repeat(3,1fr)}.seg4.n5 button:nth-child(4){border-left:0}.seg4.n5 button:nth-child(n+4){border-top:1px solid var(--rule)}
 html[data-sc="dev"] :is(.txt,.seg p){font-family:"Noto Serif Devanagari","Tiro Devanagari Hindi",serif}
 
 /* ---------- sections 2-4 ---------- */
@@ -278,6 +284,10 @@ body.playing .gear{display:none}
       <small>ફોર્મેટ: <b>લિંક | વક્તા | સિરીઝ</b>. વક્તા અને સિરીઝ ખાલી રાખવા હોય તો નીચેના ખાનામાં એક વાર લખો, એ બધી લિંક માટે વપરાશે.</small>
       <input id="dspeaker" placeholder="વક્તા (બધી લિંક માટે)">
       <input id="dseries" placeholder="કથા સિરીઝ (બધી લિંક માટે)">
+      <label for="dlang">કથા કઈ ભાષામાં બોલાઈ છે?</label>
+      <select id="dlang" style="width:100%;border:1px solid var(--rule);background:var(--card);padding:10px;font-size:15px">
+        <option value="gu">ગુજરાતી (લખાણ ગુજરાતી લિપિમાં)</option><option value="hi">હિન્દી (લખાણ દેવનાગરીમાં)</option><option value="sa">સંસ્કૃત (લખાણ દેવનાગરીમાં)</option>
+      </select>
       <button class="btn" id="addBtn" type="button">ઉમેરો</button>
       <small>દરેક કથાનું લખાણ બનતાં થોડી મિનિટ લાગે. આ પેજ ખુલ્લું રાખશો તો સ્થિતિ આપમેળે બદલાશે.</small>
       <div id="vlist" class="admin" style="margin-top:6px"></div>
@@ -326,10 +336,13 @@ body.playing .gear{display:none}
 
     <h3 data-t="s_lang">ભાષા અને લિપિ</h3>
     <div class="lbl" data-t="s_ui">બટન અને મેનુની ભાષા</div>
-    <div class="seg4 n3" data-pref="ui"><button type="button" data-v="gu">ગુજરાતી</button><button type="button" data-v="en">English</button><button type="button" data-v="hi" style="font-family:'Noto Serif Devanagari',serif">हिन्दी</button></div>
+    <div class="seg4" data-pref="ui"><button type="button" data-v="gu">ગુજરાતી</button><button type="button" data-v="en">English</button><button type="button" data-v="hi" style="font-family:'Noto Serif Devanagari',serif">हिन्दी</button><button type="button" data-v="sa" style="font-family:'Noto Serif Devanagari',serif">संस्कृतम्</button></div>
     <div class="lbl" data-t="s_sc">કથાનું લખાણ કઈ લિપિમાં</div>
     <div class="seg4 n3" data-pref="sc"><button type="button" data-v="gu">ગુજરાતી</button><button type="button" data-v="ro">ABC</button><button type="button" data-v="dev" style="font-family:'Noto Serif Devanagari',serif">देवनागरी</button></div>
     <p class="sample" id="scSample"></p>
+    <div class="lbl" data-t="s_tr">અનુવાદ</div>
+    <div class="seg4 n5" data-pref="tr"><button type="button" data-v="off" data-t="off">બંધ</button><button type="button" data-v="gu">ગુજરાતી</button><button type="button" data-v="hi" style="font-family:'Noto Serif Devanagari',serif">हिन्दी</button><button type="button" data-v="sa" style="font-family:'Noto Serif Devanagari',serif">संस्कृतम्</button><button type="button" data-v="en">English</button></div>
+    <p class="lbl" style="font-weight:400;font-size:13px;color:var(--ink-2);margin:6px 2px 0" data-t="s_tr2">દરેક ફકરા નીચે "અનુવાદ" બટન આવશે. AI અનુવાદ છે, એટલે ભૂલ હોઈ શકે.</p>
     <div class="lbl" data-t="s_dig">અંક</div>
     <div class="seg4 n2" data-pref="dig"><button type="button" data-v="gu">૧:૨૩:૪૫</button><button type="button" data-v="en">1:23:45</button></div>
 
@@ -368,7 +381,7 @@ const T = {
     s_mini: "Small video (just listen)", s_mini2: "Keeps the video small so the text has more room", s_bell: "Button sound", s_bell2: "A soft bell when you tap a button",
     s_mine: "Mine", s_fav: "Favourite moments", s_hist: "History", s_notif: "🔔 New katha alerts", s_notif2: "Coming soon", soon: "Soon",
     favAdd: "Added to favourites", favDel: "Removed from favourites", favEmpty: "No favourites yet. Tap ♡ on any passage to keep it here.",
-    histEmpty: "Nothing played yet.", clear: "Clear history", sure: "Tap again to clear", cleared: "History cleared", remove: "Remove", },
+    histEmpty: "Nothing played yet.", clear: "Clear history", sure: "Tap again to clear", cleared: "History cleared", remove: "Remove", s_tr: "Translation", s_tr2: "A \u201cTranslate\u201d button appears under each passage. It is an AI translation, so it may have mistakes.", off: "Off", trBtn: (l) => `🌐 ${l} translation`, trBusy: "Translating…", trErr: "Translation is not available right now. Please try again in a minute.", trSame: "This katha is already in that language.", },
   gu: { eyebrow: "કચ્છ સત્સંગ · કથા સંગ્રહ", sub: "— બોલાયેલા શબ્દો શોધો —", search: "શોધો", series: "કથા સિરીઝ", speaker: "વક્તા",
     allseries: "બધી સિરીઝ", allspeakers: "બધા વક્તા", see: "સંગ્રહમાં શું છે તે જુઓ", fe: "ઉદાહરણ", hint: "શોધવા માટે Enter દબાવો",
     ph: "બોલાયેલો કોઈ પણ શબ્દ શોધો…", matches: (n) => `${n} પરિણામ`, none: "આ શબ્દ હજી કોઈ કથામાં મળ્યો નથી.", play: "અહીં સાંભળો", read: "આખું લખાણ વાંચો →",
@@ -381,7 +394,7 @@ const T = {
     s_mini: "નાનો વીડિયો (ફક્ત સાંભળવા)", s_mini2: "વીડિયો નાનો રહે, લખાણ વાંચવા વધુ જગ્યા મળે", s_bell: "બટનનો અવાજ", s_bell2: "બટન દબાવતાં ધીમો ઘંટનાદ",
     s_mine: "મારું", s_fav: "મનપસંદ ક્ષણો", s_hist: "ઇતિહાસ", s_notif: "🔔 નવી કથાની સૂચના", s_notif2: "આ સુવિધા જલ્દી આવશે", soon: "જલ્દી",
     favAdd: "મનપસંદમાં ઉમેર્યું", favDel: "મનપસંદમાંથી કાઢ્યું", favEmpty: "હજી કોઈ મનપસંદ નથી. કોઈ પણ ફકરા પર ♡ દબાવો, એ અહીં સચવાઈ જશે.",
-    histEmpty: "હજી કંઈ સાંભળ્યું નથી.", clear: "ઇતિહાસ સાફ કરો", sure: "ખાતરી? ફરી દબાવો", cleared: "ઇતિહાસ સાફ થયો", remove: "કાઢો", },
+    histEmpty: "હજી કંઈ સાંભળ્યું નથી.", clear: "ઇતિહાસ સાફ કરો", sure: "ખાતરી? ફરી દબાવો", cleared: "ઇતિહાસ સાફ થયો", remove: "કાઢો", s_tr: "અનુવાદ", s_tr2: "દરેક ફકરા નીચે \u201cઅનુવાદ\u201d બટન આવશે. AI અનુવાદ છે, એટલે ભૂલ હોઈ શકે.", off: "બંધ", trBtn: (l) => `🌐 ${l} અનુવાદ`, trBusy: "અનુવાદ થઈ રહ્યો છે…", trErr: "અત્યારે અનુવાદ નથી થઈ શકતો, એક મિનિટ પછી ફરી પ્રયત્ન કરો.", trSame: "આ કથા એ જ ભાષામાં છે.", },
   hi: { eyebrow: "कच्छ सत्संग · कथा संग्रह", sub: "— बोले गए शब्द खोजें —", search: "खोजें", series: "कथा सीरीज़", speaker: "वक्ता",
     allseries: "सभी सीरीज़", allspeakers: "सभी वक्ता", see: "संग्रह में क्या है देखें", fe: "उदाहरण", hint: "खोजने के लिए Enter दबाएँ",
     ph: "बोला गया कोई भी शब्द खोजें…", matches: (n) => `${n} परिणाम`, none: "यह शब्द अभी किसी कथा में नहीं मिला।", play: "यहाँ सुनें", read: "पूरा पाठ पढ़ें →",
@@ -394,7 +407,21 @@ const T = {
     s_mini: "छोटा वीडियो (सिर्फ़ सुनने के लिए)", s_mini2: "वीडियो छोटा रहे, पढ़ने को ज़्यादा जगह मिले", s_bell: "बटन की आवाज़", s_bell2: "बटन दबाने पर धीमी घंटी",
     s_mine: "मेरा", s_fav: "पसंदीदा पल", s_hist: "इतिहास", s_notif: "🔔 नई कथा की सूचना", s_notif2: "यह सुविधा जल्द आएगी", soon: "जल्द",
     favAdd: "पसंदीदा में जोड़ा", favDel: "पसंदीदा से हटाया", favEmpty: "अभी कोई पसंदीदा नहीं। किसी भी अनुच्छेद पर ♡ दबाएँ।",
-    histEmpty: "अभी कुछ नहीं सुना।", clear: "इतिहास साफ़ करें", sure: "पक्का? फिर दबाएँ", cleared: "इतिहास साफ़ हुआ", remove: "हटाएँ" },
+    histEmpty: "अभी कुछ नहीं सुना।", clear: "इतिहास साफ़ करें", sure: "पक्का? फिर दबाएँ", cleared: "इतिहास साफ़ हुआ", remove: "हटाएँ", s_tr: "अनुवाद", s_tr2: "हर अनुच्छेद के नीचे \u201cअनुवाद\u201d बटन आएगा। यह AI अनुवाद है, इसमें भूल हो सकती है।", off: "बंद", trBtn: (l) => `🌐 ${l} अनुवाद`, trBusy: "अनुवाद हो रहा है…", trErr: "अभी अनुवाद नहीं हो पा रहा, एक मिनट बाद फिर कोशिश करें।", trSame: "यह कथा पहले से उसी भाषा में है।" },
+  sa: { eyebrow: "कच्छसत्सङ्गः · कथासङ्ग्रहः", sub: "— उक्तानि वचनानि अन्विष्यन्तु —", search: "अन्विष्यताम्", series: "कथामाला", speaker: "वक्ता",
+    allseries: "सर्वाः कथामालाः", allspeakers: "सर्वे वक्तारः", see: "सङ्ग्रहे किम् अस्ति इति पश्यन्तु", fe: "उदाहरणम्", hint: "अन्वेषणाय Enter नुदन्तु",
+    ph: "किमपि उक्तं पदम् अन्विष्यन्तु…", matches: (n) => `${n} फलानि`, none: "इदं पदम् अद्यापि कस्याम् अपि कथायां न लब्धम्।", play: "अत्र शृण्वन्तु", read: "सम्पूर्णं पाठं पठन्तु →",
+    stats: (k, p) => `${k} कथाः · ${p} अनुच्छेदाः · साक्षात् तस्मिन् क्षणे`, loading: "अन्विष्यते…", copied: "सम्पर्कसूत्रं प्रतिलिखितम्",
+    settings: "विन्यासः", s_look: "रूपम्", s_theme: "वर्णविन्यासः", s_size: "अक्षराणां परिमाणम्", s_font: "गुर्जरलिपेः अक्षररूपम्", s_night: "रात्रौ स्वयमेव गाढवर्णः", s_night2: "सायं 7 तः प्रातः 6 पर्यन्तं \u201cरात्रिग्रन्थः\u201d",
+    f_noto: "पोथीसदृशम्", f_rasa: "मुद्रितग्रन्थसदृशम्", f_hind: "सरलं स्पष्टं च",
+    th: { sadi: "सरलः", rajvi: "राजपोथी", vel: "लता", kinar: "रक्तप्रान्तः", leeli: "हरितपोथी", ratri: "रात्रिग्रन्थः" },
+    s_lang: "भाषा लिपिश्च", s_ui: "पिञ्जानां सूच्याश्च भाषा", s_sc: "कथापाठः कस्यां लिप्याम्", s_dig: "अङ्काः",
+    s_listen: "श्रवणम्", s_rate: "वेगः", s_pre: "अन्विष्टात् पदात् कियत् पूर्वम् आरभेत", sec: (n) => `${n} क्षणाः`,
+    s_mini: "लघु चलच्चित्रम् (केवलं श्रवणाय)", s_mini2: "चलच्चित्रं लघु तिष्ठति, पठनाय अधिकं स्थानं लभ्यते", s_bell: "पिञ्जस्य ध्वनिः", s_bell2: "पिञ्जनोदने मन्दः घण्टानादः",
+    s_mine: "मदीयम्", s_fav: "प्रियाः क्षणाः", s_hist: "इतिहासः", s_notif: "🔔 नूतनकथायाः सूचना", s_notif2: "इयं सुविधा शीघ्रम् आगमिष्यति", soon: "शीघ्रम्",
+    favAdd: "प्रियेषु योजितम्", favDel: "प्रियेभ्यः अपनीतम्", favEmpty: "अद्यापि किमपि प्रियं नास्ति। कस्मिन्नपि अनुच्छेदे ♡ नुदन्तु।",
+    histEmpty: "अद्यापि किमपि न श्रुतम्।", clear: "इतिहासं मार्जयन्तु", sure: "निश्चितम्? पुनः नुदन्तु", cleared: "इतिहासः मार्जितः", remove: "अपनयन्तु",
+    s_tr: "अनुवादः", s_tr2: "प्रत्येकस्य अनुच्छेदस्य अधः \u201cअनुवादः\u201d पिञ्जः भविष्यति। AI-अनुवादः अस्ति, अतः दोषाः सम्भवन्ति।", off: "निष्क्रियम्", trBtn: (l) => `🌐 ${l} अनुवादः`, trBusy: "अनूद्यते…", trErr: "इदानीम् अनुवादः न शक्यः, एकनिमेषानन्तरं पुनः प्रयतन्ताम्।", trSame: "इयं कथा पूर्वमेव तस्यां भाषायाम् अस्ति।" },
 };
 let ui = store.get("k_ui", "gu"), sc = store.get("k_sc", "gu"), stats = { kathas: 0, passages: 0 }, last = null, cur = null;
 
@@ -418,8 +445,33 @@ async function rpc(name, body) {
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 // Gujarati letters -> Devanagari: the two Unicode blocks line up letter for letter
 const toDev = (s) => String(s ?? "").replace(/[\u0A81-\u0AFF]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0x180));
-const scText = (gu, ro) => sc === "ro" && ro ? ro : sc === "dev" ? toDev(gu) : gu;
-const scQuery = (q) => sc === "dev" ? toDev(q) : q;
+// Devanagari -> Gujarati (Hindi/Sanskrit kathas read in Gujarati letters); nukta letters are split first
+const toGu = (s) => String(s ?? "").normalize("NFD").replace(/[\u0901-\u096F]/g, (c) => { const g = String.fromCharCode(c.charCodeAt(0) + 0x180); return /\p{L}|\p{M}|\p{N}/u.test(g) ? g : c; });
+const isDev = (s) => /[\u0900-\u097F]/.test(s || "");
+const scText = (txt, ro) => sc === "ro" && ro ? ro : sc === "dev" ? toDev(txt) : toGu(txt);
+const scQuery = (q) => sc === "dev" ? toDev(q) : sc === "gu" ? toGu(q) : q;
+// AI translation (cached on the server per passage and language)
+const TRN = { gu: "ગુજરાતી", hi: "हिन्दी", sa: "संस्कृतम्", en: "English" };
+const trCache = {};
+const trButton = (pid, txt, attr) => !pid || pref.tr === "off" || (pref.tr === "gu" && !isDev(txt)) ? "" :
+  `<button type="button" class="trb" data-pid="${pid}" ${attr}>${T[ui].trBtn(TRN[pref.tr])}</button>`;
+async function showTr(btn) {
+  const pid = btn.dataset.pid, lang = pref.tr, key = pid + ":" + lang;
+  let box = btn.nextElementSibling && btn.nextElementSibling.classList.contains("tr") ? btn.nextElementSibling : null;
+  if (box) { box.remove(); return; }
+  box = document.createElement("div"); box.className = "tr" + (lang === "hi" || lang === "sa" ? " dev" : "");
+  box.innerHTML = `<small>${T[ui].trBusy}</small>`; btn.after(box);
+  try {
+    if (!trCache[key]) {
+      const r = await fetch(FN, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "translate", passage_id: +pid, lang }) });
+      const j = await r.json();
+      if (j.same) { box.innerHTML = `<small>${T[ui].trSame}</small>`; return; }
+      if (!r.ok || !j.text) throw new Error(j.error || r.status);
+      trCache[key] = j.text;
+    }
+    box.innerHTML = `<small>🌐 ${TRN[lang]}</small>${esc(trCache[key])}`;
+  } catch (e) { box.innerHTML = `<small>${T[ui].trErr}</small>`; }
+}
 let dig = store.get("k_dig", "en");
 const num = (x) => dig === "gu" ? String(x).replace(/[0-9]/g, (d) => String.fromCharCode(0x0AE6 + +d)) : String(x);
 const fmt0 = (s) => { s = Math.max(0, s | 0); const h = s / 3600 | 0, m = (s % 3600) / 60 | 0, x = s % 60; return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(x).padStart(2, "0"); };
@@ -457,11 +509,12 @@ function render(rows, q) {
     const active = cur && cur.yid === r.youtube_id && cur.t === r.start_sec;
     return `<article class="card"><h4>${esc(r.title || r.series || "Katha")}</h4><p class="txt">${hl(body, scQuery(q))}</p>
       <div class="meta">${r.speaker ? `<span class="tag sp">${esc(r.speaker)}</span>` : ""}${r.series ? `<span class="tag">${esc(r.series)}</span>` : ""}<span class="time">${fmt(r.start_sec)}</span></div>
-      <div class="acts"><button class="play${active ? " active" : ""}" data-i="${i}">▶ ${T[ui].play}</button><button class="link" data-r="${i}">${T[ui].read}</button>${heart(r.youtube_id, r.start_sec, `data-f="${i}"`)}</div></article>`;
+      <div class="acts"><button class="play${active ? " active" : ""}" data-i="${i}">▶ ${T[ui].play}</button><button class="link" data-r="${i}">${T[ui].read}</button>${heart(r.youtube_id, r.start_sec, `data-f="${i}"`)}</div>${trButton(r.passage_id, r.text, "")}</article>`;
   }).join("") + `</div>`;
   $("#out").querySelectorAll("[data-i]").forEach((b) => b.onclick = () => { const r = rows[b.dataset.i]; play(r.youtube_id, r.start_sec, r); });
   $("#out").querySelectorAll("[data-r]").forEach((b) => b.onclick = () => openTranscript(rows[b.dataset.r], q));
   $("#out").querySelectorAll("[data-f]").forEach((b) => b.onclick = () => toggleFav(rows[b.dataset.f], b));
+  $("#out").querySelectorAll(".trb").forEach((b) => b.onclick = () => showTr(b));
 }
 
 function play(yid, t, info) {
@@ -484,12 +537,13 @@ async function openTranscript(r, q) {
   $("#ovTitle").textContent = r.title || r.series || "Katha";
   $("#ovWho").textContent = [r.speaker, r.series].filter(Boolean).join(" · ");
   $("#ovBody").innerHTML = `<p class="empty">…</p>`; $("#ov").hidden = false;
-  const res = await fetch(`${SB}/rest/v1/katha_passages?select=start_sec,text,roman&video_id=eq.${r.video_id}&order=start_sec`, { headers: { apikey: KEY, Authorization: "Bearer " + KEY } });
+  const res = await fetch(`${SB}/rest/v1/katha_passages?select=id,start_sec,text,roman&video_id=eq.${r.video_id}&order=start_sec`, { headers: { apikey: KEY, Authorization: "Bearer " + KEY } });
   const segs = await res.json();
   const segRow = (s) => ({ ...r, start_sec: s.start_sec, text: s.text, roman: s.roman });
-  $("#ovBody").innerHTML = segs.map((s, i) => `<div class="seg" id="seg${s.start_sec}"><button data-s="${i}">${fmt(s.start_sec)}</button><p>${hl(scText(s.text, s.roman), scQuery(q))}</p>${heart(r.youtube_id, s.start_sec, `data-sf="${i}"`)}</div>`).join("");
+  $("#ovBody").innerHTML = segs.map((s, i) => `<div class="seg" id="seg${s.start_sec}"><button data-s="${i}">${fmt(s.start_sec)}</button><p>${hl(scText(s.text, s.roman), scQuery(q))}</p>${heart(r.youtube_id, s.start_sec, `data-sf="${i}"`)}${trButton(s.id, s.text, "")}</div>`).join("");
   $("#ovBody").querySelectorAll("button[data-s]").forEach((b) => b.onclick = () => { const s = segs[b.dataset.s]; play(r.youtube_id, s.start_sec, segRow(s)); });
   $("#ovBody").querySelectorAll("[data-sf]").forEach((b) => b.onclick = () => toggleFav(segRow(segs[b.dataset.sf]), b));
+  $("#ovBody").querySelectorAll(".trb").forEach((b) => b.onclick = () => showTr(b));
   const el = document.getElementById("seg" + r.start_sec); if (el) el.scrollIntoView({ block: "center" });
 }
 $("#ovClose").onclick = () => $("#ov").hidden = true;
@@ -509,7 +563,7 @@ async function refreshList() {
   const label = { done: "✔ તૈયાર", processing: "⏳ લખાણ બની રહ્યું છે…", error: "✖ ભૂલ", pending: "રાહ" };
   $("#vlist").innerHTML = (videos || []).map((v) => `<div class="vrow ${v.status}"><div><b>${esc(v.title || v.youtube_id)}</b></div>
     <div>${esc(v.speaker || "—")} · ${esc(v.series || "—")}</div>
-    <div class="row"><span class="st">${label[v.status] || v.status}${v.status === "done" ? ` · ${v.passages} ફકરા` : ""}</span>
+    <div class="row"><span class="st">${label[v.status] || v.status}${v.status === "done" ? ` · ${v.passages} ફકરા` : ""} · ${({ gu: "ગુજરાતી", hi: "હિન્દી", sa: "સંસ્કૃત" })[v.lang] || "ગુજરાતી"}</span>
     <button class="link" data-retry="${v.id}">ફરી કરો</button><button class="link" data-del="${v.id}">કાઢો</button></div>
     ${v.error ? `<div class="err">${esc(v.error)}</div>` : ""}</div>`).join("") || "<small>હજી કોઈ કથા ઉમેરી નથી.</small>";
   $("#vlist").querySelectorAll("[data-retry]").forEach((b) => b.onclick = async () => { await adm({ action: "retry", id: +b.dataset.retry }); refreshList(); });
@@ -528,7 +582,7 @@ $("#addBtn").onclick = async () => {
   $("#addBtn").disabled = true;
   for (const l of lines) {
     const [url, sp, se] = l.split("|").map((x) => x && x.trim());
-    try { await adm({ action: "add", url, speaker: sp || $("#dspeaker").value.trim(), series: se || $("#dseries").value.trim() }); }
+    try { await adm({ action: "add", url, speaker: sp || $("#dspeaker").value.trim(), series: se || $("#dseries").value.trim(), lang: $("#dlang").value }); }
     catch (e) { toast(url + ": " + e.message); }
   }
   $("#links").value = ""; $("#addBtn").disabled = false; toast("ઉમેરાઈ ગઈ"); refreshList();
@@ -544,7 +598,7 @@ const THEMES = [ // id, page, header, card, line, frame
   ["ratri", "#17110c", "#d6a74c", "#221912", "#efdfbf", "#c9963f"],
 ];
 const pref = { theme: store.get("k_theme", "sadi"), fs: store.get("k_fs", "m"), font: store.get("k_font", "noto"), night: store.get("k_night", "0") === "1",
-  rate: store.get("k_rate", "1"), pre: store.get("k_pre", "5"), mini: store.get("k_mini", "0") === "1", bell: store.get("k_bell", "0") === "1" };
+  rate: store.get("k_rate", "1"), pre: store.get("k_pre", "5"), mini: store.get("k_mini", "0") === "1", bell: store.get("k_bell", "0") === "1", tr: store.get("k_tr", "off") };
 const isNight = () => { const h = new Date().getHours(); return h >= 19 || h < 6; };
 function applyLook() {
   const el = document.documentElement;
@@ -654,7 +708,7 @@ $("#miniTgl").onchange = (e) => { pref.mini = e.target.checked; store.set("k_min
 $("#bellTgl").onchange = (e) => { pref.bell = e.target.checked; store.set("k_bell", pref.bell ? "1" : "0"); if (pref.bell) bell(); };
 
 function applyPrefs() {
-  const val = { ui, sc, dig, rate: pref.rate, pre: pref.pre };
+  const val = { ui, sc, dig, rate: pref.rate, pre: pref.pre, tr: pref.tr };
   document.querySelectorAll("[data-pref]").forEach((g) => g.querySelectorAll("[data-v]").forEach((b) => b.classList.toggle("on", b.dataset.v === String(val[g.dataset.pref]))));
   document.querySelectorAll('[data-pref="pre"] [data-v]').forEach((b) => b.textContent = num(T[ui].sec(b.dataset.v)));
   document.querySelectorAll('[data-pref="rate"] [data-v]').forEach((b) => b.textContent = num(b.dataset.v) + "×");
