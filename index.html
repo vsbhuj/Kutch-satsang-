@@ -403,6 +403,20 @@ body.playing .gear{display:none}
   .sheet .mini-tiles{margin-top:7px;gap:5px}.mt{min-height:48px;padding:3px 2px}.mt .ic{font-size:16px}
 }
 @media (max-height:600px){ .set-pv{display:none} }
+
+.ver{margin:auto 0 0;text-align:center;font-size:11px;color:var(--ink-2)}
+.player .bar{gap:6px}.player .bar button{padding:4px 10px}
+.share .q{background:var(--card);border-left:3px solid var(--gold);padding:10px 12px;margin:12px 0;font-size:calc(15px * var(--fs));line-height:1.7;max-height:30vh;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}
+.share .acts3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.share .acts3 button,.share .acts3 a{border:1px solid var(--rule);background:var(--card);color:var(--ink);border-radius:12px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:13px;cursor:pointer;text-decoration:none}
+.share .acts3 span{font-size:22px}
+.share img{display:block;width:100%;max-width:420px;margin:12px auto 8px;border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+.share .save{display:block;text-align:center;margin:6px auto 0;width:max-content}
+
+.pager button{width:auto;padding:0 12px;font-size:14px;white-space:nowrap}
+.player .bar{gap:4px;flex-wrap:nowrap;padding:6px 6px 8px;overflow-x:auto;scrollbar-width:none}
+.player .bar::-webkit-scrollbar{display:none}
+.player .bar button{padding:4px 8px;font-size:13px;flex:none}
 </style>
 </head>
 <body>
@@ -465,7 +479,7 @@ body.playing .gear{display:none}
 
 <div class="player" id="player" hidden>
   <div class="vid" id="vid"></div>
-  <div class="bar"><button type="button" class="spd" id="spd">1×</button><button type="button" id="share">⟲ moment</button><button type="button" id="openyt">YouTube</button><button type="button" id="closeP">✕ Close</button></div>
+  <div class="bar"><button type="button" class="spd" id="spd">1×</button><button type="button" id="back10" aria-label="Back">⏪ 10</button><button type="button" id="fwd10" aria-label="Forward">10 ⏩</button><button type="button" id="sleepBtn" hidden>⏲</button><button type="button" id="share" aria-label="Share">📤</button><button type="button" id="openyt">YouTube</button><button type="button" id="closeP" aria-label="Close">✕</button></div>
   <div class="live" id="live" hidden><div class="in">
     <div class="lv-top"><span class="lv-now" data-t="lvNow">હમણાં બોલાઈ રહ્યું છે</span><span id="lvLangs"></span></div>
     <p class="lv-cur" id="lvCur"></p>
@@ -484,11 +498,19 @@ body.playing .gear{display:none}
 <div class="scrim" id="scrim" hidden></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="setTitle" hidden>
   <div class="in">
-    <div class="set-hd"><h2 id="setTitle" data-t="settings">સેટિંગ</h2><button class="x" type="button" data-close aria-label="Close">✕</button></div>
+    <div class="set-hd"><h2 id="setTitle" data-t="settings">સેટિંગ</h2><div class="pager"><button type="button" data-go="p1" class="on">①</button><button type="button" data-go="p2">② <span data-t="t_more2">વધુ</span></button></div><button class="x" type="button" data-close aria-label="Close">✕</button></div>
+    <div class="pg" data-page="p1">
     <div class="set-pv" id="setPv"><p id="pvTxt"></p><span id="pvTime"></span></div>
     <div class="dd-grid" id="ddGrid"></div>
     <div class="tg-grid"><label class="tg"><input type="checkbox" id="autoNight"><span class="ic">🌙</span><span data-t="t_night">રાત્રે ઘેરી</span></label><label class="tg"><input type="checkbox" id="liveTgl"><span class="ic">📜</span><span data-t="t_live">ચાલુ લખાણ</span></label><label class="tg"><input type="checkbox" id="ccTgl"><span class="ic">💬</span><span data-t="t_cc">YouTube subtitle</span></label><label class="tg"><input type="checkbox" id="miniTgl"><span class="ic">▫️</span><span data-t="t_mini">નાનો વીડિયો</span></label><label class="tg"><input type="checkbox" id="bellTgl"><span class="ic">🔔</span><span data-t="t_bell">ઘંટનાદ</span></label><label class="tg"><input type="checkbox" id="dualTgl"><span class="ic">🔡</span><span data-t="t_dual">બંને લિપિ</span></label><label class="tg"><input type="checkbox" id="wakeTgl"><span class="ic">☀️</span><span data-t="t_wake">સ્ક્રીન ચાલુ</span></label><label class="tg"><input type="checkbox" id="hcTgl"><span class="ic">🅰️</span><span data-t="t_hc">જાડા અક્ષર</span></label><label class="tg"><input type="checkbox" id="rmTgl"><span class="ic">🧘</span><span data-t="t_rm">ઓછું હલનચલન</span></label><label class="tg"><input type="checkbox" id="keepfTgl"><span class="ic">📌</span><span data-t="t_keepf">filter યાદ</span></label><label class="tg"><input type="checkbox" id="rhTgl"><span class="ic">🕘</span><span data-t="t_rh">તાજેતરની શોધ</span></label></div>
     <div class="mini-tiles"><button type="button" class="mt" id="openFav"><span class="ic">❤️</span><b data-t="t_fav">મનપસંદ</b><small id="favN"></small></button><button type="button" class="mt" id="openHist"><span class="ic">🕘</span><b data-t="s_hist">ઇતિહાસ</b><small id="histN"></small></button><button type="button" class="mt" data-go="report"><span class="ic">⚑</span><b data-t="t_report">ભૂલ</b><small></small></button><button type="button" class="mt" id="installBtn"><span class="ic">📲</span><b data-t="t_inst">એપ ઉમેરો</b><small></small></button><button type="button" class="mt" id="aboutBtn"><span class="ic">ℹ️</span><b data-t="t_about">વિશે</b><small></small></button><button type="button" class="mt" id="resetBtn"><span class="ic">↺</span><b data-t="t_reset">મૂળ સેટિંગ</b><small></small></button><button type="button" class="mt off" disabled><span class="ic">🔔</span><b data-t="t_notif">સૂચના</b><small data-t="soon">જલ્દી</small></button></div>
+    </div>
+    <div class="pg" data-page="p2" hidden>
+    <div class="dd-grid" id="ddGrid2"></div>
+    <div class="tg-grid"><label class="tg"><input type="checkbox" id="shTxtTgl"><span class="ic">📝</span><span data-t="t_shtxt">લખાણ સાથે શેર</span></label><label class="tg"><input type="checkbox" id="shNameTgl"><span class="ic">✍️</span><span data-t="t_shname">નામ ઉમેરો</span></label><label class="tg"><input type="checkbox" id="privTgl"><span class="ic">🔒</span><span data-t="t_priv">ખાનગી મોડ</span></label></div>
+    <div class="mini-tiles"><button type="button" class="mt" id="updBtn"><span class="ic">🔄</span><b data-t="t_upd">નવું વર્ઝન</b><small></small></button><button type="button" class="mt" id="helpBtn"><span class="ic">❓</span><b data-t="t_help">મદદ</b><small></small></button><button type="button" class="mt" data-go="p1"><span class="ic">‹</span><b data-t="t_back">પાછળ</b><small></small></button></div>
+    <p class="ver" id="verLine"></p>
+    </div>
     <div class="dd-pop" id="ddPop" hidden></div>
     <button type="button" id="reportBtn" hidden></button>
   </div>
@@ -646,13 +668,14 @@ function render(rows, q) {
     const active = cur && cur.yid === r.youtube_id && cur.t === r.start_sec;
     return `<article class="card"><h4>${esc(r.title || r.series || "Katha")}</h4><p class="txt">${hl(body, scQuery(q))}</p>${dualLine(r.text, r.roman, q)}
       <div class="meta">${r.speaker ? `<span class="tag sp">${esc(r.speaker)}</span>` : ""}${r.series ? `<span class="tag">${esc(r.series)}</span>` : ""}<span class="time">${fmt(r.start_sec)}</span></div>
-      <div class="acts"><button class="play${active ? " active" : ""}" data-i="${i}">▶ ${T[ui].play}</button><button class="link" data-r="${i}">${T[ui].read}</button><button type="button" class="link rep" data-rp="${i}" aria-label="${T[ui].s_rep}">⚑</button>${heart(r.youtube_id, r.start_sec, `data-f="${i}"`)}</div>${trButton(r.passage_id, r.text, "")}</article>`;
+      <div class="acts"><button class="play${active ? " active" : ""}" data-i="${i}">▶ ${T[ui].play}</button><button class="link" data-r="${i}">${T[ui].read}</button><button type="button" class="link rep" data-sh="${i}" aria-label="Share">📤</button><button type="button" class="link rep" data-rp="${i}" aria-label="${T[ui].s_rep}">⚑</button>${heart(r.youtube_id, r.start_sec, `data-f="${i}"`)}</div>${trButton(r.passage_id, r.text, "")}</article>`;
   }).join("") + `</div>`;
   $("#out").querySelectorAll("[data-i]").forEach((b) => b.onclick = () => { const r = rows[b.dataset.i]; play(r.youtube_id, r.start_sec, r); });
   $("#out").querySelectorAll("[data-r]").forEach((b) => b.onclick = () => openTranscript(rows[b.dataset.r], q));
   $("#out").querySelectorAll("[data-f]").forEach((b) => b.onclick = () => toggleFav(rows[b.dataset.f], b));
   $("#out").querySelectorAll(".trb").forEach((b) => b.onclick = () => showTr(b));
   $("#out").querySelectorAll("[data-rp]").forEach((b) => b.onclick = () => showReport(rows[b.dataset.rp]));
+  $("#out").querySelectorAll("[data-sh]").forEach((b) => b.onclick = () => showShare(rows[b.dataset.sh]));
 }
 
 function play(yid, t, info) {
@@ -667,11 +690,12 @@ function play(yid, t, info) {
   startLive(info, from);
   if (last) render(last.rows, last.q);
 }
-$("#closeP").onclick = () => { $("#vid").innerHTML = ""; stopLive(); $("#player").hidden = true; document.body.classList.remove("playing"); cur = null; if (last) render(last.rows, last.q); };
+$("#closeP").onclick = () => { $("#vid").innerHTML = ""; stopLive(); clearInterval(sleepTick); $("#sleepBtn").hidden = true; $("#player").hidden = true; document.body.classList.remove("playing"); cur = null; if (last) render(last.rows, last.q); };
 const ytLink = () => cur ? `https://www.youtube.com/watch?v=${cur.yid}&t=${cur.t}s` : "";
 $("#openyt").onclick = () => { if (cur) window.open(ytLink(), "_blank"); };
-$("#share").onclick = async () => { if (!cur) return; const u = ytLink();
-  try { if (navigator.share) await navigator.share({ title: cur.info?.title || "Katha", url: u }); else { await navigator.clipboard.writeText(u); toast(T[ui].copied); } } catch {} };
+$("#share").onclick = () => { if (!cur) return;
+  const s = live.segs[live.idx];
+  showShare(s ? { ...cur.info, youtube_id: cur.yid, start_sec: s.start_sec, text: s.text, roman: s.roman, passage_id: s.id } : { ...cur.info, youtube_id: cur.yid, start_sec: cur.t }); };
 
 async function openTranscript(r, q) {
   $("#ovTitle").textContent = r.title || r.series || "Katha";
@@ -755,7 +779,8 @@ const pref = { theme: store.get("k_theme", "sadi"), fs: store.get("k_fs", "m"), 
   rate: store.get("k_rate", "1"), pre: store.get("k_pre", "5"), mini: store.get("k_mini", "0") === "1", bell: store.get("k_bell", "0") === "1", tr: store.get("k_tr", "off"),
   lh: store.get("k_lh", "m"), hlc: store.get("k_hlc", "theme"), dual: store.get("k_dual", "0") === "1", wake: store.get("k_wake", "0") === "1",
   hc: store.get("k_hc", "0") === "1", rm: store.get("k_rm", "0") === "1", whole: store.get("k_whole", "0"), lim: store.get("k_lim", "50"),
-  ord: store.get("k_ord", "new"), live: store.get("k_live", "1") === "1", cc: store.get("k_cc", "0") === "1", lvl: store.get("k_lvl", "orig"), keepf: store.get("k_keepf", "0") === "1", rh: store.get("k_rh", "1") === "1" };
+  ord: store.get("k_ord", "new"), live: store.get("k_live", "1") === "1", sleep: store.get("k_sleep", "off"), skip: store.get("k_skip", "10"),
+  shtxt: store.get("k_shtxt", "1") === "1", shname: store.get("k_shname", "1") === "1", priv: store.get("k_priv", "0") === "1", cc: store.get("k_cc", "0") === "1", lvl: store.get("k_lvl", "orig"), keepf: store.get("k_keepf", "0") === "1", rh: store.get("k_rh", "1") === "1" };
 const isNight = () => { const h = new Date().getHours(); return h >= 19 || h < 6; };
 function applyLook() {
   const el = document.documentElement;
@@ -817,6 +842,7 @@ function toggleFav(r, btn) {
   counts();
 }
 function addHistory(r, yid, t) {
+  if (pref.priv) return;
   const m = { ...moment(r, yid, t), at: Date.now() };
   hist = [m, ...hist.filter((h) => h.id !== m.id)].slice(0, 60);
   setList("k_hist", hist); counts();
@@ -972,7 +998,7 @@ function arrange(rows, q) {
 }
 const dualLine = (txt, ro, q, tag = "p") => !pref.dual ? "" : sc === "ro" ? `<${tag} class="txt2">${hl(toGu(txt), toGu(q))}</${tag}>` : ro ? `<${tag} class="txt2">${hl(ro, q)}</${tag}>` : "";
 function addRecent(q) {
-  if (!pref.rh || !q) return;
+  if (!pref.rh || !q || pref.priv) return;
   setList("k_recent", [q, ...getList("k_recent").filter((x) => x !== q)].slice(0, 8));
   renderRecent();
 }
@@ -1010,6 +1036,7 @@ function tileSums() {
 }
 function applyPrefs2() {
   tileSums();
+  if (typeof page2State === "function" && window.__setsReady) page2State();
   if (window.__setsReady) drawSettings();
   const el = document.documentElement;
   el.dataset.lh = pref.lh; el.dataset.hlc = pref.hlc;
@@ -1053,7 +1080,7 @@ function showReport(r) {
   };
 }
 $("#reportBtn").onclick = () => showReport(null);
-$("#aboutBtn").onclick = () => showInfo(T[ui].aboutTitle, `<div class="about"><p>${T[ui].aboutBody}</p><p>${num(T[ui].stats(stats.kathas, stats.passages))}</p><p>${T[ui].aboutAi}</p></div>`);
+$("#aboutBtn").onclick = () => showInfo(T[ui].aboutTitle, `<div class="about"><p>${T[ui].aboutBody}</p><p>${num(T[ui].stats(stats.kathas, stats.passages))}</p><p>${T[ui].aboutAi}</p><p style="font-size:13px;color:var(--ink-2)">${T[ui].ver} ${num(APP_VER)}</p></div>`);
 const PREF_KEYS = ["k_theme", "k_fs", "k_font", "k_night", "k_ui", "k_sc", "k_dig", "k_rate", "k_pre", "k_mini", "k_bell", "k_tr", "k_lh", "k_hlc", "k_dual", "k_wake", "k_hc", "k_rm", "k_whole", "k_lim", "k_ord", "k_keepf", "k_filters", "k_rh"];
 $("#resetBtn").onclick = () => {
   const b = $("#resetBtn");
@@ -1118,22 +1145,26 @@ const SETS = [
   { k: "whole", l: "l_whole", o: () => [["0", T[ui].wPart], ["1", T[ui].wWhole]], get: () => pref.whole },
   { k: "lim", l: "l_lim", o: () => ["20", "50", "100"].map((n) => [n, num(n)]), get: () => pref.lim },
   { k: "ord", l: "l_ord", o: () => [["new", T[ui].oNew], ["old", T[ui].oOld], ["best", T[ui].oBest]], get: () => pref.ord },
+  { k: "sleep", l: "l_sleep", page: 2, o: () => [["off", T[ui].off], ...["15", "30", "45", "60"].map((n) => [n, num(T[ui].min(n))])], get: () => pref.sleep, after: () => armSleep() },
+  { k: "skip", l: "l_skip", page: 2, o: () => ["5", "10", "30"].map((n) => [n, num(T[ui].sec(n))]), get: () => pref.skip, after: () => skipLabels() },
 ];
 window.__setsReady = true;
 const optStyle = (k, v) => (k === "ui" || k === "sc" || k === "tr") && (v === "hi" || v === "sa" || v === "dev") ? DVF : "";
 function drawSettings() {
   const g = $("#ddGrid"); if (!g) return;
   const open = $("#ddPop").hidden ? null : $("#ddPop").dataset.k;
-  g.innerHTML = SETS.map((st) => {
+  const cell = (st) => {
     const cur = st.o().find(([v]) => v === String(st.get())) || [];
     return `<div class="dd"><label>${T[ui][st.l] || ""}</label><button type="button" data-dd="${st.k}" aria-expanded="${open === st.k}"><span style="${optStyle(st.k, cur[0])}">${cur[1] ?? ""}</span><i>▼</i></button></div>`;
-  }).join("");
-  g.querySelectorAll("[data-dd]").forEach((b) => b.onclick = (e) => { e.stopPropagation(); toggleDD(b); });
+  };
+  g.innerHTML = SETS.filter((st) => !st.page).map(cell).join("");
+  $("#ddGrid2").innerHTML = SETS.filter((st) => st.page === 2).map(cell).join("");
+  document.querySelectorAll("#ddGrid [data-dd], #ddGrid2 [data-dd]").forEach((b) => b.onclick = (e) => { e.stopPropagation(); toggleDD(b); });
   // live preview of the current choices
   $("#pvTxt").innerHTML = hl(scText("મહારાજે આચાર્યને ગુરુમંત્ર આપ્યો.", "maharaje acharyane gurumantra apyo."), scQuery("ગુરુમંત્ર")) + dualLine("મહારાજે આચાર્યને ગુરુમંત્ર આપ્યો.", "maharaje acharyane gurumantra apyo.", "ગુરુમંત્ર", "span");
   $("#pvTime").textContent = fmt(108);
 }
-function closeDD() { $("#ddPop").hidden = true; $("#ddGrid").querySelectorAll("[data-dd]").forEach((b) => b.setAttribute("aria-expanded", "false")); }
+function closeDD() { $("#ddPop").hidden = true; document.querySelectorAll("#ddGrid [data-dd], #ddGrid2 [data-dd]").forEach((b) => b.setAttribute("aria-expanded", "false")); }
 function toggleDD(btn) {
   const k = btn.dataset.dd, pop = $("#ddPop");
   if (!pop.hidden && pop.dataset.k === k) { closeDD(); return; }
@@ -1148,7 +1179,7 @@ function toggleDD(btn) {
   let top = r.bottom - box.top + 4; const h = pop.offsetHeight;
   if (top + h > box.height) top = Math.max(0, r.top - box.top - h - 4); // no room below: open above
   Object.assign(pop.style, { left: left + "px", top: top + "px", width: w + "px" });
-  $("#ddGrid").querySelectorAll("[data-dd]").forEach((b) => b.setAttribute("aria-expanded", String(b === btn)));
+  document.querySelectorAll("#ddGrid [data-dd], #ddGrid2 [data-dd]").forEach((b) => b.setAttribute("aria-expanded", String(b === btn)));
   pop.querySelectorAll("[data-v]").forEach((o) => o.onclick = (e) => {
     e.stopPropagation();
     const v = o.dataset.v;
@@ -1158,6 +1189,112 @@ function toggleDD(btn) {
   });
 }
 document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && !pop.hidden && !pop.contains(e.target)) closeDD(); });
+
+
+/* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
+const APP_VER = "2026.10.31";
+Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
+  t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
+  shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
+  helpTitle: "❓ કેવી રીતે વાપરવું", help: ["🔍 કથામાં બોલાયેલો કોઈ પણ શબ્દ શોધો. ગુજરાતી, ABC કે દેવનાગરી, કોઈ પણ રીતે લખી શકો.", "▶ “અહીં સાંભળો” દબાવતાં કથા એ જ ક્ષણથી ચાલે, અને નીચે વક્તા જે બોલે છે તે લખાણ દેખાય.", "🌐 લખાણ ઉપરનાં હિન્દી/સંસ્કૃત/English બટન દબાવતાં અનુવાદ દેખાય.", "♡ ગમતા ફકરા સાચવો, 📤 WhatsApp પર મોકલો, ⚑ ભૂલ દેખાય તો જણાવો.", "⚙️ માં થીમ, અક્ષરનું કદ, ભાષા, ઊંઘ ટાઇમર જેવું બધું બદલી શકો."] });
+Object.assign(T.en, { t_more2: "More", l_sleep: "⏲ Sleep timer", l_skip: "⏪⏩ Skip", min: (n) => `${n} min`, t_shtxt: "Share with text", t_shname: "Add our name", t_priv: "Private mode",
+  t_upd: "Get latest version", t_help: "Help", sleepDone: "⏲ Timer finished, the katha is paused. Jay Swaminarayan 🙏", ver: "Version", shTitle: "📤 Share", shWa: "WhatsApp", shCopy: "Copy",
+  shCard: "Quote card", shSave: "Share / save", brand: "— Kutch Satsang", listen: "Listen here:", updOk: "Getting the latest version…",
+  helpTitle: "❓ How to use", help: ["🔍 Search any word spoken in a katha, in Gujarati, ABC or Devanagari.", "▶ “Play here” starts the katha at that moment, with the spoken words shown underneath.", "🌐 Tap Hindi, Sanskrit or English above the text to see a translation.", "♡ Keep passages you like, 📤 send them on WhatsApp, ⚑ tell us about a mistake.", "⚙️ Change the theme, text size, language, sleep timer and more."] });
+Object.assign(T.hi, { t_more2: "और", l_sleep: "⏲ नींद टाइमर", l_skip: "⏪⏩ सेकंड", min: (n) => `${n} मिनट`, t_shtxt: "पाठ के साथ शेयर", t_shname: "नाम जोड़ें", t_priv: "निजी मोड",
+  t_upd: "नया वर्ज़न", t_help: "मदद", sleepDone: "⏲ टाइमर पूरा, कथा रोकी गई। जय स्वामिनारायण 🙏", ver: "वर्ज़न", shTitle: "📤 शेयर करें", shWa: "WhatsApp", shCopy: "कॉपी",
+  shCard: "सुविचार कार्ड", shSave: "शेयर / सहेजें", brand: "— कच्छ सत्संग", listen: "यहाँ सुनें:", updOk: "नया वर्ज़न ला रहे हैं…",
+  helpTitle: "❓ कैसे उपयोग करें", help: ["🔍 कथा में बोला गया कोई भी शब्द खोजें, गुजराती, ABC या देवनागरी में।", "▶ “यहाँ सुनें” दबाने पर कथा उसी पल से चले और नीचे बोला गया पाठ दिखे।", "🌐 पाठ के ऊपर हिन्दी/संस्कृत/English दबाकर अनुवाद देखें।", "♡ पसंद के अनुच्छेद सहेजें, 📤 WhatsApp पर भेजें, ⚑ गलती बताएँ।", "⚙️ में थीम, अक्षर का आकार, भाषा, नींद टाइमर आदि बदलें।"] });
+Object.assign(T.sa, { t_more2: "अधिकम्", l_sleep: "⏲ निद्रासमयः", l_skip: "⏪⏩ क्षणाः", min: (n) => `${n} निमेषाः`, t_shtxt: "पाठेन सह", t_shname: "नाम योजयतु", t_priv: "गुप्तविधिः",
+  t_upd: "नूतनसंस्करणम्", t_help: "साहाय्यम्", sleepDone: "⏲ समयः समाप्तः, कथा स्थगिता। जय स्वामिनारायण 🙏", ver: "संस्करणम्", shTitle: "📤 प्रेषयन्तु", shWa: "WhatsApp", shCopy: "प्रतिलिपिः",
+  shCard: "सुविचारपत्रम्", shSave: "प्रेषयन्तु / रक्षन्तु", brand: "— कच्छसत्सङ्गः", listen: "अत्र शृण्वन्तु:", updOk: "नूतनसंस्करणम् आनीयते…",
+  helpTitle: "❓ उपयोगविधिः", help: ["🔍 कथायाम् उक्तं किमपि पदम् अन्विष्यन्तु।", "▶ “अत्र शृण्वन्तु” नुदित्वा तस्मात् क्षणात् कथा चलति, अधः पाठः दृश्यते।", "🌐 पाठस्य उपरि भाषापिञ्जं नुदित्वा अनुवादं पश्यन्तु।", "♡ प्रियान् अनुच्छेदान् रक्षन्तु, 📤 WhatsApp द्वारा प्रेषयन्तु, ⚑ दोषं सूचयन्तु।", "⚙️ मध्ये वर्णविन्यासं, अक्षरपरिमाणं, भाषां च परिवर्तयन्तु।"] });
+
+// ⏲ sleep timer: pauses the video after the chosen minutes
+let sleepEnd = null, sleepTick = null;
+function armSleep() {
+  clearInterval(sleepTick); sleepEnd = null;
+  const m = parseInt(pref.sleep);
+  if (!cur || !m) { $("#sleepBtn").hidden = true; return; }
+  sleepEnd = Date.now() + m * 60000;
+  const show = () => {
+    const left = Math.max(0, Math.ceil((sleepEnd - Date.now()) / 60000));
+    $("#sleepBtn").hidden = false; $("#sleepBtn").textContent = "⏲ " + num(left);
+    if (Date.now() >= sleepEnd) { clearInterval(sleepTick); sleepEnd = null; $("#sleepBtn").hidden = true; sendYT("pauseVideo", []); toast(T[ui].sleepDone); }
+  };
+  show(); sleepTick = setInterval(show, 15000);
+}
+$("#sleepBtn").onclick = () => { openSettings(true); goPage("p2"); };
+// ⏪⏩ skip by the chosen seconds from where the video is now
+function skipLabels() { const n = num(pref.skip); $("#back10").textContent = "⏪ " + n; $("#fwd10").textContent = n + " ⏩"; }
+$("#back10").onclick = () => liveSeek(Math.max(0, Math.round((live.t || cur?.t || 0) - +pref.skip)));
+$("#fwd10").onclick = () => liveSeek(Math.round((live.t || cur?.t || 0) + +pref.skip));
+
+// 📤 share: WhatsApp text, copy, or a picture card
+function shareText(r) {
+  const link = `https://www.youtube.com/watch?v=${r.youtube_id}&t=${r.start_sec || 0}s`;
+  const parts = [];
+  if (pref.shtxt && r.text) parts.push(`“${String(scText(r.text, r.roman)).trim()}”`);
+  parts.push([r.title, r.speaker].filter(Boolean).join(" · "));
+  parts.push(`${T[ui].listen} ${link}`);
+  if (pref.shname) parts.push(T[ui].brand + "  " + location.origin + location.pathname);
+  return parts.filter(Boolean).join("\n\n");
+}
+function showShare(r) {
+  const txt = shareText(r);
+  showInfo(T[ui].shTitle, `<div class="share"><div class="q">${esc(txt)}</div>
+    <div class="acts3"><a id="shWa" href="https://wa.me/?text=${encodeURIComponent(txt)}" target="_blank" rel="noopener"><span>🟢</span>${T[ui].shWa}</a>
+    <button type="button" id="shCopy"><span>📋</span>${T[ui].shCopy}</button><button type="button" id="shCard"><span>🖼</span>${T[ui].shCard}</button></div>
+    <div id="shCardOut"></div></div>`);
+  $("#shCopy").onclick = async () => { try { await navigator.clipboard.writeText(txt); toast(T[ui].copied); } catch { const q = $(".share .q"); const rg = document.createRange(); rg.selectNodeContents(q); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(rg); } };
+  $("#shCard").onclick = () => makeCard(r);
+}
+// a square picture of the passage in the current theme
+function wrapLines(ctx, text, maxW) {
+  const words = text.split(/\s+/), lines = []; let line = "";
+  for (const w of words) { const t = line ? line + " " + w : w; if (ctx.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t; }
+  if (line) lines.push(line); return lines;
+}
+async function makeCard(r) {
+  try { await document.fonts.ready; } catch {}
+  const cs = getComputedStyle(document.documentElement), v = (n) => cs.getPropertyValue(n).trim();
+  const S = 1080, c = document.createElement("canvas"); c.width = c.height = S; const x = c.getContext("2d");
+  x.fillStyle = v("--paper") || "#f3e9d8"; x.fillRect(0, 0, S, S);
+  x.strokeStyle = v("--gold") || "#b8892f"; x.lineWidth = 6; x.strokeRect(40, 40, S - 80, S - 80); x.lineWidth = 2; x.strokeRect(56, 56, S - 112, S - 112);
+  const gu = v("--gu") || "serif";
+  x.fillStyle = v("--maroon") || "#6e1f14"; x.font = `700 150px ${gu}`; x.fillText("“", 100, 250);
+  let body = String(scText(r.text || "", r.roman)).trim();
+  let size = 54; x.font = `${size}px ${gu}`;
+  let lines = wrapLines(x, body, S - 240);
+  while (lines.length > 10 && size > 34) { size -= 4; x.font = `${size}px ${gu}`; lines = wrapLines(x, body, S - 240); }
+  if (lines.length > 11) { lines = lines.slice(0, 11); lines[10] = lines[10].replace(/\s*\S*$/, "") + " …"; }
+  x.fillStyle = v("--ink") || "#2b1a12";
+  const lh = size * 1.6, top = Math.max(270, (S - lines.length * lh) / 2);
+  lines.forEach((l, i) => x.fillText(l, 120, top + i * lh));
+  x.fillStyle = v("--maroon") || "#6e1f14"; x.font = `600 34px ${gu}`;
+  x.fillText([r.speaker, r.title].filter(Boolean).join(" · ").slice(0, 60), 120, S - 170);
+  x.fillStyle = v("--ink-2") || "#6d5646"; x.font = `30px ${gu}`;
+  x.fillText((pref.shname ? T[ui].brand.replace(/^—\s*/, "") + "  ·  " : "") + fmt(r.start_sec || 0), 120, S - 118);
+  const url = c.toDataURL("image/png");
+  $("#shCardOut").innerHTML = `<img src="${url}" alt="${esc(T[ui].shCard)}"><button type="button" class="btn save" id="shSave" style="padding:12px 18px">${T[ui].shSave}</button>`;
+  $("#shSave").onclick = () => c.toBlob(async (blob) => {
+    const file = new File([blob], "kutch-satsang.png", { type: "image/png" });
+    try { if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], text: shareText(r) }); return; } } catch { return; }
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "kutch-satsang.png"; document.body.appendChild(a); a.click(); a.remove();
+  }, "image/png");
+}
+
+// toggles on page ②
+const bind2 = (id, key) => { $(id).onchange = (e) => { pref[key] = e.target.checked; store.set("k_" + key, pref[key] ? "1" : "0"); }; };
+bind2("#shTxtTgl", "shtxt"); bind2("#shNameTgl", "shname"); bind2("#privTgl", "priv");
+$("#updBtn").onclick = () => { toast(T[ui].updOk); setTimeout(() => location.replace(location.pathname + "?v=" + Date.now() + location.hash), 400); };
+$("#helpBtn").onclick = () => showInfo(T[ui].helpTitle, `<div class="about">${T[ui].help.map((h) => `<p>${h}</p>`).join("")}</div>`);
+function page2State() {
+  $("#shTxtTgl").checked = pref.shtxt; $("#shNameTgl").checked = pref.shname; $("#privTgl").checked = pref.priv;
+  $("#verLine").textContent = `${T[ui].ver} ${num(APP_VER)} · ${num(T[ui].stats(stats.kathas, stats.passages)).split("·").slice(0, 2).join("·")}`;
+  skipLabels();
+}
+page2State();
 
 /* ---------- live text under the video ---------- */
 Object.assign(T.gu, { lvNow: "હમણાં બોલાઈ રહ્યું છે", lvOrig: "મૂળ", s_live: "વીડિયો સાથે ચાલુ લખાણ", s_live2: "વક્તા જે બોલે છે તે વીડિયો નીચે સાથે-સાથે દેખાય", s_cc: "YouTube ના subtitle", s_cc2: "વીડિયોમાં YouTube ના પોતાના subtitle (હોય તો)" });
@@ -1169,6 +1306,7 @@ const LV_LANGS = [["orig", null], ["gu", "ગુજરાતી"], ["hi", "ह�
 let live = { vid: null, segs: [], idx: -1, t: 0 };
 async function startLive(info, t) {
   live.t = t;
+  if (typeof armSleep === "function") armSleep();
   if (!pref.live || !info?.video_id) { $("#live").hidden = true; return; }
   $("#live").hidden = false;
   if (live.vid !== info.video_id) {
