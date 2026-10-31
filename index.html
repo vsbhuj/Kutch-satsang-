@@ -230,6 +230,24 @@ html.rm *,html.rm *::before,html.rm *::after{animation:none!important;transition
 .rptrow{background:var(--card);border-left:3px solid var(--saffron);padding:10px 12px;display:grid;gap:4px;font-size:14px}
 .rptrow.fixed{border-color:#4f8a3a;opacity:.7}.rptrow.seen{border-color:var(--rule)}
 
+/* ---------- live text under the video ---------- */
+body.playing,body.mini.playing{padding-top:var(--ph,calc(min(56.25vw,42vh,360px) + 50px + env(safe-area-inset-top,0px)))}
+body.playing .overlay,body.mini.playing .overlay{top:var(--ph,calc(min(56.25vw,42vh,360px) + 50px + env(safe-area-inset-top,0px)))}
+.live{background:var(--paper);color:var(--ink);border-top:2px solid var(--gold);box-shadow:0 4px 10px rgba(0,0,0,.18)}
+.live .in{max-width:640px;margin:0 auto;padding:8px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+.lv-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.lv-now{font-size:12px;color:var(--maroon-2);font-weight:600;margin-right:auto;display:flex;align-items:center;gap:6px}
+.lv-now::before{content:"";width:7px;height:7px;border-radius:50%;background:#c0392b;box-shadow:0 0 0 3px rgba(192,57,43,.2)}
+.lv-lang{border:1px solid var(--rule);background:var(--card);color:var(--ink-2);border-radius:99px;padding:3px 11px;font-size:13px;cursor:pointer;min-height:30px}
+.lv-lang.on{background:var(--maroon);border-color:var(--maroon);color:var(--on-accent)}
+.lv-lang.dv{font-family:"Noto Serif Devanagari",serif}
+.lv-cur{margin:8px 0 0;font-size:calc(17px * var(--fs));line-height:calc(1.75 * var(--lhm));max-height:22vh;overflow:auto;overflow-wrap:anywhere}
+.lv-tr{margin:6px 0 0;padding:6px 10px;border-left:2px solid var(--gold);background:var(--card);font-size:calc(15px * var(--fs));line-height:1.7;max-height:16vh;overflow:auto;overflow-wrap:anywhere}
+.lv-tr.dv{font-family:"Noto Serif Devanagari",serif}
+.lv-nav{display:flex;justify-content:space-between;gap:8px;margin-top:6px}
+.lv-nav button{background:none;border:0;color:var(--ink-2);font-size:13px;cursor:pointer;padding:4px 0;max-width:48%;text-align:left;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.lv-nav button:last-child{text-align:right}
+
 /* ---------- ⚙️ button + bottom sheet ---------- */
 .gear{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:max(12px,env(safe-area-inset-right,0px));z-index:22;width:44px;height:44px;border-radius:50%;
   border:1px solid var(--rule);background:var(--card);color:var(--maroon);font-size:22px;line-height:1;cursor:pointer;box-shadow:0 1px 6px rgba(60,30,10,.15);display:grid;place-items:center}
@@ -330,6 +348,12 @@ body.playing .gear{display:none}
 <div class="player" id="player" hidden>
   <div class="vid" id="vid"></div>
   <div class="bar"><button type="button" class="spd" id="spd">1×</button><button type="button" id="share">⟲ moment</button><button type="button" id="openyt">YouTube</button><button type="button" id="closeP">✕ Close</button></div>
+  <div class="live" id="live" hidden><div class="in">
+    <div class="lv-top"><span class="lv-now" data-t="lvNow">હમણાં બોલાઈ રહ્યું છે</span><span id="lvLangs"></span></div>
+    <p class="lv-cur" id="lvCur"></p>
+    <div class="lv-tr" id="lvTr" hidden></div>
+    <div class="lv-nav"><button type="button" id="lvPrev"></button><button type="button" id="lvNext"></button></div>
+  </div></div>
 </div>
 
 <div class="overlay" id="ov" hidden>
@@ -384,6 +408,8 @@ body.playing .gear{display:none}
     <div class="seg4 n3" data-pref="pre"><button type="button" data-v="0"></button><button type="button" data-v="5"></button><button type="button" data-v="10"></button></div>
     <label class="tgl"><div><span data-t="s_mini">નાનો વીડિયો (ફક્ત સાંભળવા)</span><small data-t="s_mini2">વીડિયો નાનો રહે, લખાણ વાંચવા વધુ જગ્યા મળે</small></div><input type="checkbox" id="miniTgl"></label>
     <label class="tgl"><div><span data-t="s_bell">બટનનો અવાજ</span><small data-t="s_bell2">બટન દબાવતાં ધીમો ઘંટનાદ</small></div><input type="checkbox" id="bellTgl"></label>
+    <label class="tgl"><div><span data-t="s_live">વીડિયો સાથે ચાલુ લખાણ</span><small data-t="s_live2">વક્તા જે બોલે છે તે વીડિયો નીચે સાથે-સાથે દેખાય</small></div><input type="checkbox" id="liveTgl"></label>
+    <label class="tgl"><div><span data-t="s_cc">YouTube ના subtitle</span><small data-t="s_cc2">વીડિયોમાં YouTube ના પોતાના subtitle (હોય તો)</small></div><input type="checkbox" id="ccTgl"></label>
 
     <h3 data-t="s_mine">મારું</h3>
     <button type="button" class="rowbtn" id="openFav"><span>❤️</span><b data-t="s_fav">મનપસંદ ક્ષણો</b><span class="n" id="favN"></span><span class="chev">›</span></button>
@@ -585,12 +611,14 @@ function play(yid, t, info) {
   addHistory(info, yid, t);
   const from = Math.max(0, t - (+pref.pre || 0));
   const org = /^https?:/.test(location.origin) ? `&origin=${encodeURIComponent(location.origin)}` : "";
-  $("#vid").innerHTML = `<iframe id="yt" src="https://www.youtube.com/embed/${yid}?start=${from}&autoplay=1&playsinline=1&rel=0&enablejsapi=1${org}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Katha"></iframe>`;
-  $("#yt").addEventListener("load", () => [700, 2000, 4500].forEach((ms) => setTimeout(applyRate, ms)));
+  const cc = pref.cc ? `&cc_load_policy=1&cc_lang_pref=${ui === "en" ? "gu" : ui}&hl=${ui}` : "";
+  $("#vid").innerHTML = `<iframe id="yt" src="https://www.youtube.com/embed/${yid}?start=${from}&autoplay=1&playsinline=1&rel=0&enablejsapi=1${cc}${org}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Katha"></iframe>`;
+  $("#yt").addEventListener("load", () => [700, 2000, 4500].forEach((ms) => setTimeout(() => { applyRate(); ytListen(); }, ms)));
   $("#player").hidden = false; document.body.classList.add("playing");
+  startLive(info, from);
   if (last) render(last.rows, last.q);
 }
-$("#closeP").onclick = () => { $("#vid").innerHTML = ""; $("#player").hidden = true; document.body.classList.remove("playing"); cur = null; if (last) render(last.rows, last.q); };
+$("#closeP").onclick = () => { $("#vid").innerHTML = ""; stopLive(); $("#player").hidden = true; document.body.classList.remove("playing"); cur = null; if (last) render(last.rows, last.q); };
 const ytLink = () => cur ? `https://www.youtube.com/watch?v=${cur.yid}&t=${cur.t}s` : "";
 $("#openyt").onclick = () => { if (cur) window.open(ytLink(), "_blank"); };
 $("#share").onclick = async () => { if (!cur) return; const u = ytLink();
@@ -678,7 +706,7 @@ const pref = { theme: store.get("k_theme", "sadi"), fs: store.get("k_fs", "m"), 
   rate: store.get("k_rate", "1"), pre: store.get("k_pre", "5"), mini: store.get("k_mini", "0") === "1", bell: store.get("k_bell", "0") === "1", tr: store.get("k_tr", "off"),
   lh: store.get("k_lh", "m"), hlc: store.get("k_hlc", "theme"), dual: store.get("k_dual", "0") === "1", wake: store.get("k_wake", "0") === "1",
   hc: store.get("k_hc", "0") === "1", rm: store.get("k_rm", "0") === "1", whole: store.get("k_whole", "0"), lim: store.get("k_lim", "50"),
-  ord: store.get("k_ord", "new"), keepf: store.get("k_keepf", "0") === "1", rh: store.get("k_rh", "1") === "1" };
+  ord: store.get("k_ord", "new"), live: store.get("k_live", "1") === "1", cc: store.get("k_cc", "0") === "1", lvl: store.get("k_lvl", "orig"), keepf: store.get("k_keepf", "0") === "1", rh: store.get("k_rh", "1") === "1" };
 const isNight = () => { const h = new Date().getHours(); return h >= 19 || h < 6; };
 function applyLook() {
   const el = document.documentElement;
@@ -798,6 +826,7 @@ function applyPrefs() {
   $("#spd").textContent = num(pref.rate) + "×";
   counts();
   if (typeof applyPrefs2 === "function") applyPrefs2();
+
 }
 applyPrefs();
 
@@ -964,6 +993,79 @@ $("#resetBtn").onclick = () => {
 if (standalone()) $("#installBtn").hidden = true;
 if (pref.wake) setWake(true);
 applyPrefs2();
+
+/* ---------- live text under the video ---------- */
+Object.assign(T.gu, { lvNow: "હમણાં બોલાઈ રહ્યું છે", lvOrig: "મૂળ", s_live: "વીડિયો સાથે ચાલુ લખાણ", s_live2: "વક્તા જે બોલે છે તે વીડિયો નીચે સાથે-સાથે દેખાય", s_cc: "YouTube ના subtitle", s_cc2: "વીડિયોમાં YouTube ના પોતાના subtitle (હોય તો)" });
+Object.assign(T.en, { lvNow: "Now speaking", lvOrig: "Original", s_live: "Live text with the video", s_live2: "What the speaker is saying appears under the video as it plays", s_cc: "YouTube subtitles", s_cc2: "YouTube's own subtitles in the video, when available" });
+Object.assign(T.hi, { lvNow: "अभी बोला जा रहा है", lvOrig: "मूल", s_live: "वीडियो के साथ चलता पाठ", s_live2: "वक्ता जो बोलते हैं वह वीडियो के नीचे साथ-साथ दिखे", s_cc: "YouTube के सबटाइटल", s_cc2: "वीडियो में YouTube के अपने सबटाइटल (हों तो)" });
+Object.assign(T.sa, { lvNow: "इदानीम् उच्यते", lvOrig: "मूलम्", s_live: "चलच्चित्रेण सह पाठः", s_live2: "वक्ता यत् वदति तत् चलच्चित्रस्य अधः सह दृश्यते", s_cc: "YouTube-उपशीर्षकाणि", s_cc2: "चलच्चित्रे YouTube-स्य स्वकीयानि उपशीर्षकाणि (यदि सन्ति)" });
+// one short word per language; tapping one shows only that translation
+const LV_LANGS = [["orig", null], ["gu", "ગુજરાતી"], ["hi", "हिन्दी"], ["sa", "संस्कृत"], ["en", "English"]];
+let live = { vid: null, segs: [], idx: -1, t: 0 };
+async function startLive(info, t) {
+  live.t = t;
+  if (!pref.live || !info?.video_id) { $("#live").hidden = true; return; }
+  $("#live").hidden = false;
+  if (live.vid !== info.video_id) {
+    live = { vid: info.video_id, segs: [], idx: -1, t };
+    $("#lvCur").textContent = "…"; $("#lvTr").hidden = true; $("#lvPrev").textContent = $("#lvNext").textContent = "";
+    try {
+      const r = await fetch(`${SB}/rest/v1/katha_passages?select=id,start_sec,text,roman&video_id=eq.${info.video_id}&order=start_sec`, { headers: { apikey: KEY, Authorization: "Bearer " + KEY } });
+      live.segs = await r.json();
+    } catch { live.segs = []; }
+  }
+  live.idx = -1; liveTick(t);
+}
+function stopLive() { $("#live").hidden = true; live.idx = -1; }
+function liveTick(t) {
+  live.t = t;
+  if (!pref.live || !live.segs.length) return;
+  let i = 0;
+  for (let k = 0; k < live.segs.length; k++) { if (live.segs[k].start_sec <= t + 0.5) i = k; else break; }
+  if (i !== live.idx) { live.idx = i; drawLive(); }
+}
+function drawLive() {
+  const s = live.segs[live.idx]; if (!s) return;
+  const src = isDev(s.text) ? "dev" : "gu";
+  const langs = LV_LANGS.filter(([k]) => !(k === "gu" && src === "gu"));
+  if (!langs.some(([k]) => k === pref.lvl)) pref.lvl = "orig";
+  $("#lvLangs").innerHTML = langs.map(([k, w]) => `<button type="button" class="lv-lang${k === pref.lvl ? " on" : ""}${k === "hi" || k === "sa" ? " dv" : ""}" data-lv="${k}">${w || T[ui].lvOrig}</button>`).join(" ");
+  $("#lvLangs").querySelectorAll("[data-lv]").forEach((b) => b.onclick = () => { pref.lvl = b.dataset.lv; store.set("k_lvl", pref.lvl); drawLive(); });
+  $("#lvCur").textContent = scText(s.text, s.roman);
+  const prev = live.segs[live.idx - 1], next = live.segs[live.idx + 1];
+  $("#lvPrev").textContent = prev ? "‹ " + fmt(prev.start_sec) : ""; $("#lvNext").textContent = next ? fmt(next.start_sec) + " ›" : "";
+  $("#lvPrev").onclick = () => prev && liveSeek(prev.start_sec); $("#lvNext").onclick = () => next && liveSeek(next.start_sec);
+  liveTr(s);
+}
+async function liveTr(s) {
+  const lang = pref.lvl, box = $("#lvTr");
+  if (lang === "orig") { box.hidden = true; return; }
+  box.hidden = false; box.className = "lv-tr" + (lang === "hi" || lang === "sa" ? " dv" : "");
+  const key = s.id + ":" + lang;
+  if (trCache[key]) { box.textContent = trCache[key]; return; }
+  box.textContent = T[ui].trBusy;
+  try {
+    const r = await fetch(FN, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "translate", passage_id: s.id, lang }) });
+    const j = await r.json();
+    if (j.same) { box.hidden = true; return; }
+    if (!r.ok || !j.text) throw 0;
+    trCache[key] = j.text;
+    if (live.segs[live.idx] === s && pref.lvl === lang) box.textContent = j.text;
+  } catch { if (live.segs[live.idx] === s) box.textContent = T[ui].trErr; }
+}
+function liveSeek(sec) { sendYT("seekTo", [sec, true]); if (cur) cur.t = sec; liveTick(sec); }
+// YouTube reports the playing time once we say we are listening
+function ytListen() { const f = $("#yt"); if (f && f.contentWindow) f.contentWindow.postMessage(JSON.stringify({ event: "listening", id: "yt", channel: "widget" }), "*"); }
+window.addEventListener("message", (e) => {
+  if (!/(^|\.)youtube(-nocookie)?\.com$/.test((() => { try { return new URL(e.origin).hostname; } catch { return ""; } })())) return;
+  let d; try { d = typeof e.data === "string" ? JSON.parse(e.data) : e.data; } catch { return; }
+  if (d && d.event === "infoDelivery" && d.info && typeof d.info.currentTime === "number") liveTick(d.info.currentTime);
+});
+// keep the page below the player whatever its height
+try { new ResizeObserver(() => document.body.style.setProperty("--ph", $("#player").offsetHeight + "px")).observe($("#player")); } catch {}
+$("#liveTgl").checked = pref.live; $("#ccTgl").checked = pref.cc;
+$("#liveTgl").onchange = (e) => { pref.live = e.target.checked; store.set("k_live", pref.live ? "1" : "0"); if (cur) { if (pref.live) startLive(cur.info, live.t || cur.t); else stopLive(); } };
+$("#ccTgl").onchange = (e) => { pref.cc = e.target.checked; store.set("k_cc", pref.cc ? "1" : "0"); };
 
 function route() {
   const isAdmin = location.hash === "#admin";
