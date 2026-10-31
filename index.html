@@ -503,6 +503,28 @@ body.playing .gear{display:none}
 .player .bar{gap:4px;flex-wrap:nowrap;padding:6px 6px 8px;overflow-x:auto;scrollbar-width:none}
 .player .bar::-webkit-scrollbar{display:none}
 .player .bar button{padding:4px 8px;font-size:13px;flex:none}
+/* main page, compact (1 Nov): results come up near the top */
+header{padding:6px 54px 2px;text-align:center}
+header .eyebrow,header .sub,header .orn{display:none}
+header h1{font-size:30px;margin:0;line-height:1.3}
+.search{margin-top:8px}
+.recent{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-top:8px;gap:6px}
+.recent::-webkit-scrollbar{display:none}
+.recent small,.recent .r{flex:none}
+.recent .r{padding:2px 11px;font-size:13.5px}
+.filters{margin-top:8px;grid-template-columns:1fr 1fr;gap:8px}
+.field label{display:none}
+.fsel{border:1px solid var(--rule);border-radius:10px;background:var(--card);padding:8px 10px;font-size:calc(15px * var(--fs));box-shadow:0 1px 2px rgba(60,30,10,.08)}
+.fsel[aria-expanded="true"]{border-color:var(--maroon)}
+.filters .field:nth-child(1) .fsel span::before{content:"📚 "}
+.filters .field:nth-child(2) .fsel span::before{content:"🎙 "}
+.filters .field:nth-child(2) .fpop{left:auto;right:0;width:calc(200% + 8px)}
+.filters .field:nth-child(1) .fpop{right:auto;width:calc(200% + 8px)}
+.explore{margin:14px 0 4px}
+.explore h3,.hint{display:none}
+.chips{gap:6px}.chip{padding:3px 12px;font-size:14px}
+#home:has(#out .card) .explore{display:none}
+.count{margin:14px 0 10px}
 </style>
 </head>
 <body>
@@ -1408,7 +1430,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.11.01.2";
+const APP_VER = "2026.11.01.3";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
