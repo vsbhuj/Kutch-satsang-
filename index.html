@@ -285,6 +285,45 @@ body.playing .gear{display:none}
 .tgl input{appearance:none;width:46px;height:26px;border-radius:99px;background:var(--rule);position:relative;cursor:pointer;flex:none;transition:background .2s}
 .tgl input::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 2px rgba(0,0,0,.3)}
 .tgl input:checked{background:var(--maroon)}.tgl input:checked::after{transform:translateX(20px)}
+
+/* ---------- settings v2: tile home + one-screen pages (nothing scrolls) ---------- */
+.sheet{padding-top:6px}
+.sheet .grab{margin:0 auto 6px}
+.pg-hd{display:flex;align-items:center;gap:6px;margin:0 0 6px;min-height:40px}
+.pg-hd h2{margin:0;font-size:19px;color:var(--maroon);flex:1}
+.pg-hd .bk{border:0;background:var(--card);border:1px solid var(--rule);border-radius:50%;width:34px;height:34px;font-size:22px;line-height:1;color:var(--maroon);cursor:pointer;display:grid;place-items:center;padding:0 0 3px}
+.pg-hd .x{width:34px;height:34px;font-size:18px}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tiles.t2{grid-template-columns:repeat(3,1fr);margin-top:6px}
+.tile{border:1px solid var(--rule);border-radius:14px;background:var(--card);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 2px 8px;min-height:84px;cursor:pointer;text-align:center}
+.tile:active{transform:scale(.97)}
+.tile .ic{font-size:24px;line-height:1.1}
+.tile b{font-size:12.5px;font-weight:600;line-height:1.25}
+.tile small{font-size:10.5px;color:var(--ink-2);line-height:1.2;min-height:12px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px}
+.tile.off{opacity:.5;cursor:default}
+.sheet .lbl{font-size:12px;font-weight:600;color:var(--ink-2);margin:10px 2px 5px}
+.sheet .seg4{border-radius:9px}
+.sheet .seg4 button{min-height:34px;font-size:13px;padding:5px 2px;line-height:1.2}
+.sheet .seg4.n5{grid-template-columns:repeat(5,1fr)}.sheet .seg4.n5 button:nth-child(4){border-left:1px solid var(--rule)}.sheet .seg4.n5 button:nth-child(n+4){border-top:0}
+.sheet .seg4.n5 button{font-size:12px}
+.sheet .themes{gap:6px}
+.sheet .sw{padding:2px}
+.sheet .sw .pv{height:42px}
+.sheet .sw .pv i{height:10px}.sheet .sw .pv b{top:15px;bottom:6px;left:8px;right:8px}.sheet .sw .pv u{top:21px;left:14px;right:22px;height:3px;box-shadow:0 6px 0 currentColor}
+.sheet .sw span{font-size:11.5px;margin-top:3px}
+.sheet .sample{margin:6px 0 0;padding:6px 10px;font-size:calc(15px * var(--fs));line-height:1.5}
+.sheet .fonts{grid-template-columns:repeat(3,1fr);gap:6px}
+.sheet .fonts button{flex-direction:column;justify-content:center;gap:0;padding:5px 4px;min-height:48px;text-align:center}
+.sheet .fonts button em{font-size:18px}.sheet .fonts button small{font-size:10.5px}
+.sheet .hlsw{gap:6px}.sheet .hlsw button{padding:6px 2px;font-size:14px}
+.tg-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}
+.tg{position:relative;display:flex;align-items:center;gap:7px;border:1px solid var(--rule);border-radius:10px;background:var(--card);color:var(--ink);padding:7px 9px;font-size:13px;line-height:1.25;cursor:pointer;min-height:42px}
+.tg input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.tg .ic{font-size:17px;flex:none}
+.tg::after{content:"";margin-left:auto;flex:none;width:14px;height:14px;border-radius:50%;border:1.5px solid var(--rule)}
+.tg:has(input:checked){background:var(--maroon);border-color:var(--maroon);color:var(--on-accent)}
+.tg:has(input:checked)::after{border-color:var(--on-accent);background:var(--on-accent);box-shadow:inset 0 0 0 3px var(--maroon)}
+.tg:has(input:focus-visible){outline:2px solid var(--saffron);outline-offset:2px}
 </style>
 </head>
 <body>
@@ -367,81 +406,15 @@ body.playing .gear{display:none}
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="setTitle" hidden>
   <div class="in">
     <div class="grab"></div>
-    <div class="hd"><h2 id="setTitle" data-t="settings">સેટિંગ</h2><button class="x" id="setClose" type="button" aria-label="Close">✕</button></div>
-
-    <h3 data-t="s_look">દેખાવ</h3>
-    <div class="lbl" data-t="s_theme">થીમ</div>
-    <div class="themes" id="themes"></div>
-
-    <div class="lbl" data-t="s_size">અક્ષરનું કદ</div>
-    <div class="seg4" id="sizes">
-      <button type="button" data-fs="s" style="font-size:14px">અ</button><button type="button" data-fs="m" style="font-size:17px">અ</button>
-      <button type="button" data-fs="l" style="font-size:21px">અ</button><button type="button" data-fs="xl" style="font-size:26px">અ</button>
-    </div>
-    <p class="sample">મહારાજે આચાર્યને <mark>ગુરુમંત્ર</mark> આપ્યો અને દીક્ષા આપવાનો અધિકાર આપ્યો.</p>
-
-    <div class="lbl" data-t="s_font">ફોન્ટ</div>
-    <div class="fonts" id="fonts">
-      <button type="button" data-font="noto"><em style="font-family:'Noto Serif Gujarati'">કચ્છ સત્સંગ</em><small data-t="f_noto">પોથી જેવા</small></button>
-      <button type="button" data-font="rasa"><em style="font-family:'Rasa'">કચ્છ સત્સંગ</em><small data-t="f_rasa">છાપેલા પુસ્તક જેવા</small></button>
-      <button type="button" data-font="hind"><em style="font-family:'Hind Vadodara'">કચ્છ સત્સંગ</em><small data-t="f_hind">સાદા, સ્પષ્ટ</small></button>
-    </div>
-
-    <label class="tgl"><div><span data-t="s_night">રાત્રે આપમેળે ઘેરી થીમ</span><small data-t="s_night2">સાંજે 7 થી સવારે 6 સુધી "રાત્રિ ગ્રંથ"</small></div><input type="checkbox" id="autoNight"></label>
-
-    <h3 data-t="s_lang">ભાષા અને લિપિ</h3>
-    <div class="lbl" data-t="s_ui">બટન અને મેનુની ભાષા</div>
-    <div class="seg4" data-pref="ui"><button type="button" data-v="gu">ગુજરાતી</button><button type="button" data-v="en">English</button><button type="button" data-v="hi" style="font-family:'Noto Serif Devanagari',serif">हिन्दी</button><button type="button" data-v="sa" style="font-family:'Noto Serif Devanagari',serif">संस्कृतम्</button></div>
-    <div class="lbl" data-t="s_sc">કથાનું લખાણ કઈ લિપિમાં</div>
-    <div class="seg4 n3" data-pref="sc"><button type="button" data-v="gu">ગુજરાતી</button><button type="button" data-v="ro">ABC</button><button type="button" data-v="dev" style="font-family:'Noto Serif Devanagari',serif">देवनागरी</button></div>
-    <p class="sample" id="scSample"></p>
-    <div class="lbl" data-t="s_tr">અનુવાદ</div>
-    <div class="seg4 n5" data-pref="tr"><button type="button" data-v="off" data-t="off">બંધ</button><button type="button" data-v="gu">ગુજરાતી</button><button type="button" data-v="hi" style="font-family:'Noto Serif Devanagari',serif">हिन्दी</button><button type="button" data-v="sa" style="font-family:'Noto Serif Devanagari',serif">संस्कृतम्</button><button type="button" data-v="en">English</button></div>
-    <p class="lbl" style="font-weight:400;font-size:13px;color:var(--ink-2);margin:6px 2px 0" data-t="s_tr2">દરેક ફકરા નીચે "અનુવાદ" બટન આવશે. AI અનુવાદ છે, એટલે ભૂલ હોઈ શકે.</p>
-    <div class="lbl" data-t="s_dig">અંક</div>
-    <div class="seg4 n2" data-pref="dig"><button type="button" data-v="gu">૧:૨૩:૪૫</button><button type="button" data-v="en">1:23:45</button></div>
-
-    <h3 data-t="s_listen">સાંભળવું</h3>
-    <div class="lbl" data-t="s_rate">સ્પીડ</div>
-    <div class="seg4" data-pref="rate"><button type="button" data-v="0.75">0.75×</button><button type="button" data-v="1">1×</button><button type="button" data-v="1.25">1.25×</button><button type="button" data-v="1.5">1.5×</button></div>
-    <div class="lbl" data-t="s_pre">શોધેલા શબ્દથી કેટલું પહેલાં શરૂ કરવું</div>
-    <div class="seg4 n3" data-pref="pre"><button type="button" data-v="0"></button><button type="button" data-v="5"></button><button type="button" data-v="10"></button></div>
-    <label class="tgl"><div><span data-t="s_mini">નાનો વીડિયો (ફક્ત સાંભળવા)</span><small data-t="s_mini2">વીડિયો નાનો રહે, લખાણ વાંચવા વધુ જગ્યા મળે</small></div><input type="checkbox" id="miniTgl"></label>
-    <label class="tgl"><div><span data-t="s_bell">બટનનો અવાજ</span><small data-t="s_bell2">બટન દબાવતાં ધીમો ઘંટનાદ</small></div><input type="checkbox" id="bellTgl"></label>
-    <label class="tgl"><div><span data-t="s_live">વીડિયો સાથે ચાલુ લખાણ</span><small data-t="s_live2">વક્તા જે બોલે છે તે વીડિયો નીચે સાથે-સાથે દેખાય</small></div><input type="checkbox" id="liveTgl"></label>
-    <label class="tgl"><div><span data-t="s_cc">YouTube ના subtitle</span><small data-t="s_cc2">વીડિયોમાં YouTube ના પોતાના subtitle (હોય તો)</small></div><input type="checkbox" id="ccTgl"></label>
-
-    <h3 data-t="s_mine">મારું</h3>
-    <button type="button" class="rowbtn" id="openFav"><span>❤️</span><b data-t="s_fav">મનપસંદ ક્ષણો</b><span class="n" id="favN"></span><span class="chev">›</span></button>
-    <button type="button" class="rowbtn" id="openHist"><span>🕘</span><b data-t="s_hist">ઇતિહાસ</b><span class="n" id="histN"></span><span class="chev">›</span></button>
-    <div class="tgl off"><div><span data-t="s_notif">🔔 નવી કથાની સૂચના</span><small data-t="s_notif2">આ સુવિધા જલ્દી આવશે</small></div><span class="soon" data-t="soon">જલ્દી</span></div>
-
-    <h3 data-t="s_read">વાંચવું</h3>
-    <div class="lbl" data-t="s_lh">લીટી વચ્ચેની જગ્યા</div>
-    <div class="seg4 n3" data-pref="lh"><button type="button" data-v="s" data-t="lhS">ઓછી</button><button type="button" data-v="m" data-t="lhM">સામાન્ય</button><button type="button" data-v="l" data-t="lhL">વધુ</button></div>
-    <div class="lbl" data-t="s_hlc">શોધેલા શબ્દનો રંગ</div>
-    <div class="hlsw" data-pref="hlc"><button type="button" data-v="maroon"><b style="color:var(--maroon);text-decoration:underline 2px">મંત્ર</b></button><button type="button" data-v="theme"><b style="background:var(--mark)">મંત્ર</b></button><button type="button" data-v="gold"><b style="background:#f2d58c;color:#2a1a08">મંત્ર</b></button><button type="button" data-v="green"><b style="background:#cfe6c2;color:#13300f">મંત્ર</b></button></div>
-    <label class="tgl"><div><span data-t="s_dual">બંને લિપિ સાથે</span><small data-t="s_dual2">ગુજરાતી નીચે ABC પણ દેખાય</small></div><input type="checkbox" id="dualTgl"></label>
-    <label class="tgl"><div><span data-t="s_wake">સ્ક્રીન બંધ ન થાય</span><small data-t="s_wake2">વાંચતી કે સાંભળતી વખતે ફોનની સ્ક્રીન ચાલુ રહે</small></div><input type="checkbox" id="wakeTgl"></label>
-    <label class="tgl"><div><span data-t="s_hc">વધુ સ્પષ્ટ અને જાડા અક્ષર</span><small data-t="s_hc2">વડીલો અને તડકામાં વાંચવા માટે</small></div><input type="checkbox" id="hcTgl"></label>
-    <label class="tgl"><div><span data-t="s_rm">હલનચલન ઓછું</span><small data-t="s_rm2">કાર્ડ અને પાનાંની હલનચલન બંધ</small></div><input type="checkbox" id="rmTgl"></label>
-
-    <h3 data-t="s_search">શોધ</h3>
-    <div class="lbl" data-t="s_whole">શોધનો પ્રકાર</div>
-    <div class="seg4 n2" data-pref="whole"><button type="button" data-v="0" data-t="wPart">શબ્દનો ભાગ પણ</button><button type="button" data-v="1" data-t="wWhole">ફક્ત આખો શબ્દ</button></div>
-    <p class="lbl" style="font-weight:400;font-size:13px;color:var(--ink-2);margin:6px 2px 0" data-t="s_whole2">ઉદાહરણ: "મંત્ર" શોધો તો "ગુરુમંત્ર" પણ મળે, કે ફક્ત "મંત્ર"</p>
-    <div class="lbl" data-t="s_lim">એક સાથે કેટલાં પરિણામ</div>
-    <div class="seg4 n3" data-pref="lim"><button type="button" data-v="20"></button><button type="button" data-v="50"></button><button type="button" data-v="100"></button></div>
-    <div class="lbl" data-t="s_ord">પરિણામનો ક્રમ</div>
-    <div class="seg4 n3" data-pref="ord"><button type="button" data-v="new" data-t="oNew">નવી કથા પહેલાં</button><button type="button" data-v="old" data-t="oOld">જૂની પહેલાં</button><button type="button" data-v="best" data-t="oBest">સૌથી સારો મેળ</button></div>
-    <label class="tgl"><div><span data-t="s_keepf">વક્તા/સિરીઝ યાદ રાખો</span><small data-t="s_keepf2">છેલ્લે પસંદ કરેલો filter ફરી ખોલો ત્યારે પહેલેથી પસંદ</small></div><input type="checkbox" id="keepfTgl"></label>
-    <label class="tgl"><div><span data-t="s_rh">તાજેતરની શોધ યાદ રાખો</span><small data-t="s_rh2">શોધ ખાના નીચે છેલ્લા શબ્દો દેખાય</small></div><input type="checkbox" id="rhTgl"></label>
-
-    <h3 data-t="s_more">બીજું</h3>
-    <button type="button" class="rowbtn" id="installBtn"><span>📲</span><b data-t="s_inst">એપ તરીકે ઉમેરો</b><span class="chev">›</span></button>
-    <button type="button" class="rowbtn" id="reportBtn"><span>⚑</span><b data-t="s_rep">ભૂલ જણાવો</b><span class="chev">›</span></button>
-    <button type="button" class="rowbtn" id="aboutBtn"><span>ℹ️</span><b data-t="s_about">અમારા વિશે</b><span class="chev">›</span></button>
-    <button type="button" class="rowbtn" id="resetBtn"><span>↺</span><b data-t="s_reset">બધાં સેટિંગ મૂળ સ્થિતિમાં</b></button>
+    <div class="pg" data-page="home"><div class="pg-hd"><h2 id="setTitle" data-t="settings">સેટિંગ</h2><button class="x" type="button" data-close aria-label="Close">✕</button></div><div class="tiles"><button type="button" class="tile" data-go="look"><span class="ic">🎨</span><b data-t="s_look">દેખાવ</b><small id="sum_look"></small></button><button type="button" class="tile" data-go="lang"><span class="ic">🔤</span><b data-t="s_lang">ભાષા</b><small id="sum_lang"></small></button><button type="button" class="tile" data-go="listen"><span class="ic">🎧</span><b data-t="s_listen">સાંભળવું</b><small id="sum_listen"></small></button><button type="button" class="tile" data-go="read"><span class="ic">📖</span><b data-t="s_read">વાંચવું</b><small id="sum_read"></small></button><button type="button" class="tile" data-go="search"><span class="ic">🔍</span><b data-t="s_search">શોધ</b><small id="sum_search"></small></button><button type="button" class="tile" data-go="mine"><span class="ic">❤️</span><b data-t="s_mine">મારું</b><small id="sum_mine"></small></button><button type="button" class="tile" data-go="report"><span class="ic">⚑</span><b data-t="t_report">ભૂલ</b><small id="sum_report"></small></button><button type="button" class="tile" data-go="more"><span class="ic">⋯</span><b data-t="s_more">બીજું</b><small id="sum_more"></small></button></div></div>
+    <div class="pg" data-page="look" hidden><div class="pg-hd"><button type="button" class="bk" data-go="home" aria-label="Back">‹</button><h2 data-t="s_look">દેખાવ</h2><button class="x" type="button" data-close aria-label="Close">✕</button></div><div class="lbl" data-t="l_theme">થીમ</div><div class="themes" id="themes"></div><div class="lbl" data-t="l_size">અક્ષરનું કદ</div><div class="seg4" id="sizes"><button type="button" data-fs="s" style="font-size:13px">અ</button><button type="button" data-fs="m" style="font-size:16px">અ</button><button type="button" data-fs="l" style="font-size:19px">અ</button><button type="button" data-fs="xl" style="font-size:23px">અ</button></div><p class="sample">મહારાજે <mark>ગુરુમંત્ર</mark> આપ્યો.</p><div class="lbl" data-t="l_font">ફોન્ટ</div><div class="fonts" id="fonts"><button type="button" data-font="noto"><em style="font-family:'Noto Serif Gujarati'">કચ્છ</em><small data-t="f_noto">પોથી</small></button><button type="button" data-font="rasa"><em style="font-family:'Rasa'">કચ્છ</em><small data-t="f_rasa">પુસ્તક</small></button><button type="button" data-font="hind"><em style="font-family:'Hind Vadodara'">કચ્છ</em><small data-t="f_hind">સાદા</small></button></div><div class="tg-grid"><label class="tg"><input type="checkbox" id="autoNight"><span class="ic">🌙</span><span data-t="t_night">રાત્રે ઘેરી</span></label></div></div>
+    <div class="pg" data-page="lang" hidden><div class="pg-hd"><button type="button" class="bk" data-go="home" aria-label="Back">‹</button><h2 data-t="s_lang">ભાષા</h2><button class="x" type="button" data-close aria-label="Close">✕</button></div><div class="lbl" data-t="l_ui">મેનુની ભાષા</div><div class="seg4 " data-pref="ui"><button type="button" data-v="gu">ગુજરાતી</button><button type="button" data-v="en">English</button><button type="button" data-v="hi" style="font-family:'Noto Serif Devanagari',serif">हिन्दी</button><button type="button" data-v="sa" style="font-family:'Noto Serif Devanagari',serif">संस्कृतम्</button></div><div class="lbl" data-t="l_sc">કથાની લિપિ</div><div class="seg4 n3" data-pref="sc"><button type="button" data-v="gu">ગુજરાતી</button><button type="button" data-v="ro">ABC</button><button type="button" data-v="dev" style="font-family:'Noto Serif Devanagari',serif">देवनागरी</button></div><p class="sample" id="scSample"></p><div class="lbl" data-t="l_tr">અનુવાદ</div><div class="seg4 n5" data-pref="tr"><button type="button" data-v="off" data-t="off">બંધ</button><button type="button" data-v="gu">ગુજરાતી</button><button type="button" data-v="hi" style="font-family:'Noto Serif Devanagari',serif">हिन्दी</button><button type="button" data-v="sa" style="font-family:'Noto Serif Devanagari',serif">संस्कृत</button><button type="button" data-v="en">English</button></div><div class="lbl" data-t="l_dig">અંક</div><div class="seg4 n2" data-pref="dig"><button type="button" data-v="gu">૧૨:૩૦</button><button type="button" data-v="en">12:30</button></div></div>
+    <div class="pg" data-page="listen" hidden><div class="pg-hd"><button type="button" class="bk" data-go="home" aria-label="Back">‹</button><h2 data-t="s_listen">સાંભળવું</h2><button class="x" type="button" data-close aria-label="Close">✕</button></div><div class="lbl" data-t="l_rate">સ્પીડ</div><div class="seg4 " data-pref="rate"><button type="button" data-v="0.75">0.75×</button><button type="button" data-v="1">1×</button><button type="button" data-v="1.25">1.25×</button><button type="button" data-v="1.5">1.5×</button></div><div class="lbl" data-t="l_pre">શબ્દથી પહેલાં શરૂ</div><div class="seg4 n3" data-pref="pre"><button type="button" data-v="0"></button><button type="button" data-v="5"></button><button type="button" data-v="10"></button></div><div class="tg-grid"><label class="tg"><input type="checkbox" id="liveTgl"><span class="ic">📜</span><span data-t="t_live">ચાલુ લખાણ</span></label><label class="tg"><input type="checkbox" id="ccTgl"><span class="ic">💬</span><span data-t="t_cc">YouTube subtitle</span></label><label class="tg"><input type="checkbox" id="miniTgl"><span class="ic">▫️</span><span data-t="t_mini">નાનો વીડિયો</span></label><label class="tg"><input type="checkbox" id="bellTgl"><span class="ic">🔔</span><span data-t="t_bell">ઘંટનાદ</span></label></div></div>
+    <div class="pg" data-page="read" hidden><div class="pg-hd"><button type="button" class="bk" data-go="home" aria-label="Back">‹</button><h2 data-t="s_read">વાંચવું</h2><button class="x" type="button" data-close aria-label="Close">✕</button></div><div class="lbl" data-t="l_lh">લીટી વચ્ચે જગ્યા</div><div class="seg4 n3" data-pref="lh"><button type="button" data-v="s" data-t="lhS">ઓછી</button><button type="button" data-v="m" data-t="lhM">સામાન્ય</button><button type="button" data-v="l" data-t="lhL">વધુ</button></div><div class="lbl" data-t="l_hlc">શોધેલા શબ્દનો રંગ</div><div class="hlsw" data-pref="hlc"><button type="button" data-v="maroon"><b style="color:var(--maroon);text-decoration:underline 2px">મંત્ર</b></button><button type="button" data-v="theme"><b style="background:var(--mark)">મંત્ર</b></button><button type="button" data-v="gold"><b style="background:#f2d58c;color:#2a1a08">મંત્ર</b></button><button type="button" data-v="green"><b style="background:#cfe6c2;color:#13300f">મંત્ર</b></button></div><div class="tg-grid"><label class="tg"><input type="checkbox" id="dualTgl"><span class="ic">🔡</span><span data-t="t_dual">બંને લિપિ</span></label><label class="tg"><input type="checkbox" id="wakeTgl"><span class="ic">☀️</span><span data-t="t_wake">સ્ક્રીન ચાલુ</span></label><label class="tg"><input type="checkbox" id="hcTgl"><span class="ic">🅰️</span><span data-t="t_hc">જાડા અક્ષર</span></label><label class="tg"><input type="checkbox" id="rmTgl"><span class="ic">🧘</span><span data-t="t_rm">ઓછું હલનચલન</span></label></div></div>
+    <div class="pg" data-page="search" hidden><div class="pg-hd"><button type="button" class="bk" data-go="home" aria-label="Back">‹</button><h2 data-t="s_search">શોધ</h2><button class="x" type="button" data-close aria-label="Close">✕</button></div><div class="lbl" data-t="l_whole">મેળ</div><div class="seg4 n2" data-pref="whole"><button type="button" data-v="0" data-t="wPart">ગુરુ<u>મંત્ર</u> પણ</button><button type="button" data-v="1" data-t="wWhole">ફક્ત <u>મંત્ર</u></button></div><div class="lbl" data-t="l_lim">પરિણામ</div><div class="seg4 n3" data-pref="lim"><button type="button" data-v="20"></button><button type="button" data-v="50"></button><button type="button" data-v="100"></button></div><div class="lbl" data-t="l_ord">ક્રમ</div><div class="seg4 n3" data-pref="ord"><button type="button" data-v="new" data-t="oNew">નવી પહેલાં</button><button type="button" data-v="old" data-t="oOld">જૂની પહેલાં</button><button type="button" data-v="best" data-t="oBest">સારો મેળ</button></div><div class="tg-grid"><label class="tg"><input type="checkbox" id="keepfTgl"><span class="ic">📌</span><span data-t="t_keepf">filter યાદ</span></label><label class="tg"><input type="checkbox" id="rhTgl"><span class="ic">🕘</span><span data-t="t_rh">તાજેતરની શોધ</span></label></div></div>
+    <div class="pg" data-page="mine" hidden><div class="pg-hd"><button type="button" class="bk" data-go="home" aria-label="Back">‹</button><h2 data-t="s_mine">મારું</h2><button class="x" type="button" data-close aria-label="Close">✕</button></div><div class="tiles t2"><button type="button" class="tile" id="openFav"><span class="ic">❤️</span><b data-t="s_fav">મનપસંદ</b><small id="favN"></small></button><button type="button" class="tile" id="openHist"><span class="ic">🕘</span><b data-t="s_hist">ઇતિહાસ</b><small id="histN"></small></button><button type="button" class="tile off" disabled><span class="ic">🔔</span><b data-t="t_notif">સૂચના</b><small data-t="soon">જલ્દી</small></button></div></div>
+    <div class="pg" data-page="more" hidden><div class="pg-hd"><button type="button" class="bk" data-go="home" aria-label="Back">‹</button><h2 data-t="s_more">બીજું</h2><button class="x" type="button" data-close aria-label="Close">✕</button></div><div class="tiles t2"><button type="button" class="tile" id="installBtn"><span class="ic">📲</span><b data-t="t_inst">એપ ઉમેરો</b></button><button type="button" class="tile" id="aboutBtn"><span class="ic">ℹ️</span><b data-t="s_about">અમારા વિશે</b></button><button type="button" class="tile" id="resetBtn"><span class="ic">↺</span><b data-t="t_reset">મૂળ સેટિંગ</b><small></small></button></div></div>
+    <button type="button" id="reportBtn" hidden></button>
   </div>
 </div>
 
@@ -731,9 +704,15 @@ document.querySelectorAll("#sizes [data-fs]").forEach((b) => b.onclick = () => {
 document.querySelectorAll("#fonts [data-font]").forEach((b) => b.onclick = () => { pref.font = b.dataset.font; store.set("k_font", pref.font); applyLook(); });
 $("#autoNight").onchange = (e) => { pref.night = e.target.checked; store.set("k_night", pref.night ? "1" : "0"); applyLook(); };
 setInterval(() => { if (pref.night) applyLook(); }, 60000);
-function openSettings(open) { $("#sheet").hidden = $("#scrim").hidden = !open; document.body.style.overflow = open ? "hidden" : ""; }
+function openSettings(open) { if (open && typeof goPage === "function") goPage("home"); $("#sheet").hidden = $("#scrim").hidden = !open; document.body.style.overflow = open ? "hidden" : ""; }
 $("#gear").onclick = () => openSettings(true);
-$("#setClose").onclick = $("#scrim").onclick = () => openSettings(false);
+document.querySelectorAll("[data-close]").forEach((b) => b.onclick = () => openSettings(false));
+$("#scrim").onclick = () => openSettings(false);
+function goPage(name) {
+  if (name === "report") { openSettings(false); showReport(null); return; }
+  document.querySelectorAll("#sheet .pg").forEach((p) => p.hidden = p.dataset.page !== name);
+}
+document.querySelectorAll("#sheet [data-go]").forEach((b) => b.onclick = () => goPage(b.dataset.go));
 document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#sheet").hidden) openSettings(false); });
 applyLook();
 
@@ -939,7 +918,14 @@ bindTgl("#dualTgl", "dual"); bindTgl("#hcTgl", "hc"); bindTgl("#rmTgl", "rm"); b
 bindTgl("#keepfTgl", "keepf", (on) => { if (on) saveFilters(); else setList("k_filters", []); });
 bindTgl("#wakeTgl", "wake", async (on) => { const ok = await setWake(on); if (on && !ok) { pref.wake = false; store.set("k_wake", "0"); $("#wakeTgl").checked = false; } });
 
+function tileSums() {
+  const set = (id, v) => { const e = document.getElementById("sum_" + id); if (e) e.textContent = v; };
+  set("look", T[ui].th[pref.theme] || ""); set("lang", { gu: "ગુજરાતી", en: "English", hi: "हिन्दी", sa: "संस्कृतम्" }[ui]);
+  set("listen", num(pref.rate) + "×"); set("read", T[ui][{ s: "lhS", m: "lhM", l: "lhL" }[pref.lh]] || "");
+  set("search", num(pref.lim)); set("mine", favs.length ? "❤ " + num(favs.length) : "");
+}
 function applyPrefs2() {
+  tileSums();
   const el = document.documentElement;
   el.dataset.lh = pref.lh; el.dataset.hlc = pref.hlc;
   el.classList.toggle("hc", pref.hc); el.classList.toggle("rm", pref.rm);
@@ -986,13 +972,35 @@ $("#aboutBtn").onclick = () => showInfo(T[ui].aboutTitle, `<div class="about"><p
 const PREF_KEYS = ["k_theme", "k_fs", "k_font", "k_night", "k_ui", "k_sc", "k_dig", "k_rate", "k_pre", "k_mini", "k_bell", "k_tr", "k_lh", "k_hlc", "k_dual", "k_wake", "k_hc", "k_rm", "k_whole", "k_lim", "k_ord", "k_keepf", "k_filters", "k_rh"];
 $("#resetBtn").onclick = () => {
   const b = $("#resetBtn");
-  if (!b.dataset.sure) { b.dataset.sure = 1; b.querySelector("b").textContent = T[ui].resetSure; return; }
+  if (!b.dataset.sure) { b.dataset.sure = 1; b.querySelector("small").textContent = T[ui].sure; return; }
   PREF_KEYS.forEach((k) => { try { localStorage.removeItem(k); } catch {} });
   location.reload();
 };
 if (standalone()) $("#installBtn").hidden = true;
 if (pref.wake) setWake(true);
 applyPrefs2();
+
+/* ---------- compact labels for the settings pages ---------- */
+Object.assign(T.gu, { t_report: "ભૂલ જણાવો", t_night: "રાત્રે ઘેરી", t_live: "ચાલુ લખાણ", t_cc: "YouTube subtitle", t_mini: "નાનો વીડિયો", t_bell: "ઘંટનાદ",
+  t_dual: "બંને લિપિ", t_wake: "સ્ક્રીન ચાલુ", t_hc: "જાડા અક્ષર", t_rm: "ઓછું હલનચલન", t_keepf: "filter યાદ", t_rh: "તાજેતરની શોધ", t_notif: "સૂચના", t_inst: "એપ ઉમેરો", t_reset: "મૂળ સેટિંગ",
+  l_theme: "થીમ", l_size: "અક્ષરનું કદ", l_font: "ફોન્ટ", l_ui: "મેનુની ભાષા", l_sc: "કથાની લિપિ", l_tr: "અનુવાદ", l_dig: "અંક", l_rate: "સ્પીડ", l_pre: "શબ્દથી પહેલાં શરૂ",
+  l_lh: "લીટી વચ્ચે જગ્યા", l_hlc: "શોધેલા શબ્દનો રંગ", l_whole: "મેળ", l_lim: "પરિણામ", l_ord: "ક્રમ", s_lang: "ભાષા", s_more: "બીજું",
+  f_noto: "પોથી", f_rasa: "પુસ્તક", f_hind: "સાદા", wPart: "શબ્દનો ભાગ પણ", wWhole: "ફક્ત આખો શબ્દ", oNew: "નવી પહેલાં", oOld: "જૂની પહેલાં", oBest: "સારો મેળ", sec: (n) => `${n} સેકન્ડ` });
+Object.assign(T.en, { t_report: "Report", t_night: "Dark at night", t_live: "Live text", t_cc: "YouTube subtitles", t_mini: "Small video", t_bell: "Bell sound",
+  t_dual: "Both scripts", t_wake: "Screen on", t_hc: "Bold text", t_rm: "Less motion", t_keepf: "Keep filter", t_rh: "Recent searches", t_notif: "Alerts", t_inst: "Add app", t_reset: "Reset",
+  l_theme: "Theme", l_size: "Text size", l_font: "Font", l_ui: "Menu language", l_sc: "Katha script", l_tr: "Translation", l_dig: "Numbers", l_rate: "Speed", l_pre: "Start before the word",
+  l_lh: "Line spacing", l_hlc: "Highlight colour", l_whole: "Match", l_lim: "Results", l_ord: "Order", s_lang: "Language", s_more: "More",
+  f_noto: "Pothi", f_rasa: "Book", f_hind: "Plain", wPart: "Part of word", wWhole: "Whole word", oNew: "Newest", oOld: "Oldest", oBest: "Best match", sec: (n) => `${n} sec` });
+Object.assign(T.hi, { t_report: "गलती बताएँ", t_night: "रात में गहरी", t_live: "चलता पाठ", t_cc: "YouTube सबटाइटल", t_mini: "छोटा वीडियो", t_bell: "घंटी",
+  t_dual: "दोनों लिपि", t_wake: "स्क्रीन चालू", t_hc: "मोटे अक्षर", t_rm: "कम हलचल", t_keepf: "फ़िल्टर याद", t_rh: "हाल की खोज", t_notif: "सूचना", t_inst: "ऐप जोड़ें", t_reset: "मूल सेटिंग",
+  l_theme: "थीम", l_size: "अक्षर का आकार", l_font: "फ़ॉन्ट", l_ui: "मेनू की भाषा", l_sc: "कथा की लिपि", l_tr: "अनुवाद", l_dig: "अंक", l_rate: "गति", l_pre: "शब्द से पहले शुरू",
+  l_lh: "पंक्ति अंतर", l_hlc: "खोजे शब्द का रंग", l_whole: "मेल", l_lim: "परिणाम", l_ord: "क्रम", s_lang: "भाषा", s_more: "और",
+  f_noto: "पोथी", f_rasa: "किताब", f_hind: "सादे", wPart: "शब्द का भाग भी", wWhole: "पूरा शब्द", oNew: "नई पहले", oOld: "पुरानी पहले", oBest: "अच्छा मेल", sec: (n) => `${n} सेकंड` });
+Object.assign(T.sa, { t_report: "दोषः", t_night: "रात्रौ गाढम्", t_live: "चलपाठः", t_cc: "YouTube उपशीर्षकम्", t_mini: "लघुचित्रम्", t_bell: "घण्टा",
+  t_dual: "लिपिद्वयम्", t_wake: "पटलं ज्वलेत्", t_hc: "स्थूलाक्षराणि", t_rm: "अल्पचलनम्", t_keepf: "चयनं स्मरतु", t_rh: "अद्यतनान्वेषणम्", t_notif: "सूचना", t_inst: "योजयन्तु", t_reset: "मूलविन्यासः",
+  l_theme: "वर्णविन्यासः", l_size: "अक्षरपरिमाणम्", l_font: "अक्षररूपम्", l_ui: "सूच्याः भाषा", l_sc: "कथालिपिः", l_tr: "अनुवादः", l_dig: "अङ्काः", l_rate: "वेगः", l_pre: "पदात् पूर्वम्",
+  l_lh: "पङ्क्त्यन्तरम्", l_hlc: "पदवर्णः", l_whole: "मेलः", l_lim: "फलानि", l_ord: "क्रमः", s_lang: "भाषा", s_more: "अन्यत्",
+  f_noto: "पोथी", f_rasa: "ग्रन्थः", f_hind: "सरलम्", wPart: "पदांशः अपि", wWhole: "पूर्णपदम्", oNew: "नूतनम्", oOld: "पुरातनम्", oBest: "उत्तममेलः", sec: (n) => `${n} क्षणाः` });
 
 /* ---------- live text under the video ---------- */
 Object.assign(T.gu, { lvNow: "હમણાં બોલાઈ રહ્યું છે", lvOrig: "મૂળ", s_live: "વીડિયો સાથે ચાલુ લખાણ", s_live2: "વક્તા જે બોલે છે તે વીડિયો નીચે સાથે-સાથે દેખાય", s_cc: "YouTube ના subtitle", s_cc2: "વીડિયોમાં YouTube ના પોતાના subtitle (હોય તો)" });
