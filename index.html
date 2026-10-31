@@ -265,11 +265,11 @@ body.lvfull .player .vid,body.lvfull .player .bar{flex:none}
 body.lvfull .live{flex:1;min-height:0;display:flex;box-shadow:none}
 body.lvfull .live .in{flex:1;min-height:0;display:flex;flex-direction:column;width:100%;padding-bottom:0}
 body.lvfull .lv-cur,body.lvfull .lv-nav{display:none}
-.lv-pick{position:relative;margin-left:auto}
-.lv-pick>button{display:flex;align-items:center;gap:5px;border:1px solid var(--rule);background:var(--card);color:var(--ink);border-radius:99px;padding:3px 10px 3px 8px;font-size:13px;min-height:30px;cursor:pointer}
-.lv-pick>button i{font-style:normal;font-size:9px;color:var(--ink-2)}
-.lv-pick>button[aria-expanded="true"]{border-color:var(--maroon)}
-.lv-pick .fpop{left:auto;right:0;min-width:170px}
+.lv-pick{flex:none;display:flex}
+.player .bar .lv-pick>button{display:flex;align-items:center;gap:4px;background:#5a1d12;border-color:#9b5a2a;color:#fbe9cf}
+.lv-pick>button i{font-style:normal;font-size:8px;opacity:.8}
+.lv-pick>button[aria-expanded="true"]{border-color:#e0b45e}
+.fpop.lv-fix{position:fixed;right:auto;top:auto;min-width:170px;z-index:70}
 .lv-pick .fpop .sep{height:1px;background:var(--rule);margin:2px 4px}
 .lv-mode{border:1px dashed var(--rule);background:none;color:var(--ink-2);border-radius:99px;padding:3px 10px;font-size:12px;cursor:pointer;min-height:30px}
 .lv-mode.on{border-style:solid;border-color:var(--maroon);color:var(--maroon)}
@@ -522,9 +522,9 @@ body.playing .gear{display:none}
 
 <div class="player" id="player" hidden>
   <div class="vid" id="vid"></div>
-  <div class="bar"><button type="button" class="spd" id="spd">1×</button><button type="button" id="back10" aria-label="Back">⏪ 10</button><button type="button" id="fwd10" aria-label="Forward">10 ⏩</button><button type="button" id="sleepBtn" hidden>⏲</button><button type="button" id="share" aria-label="Share">📤</button><button type="button" id="openyt">YouTube</button><button type="button" id="closeP" aria-label="Close">✕</button></div>
+  <div class="bar"><span id="lvLangs" class="lv-pick" hidden></span><button type="button" class="spd" id="spd">1×</button><button type="button" id="back10" aria-label="Back">⏪ 10</button><button type="button" id="fwd10" aria-label="Forward">10 ⏩</button><button type="button" id="sleepBtn" hidden>⏲</button><button type="button" id="share" aria-label="Share">📤</button><button type="button" id="openyt">YouTube</button><button type="button" id="closeP" aria-label="Close">✕</button></div>
   <div class="live" id="live" hidden><div class="in">
-    <div class="lv-top"><span class="lv-now" data-t="lvNow">હમણાં બોલાઈ રહ્યું છે</span><span id="lvLangs"></span></div>
+    <div class="lv-top"><span class="lv-now" data-t="lvNow">હમણાં બોલાઈ રહ્યું છે</span></div>
     <p class="lv-cur" id="lvCur"></p>
     <div class="lv-tr" id="lvTr" hidden></div>
     <div class="lv-nav"><button type="button" id="lvPrev"></button><button type="button" id="lvNext"></button></div>
@@ -840,7 +840,7 @@ const THEMES = [ // id, page, header, card, line, frame
   ["leeli", "#eef0e2", "#1f4d2b", "#f8f8ee", "#17261b", "#b28b2e"],
   ["ratri", "#17110c", "#d6a74c", "#221912", "#efdfbf", "#c9963f"],
 ];
-const pref = { lvb: store.get("k_lvb", "one"), theme: store.get("k_theme", "sadi"), fs: store.get("k_fs", "m"), font: store.get("k_font", "noto"), night: store.get("k_night", "0") === "1",
+const pref = { theme: store.get("k_theme", "sadi"), fs: store.get("k_fs", "m"), font: store.get("k_font", "noto"), night: store.get("k_night", "0") === "1",
   rate: store.get("k_rate", "1"), pre: store.get("k_pre", "5"), mini: store.get("k_mini", "0") === "1", bell: store.get("k_bell", "0") === "1", tr: store.get("k_tr", "off"),
   lh: store.get("k_lh", "m"), hlc: store.get("k_hlc", "theme"), dual: store.get("k_dual", "0") === "1", wake: store.get("k_wake", "0") === "1",
   hc: store.get("k_hc", "0") === "1", rm: store.get("k_rm", "0") === "1", whole: store.get("k_whole", "0"), lim: store.get("k_lim", "50"),
@@ -1212,7 +1212,6 @@ const SETS = [
   { k: "lim", l: "l_lim", o: () => ["20", "50", "100"].map((n) => [n, num(n)]), get: () => pref.lim },
   { k: "ord", l: "l_ord", o: () => [["new", T[ui].oNew], ["old", T[ui].oOld], ["best", T[ui].oBest]], get: () => pref.ord },
   { k: "sleep", l: "l_sleep", page: 2, o: () => [["off", T[ui].off], ...["15", "30", "45", "60"].map((n) => [n, num(T[ui].min(n))])], get: () => pref.sleep, after: () => armSleep() },
-  { k: "lvb", l: "l_lvb", page: 2, o: () => [["one", T[ui].lvbOne], ["row", T[ui].lvbRow]], get: () => pref.lvb, after: () => { if (live.idx >= 0) drawLive(); } },
   { k: "skip", l: "l_skip", page: 2, o: () => ["5", "10", "30"].map((n) => [n, num(T[ui].sec(n))]), get: () => pref.skip, after: () => skipLabels() },
 ];
 window.__setsReady = true;
@@ -1261,19 +1260,19 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
 const APP_VER = "2026.10.31";
-Object.assign(T.gu, { l_lvb: "🌐 અનુવાદ બટન", lvbOne: "એક નાનું બટન", lvbRow: "બધી ભાષા હરોળમાં", t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
+Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
   helpTitle: "❓ કેવી રીતે વાપરવું", help: ["🔍 કથામાં બોલાયેલો કોઈ પણ શબ્દ શોધો. ગુજરાતી, ABC કે દેવનાગરી, કોઈ પણ રીતે લખી શકો.", "▶ “અહીં સાંભળો” દબાવતાં કથા એ જ ક્ષણથી ચાલે, અને નીચે વક્તા જે બોલે છે તે લખાણ દેખાય.", "🌐 લખાણ ઉપરનાં હિન્દી/સંસ્કૃત/English બટન દબાવતાં અનુવાદ દેખાય.", "♡ ગમતા ફકરા સાચવો, 📤 WhatsApp પર મોકલો, ⚑ ભૂલ દેખાય તો જણાવો.", "⚙️ માં થીમ, અક્ષરનું કદ, ભાષા, ઊંઘ ટાઇમર જેવું બધું બદલી શકો."] });
-Object.assign(T.en, { l_lvb: "🌐 Translation", lvbOne: "One small button", lvbRow: "All languages in a row", t_more2: "More", l_sleep: "⏲ Sleep timer", l_skip: "⏪⏩ Skip", min: (n) => `${n} min`, t_shtxt: "Share with text", t_shname: "Add our name", t_priv: "Private mode",
+Object.assign(T.en, { t_more2: "More", l_sleep: "⏲ Sleep timer", l_skip: "⏪⏩ Skip", min: (n) => `${n} min`, t_shtxt: "Share with text", t_shname: "Add our name", t_priv: "Private mode",
   t_upd: "Get latest version", t_help: "Help", sleepDone: "⏲ Timer finished, the katha is paused. Jay Swaminarayan 🙏", ver: "Version", shTitle: "📤 Share", shWa: "WhatsApp", shCopy: "Copy",
   shCard: "Quote card", shSave: "Share / save", brand: "— Kutch Satsang", listen: "Listen here:", updOk: "Getting the latest version…",
   helpTitle: "❓ How to use", help: ["🔍 Search any word spoken in a katha, in Gujarati, ABC or Devanagari.", "▶ “Play here” starts the katha at that moment, with the spoken words shown underneath.", "🌐 Tap Hindi, Sanskrit or English above the text to see a translation.", "♡ Keep passages you like, 📤 send them on WhatsApp, ⚑ tell us about a mistake.", "⚙️ Change the theme, text size, language, sleep timer and more."] });
-Object.assign(T.hi, { l_lvb: "🌐 अनुवाद बटन", lvbOne: "एक छोटा बटन", lvbRow: "सभी भाषाएँ पंक्ति में", t_more2: "और", l_sleep: "⏲ नींद टाइमर", l_skip: "⏪⏩ सेकंड", min: (n) => `${n} मिनट`, t_shtxt: "पाठ के साथ शेयर", t_shname: "नाम जोड़ें", t_priv: "निजी मोड",
+Object.assign(T.hi, { t_more2: "और", l_sleep: "⏲ नींद टाइमर", l_skip: "⏪⏩ सेकंड", min: (n) => `${n} मिनट`, t_shtxt: "पाठ के साथ शेयर", t_shname: "नाम जोड़ें", t_priv: "निजी मोड",
   t_upd: "नया वर्ज़न", t_help: "मदद", sleepDone: "⏲ टाइमर पूरा, कथा रोकी गई। जय स्वामिनारायण 🙏", ver: "वर्ज़न", shTitle: "📤 शेयर करें", shWa: "WhatsApp", shCopy: "कॉपी",
   shCard: "सुविचार कार्ड", shSave: "शेयर / सहेजें", brand: "— कच्छ सत्संग", listen: "यहाँ सुनें:", updOk: "नया वर्ज़न ला रहे हैं…",
   helpTitle: "❓ कैसे उपयोग करें", help: ["🔍 कथा में बोला गया कोई भी शब्द खोजें, गुजराती, ABC या देवनागरी में।", "▶ “यहाँ सुनें” दबाने पर कथा उसी पल से चले और नीचे बोला गया पाठ दिखे।", "🌐 पाठ के ऊपर हिन्दी/संस्कृत/English दबाकर अनुवाद देखें।", "♡ पसंद के अनुच्छेद सहेजें, 📤 WhatsApp पर भेजें, ⚑ गलती बताएँ।", "⚙️ में थीम, अक्षर का आकार, भाषा, नींद टाइमर आदि बदलें।"] });
-Object.assign(T.sa, { l_lvb: "🌐 अनुवादः", lvbOne: "एकं लघु-बटनम्", lvbRow: "सर्वाः भाषाः पङ्क्तौ", t_more2: "अधिकम्", l_sleep: "⏲ निद्रासमयः", l_skip: "⏪⏩ क्षणाः", min: (n) => `${n} निमेषाः`, t_shtxt: "पाठेन सह", t_shname: "नाम योजयतु", t_priv: "गुप्तविधिः",
+Object.assign(T.sa, { t_more2: "अधिकम्", l_sleep: "⏲ निद्रासमयः", l_skip: "⏪⏩ क्षणाः", min: (n) => `${n} निमेषाः`, t_shtxt: "पाठेन सह", t_shname: "नाम योजयतु", t_priv: "गुप्तविधिः",
   t_upd: "नूतनसंस्करणम्", t_help: "साहाय्यम्", sleepDone: "⏲ समयः समाप्तः, कथा स्थगिता। जय स्वामिनारायण 🙏", ver: "संस्करणम्", shTitle: "📤 प्रेषयन्तु", shWa: "WhatsApp", shCopy: "प्रतिलिपिः",
   shCard: "सुविचारपत्रम्", shSave: "प्रेषयन्तु / रक्षन्तु", brand: "— कच्छसत्सङ्गः", listen: "अत्र शृण्वन्तु:", updOk: "नूतनसंस्करणम् आनीयते…",
   helpTitle: "❓ उपयोगविधिः", help: ["🔍 कथायाम् उक्तं किमपि पदम् अन्विष्यन्तु।", "▶ “अत्र शृण्वन्तु” नुदित्वा तस्मात् क्षणात् कथा चलति, अधः पाठः दृश्यते।", "🌐 पाठस्य उपरि भाषापिञ्जं नुदित्वा अनुवादं पश्यन्तु।", "♡ प्रियान् अनुच्छेदान् रक्षन्तु, 📤 WhatsApp द्वारा प्रेषयन्तु, ⚑ दोषं सूचयन्तु।", "⚙️ मध्ये वर्णविन्यासं, अक्षरपरिमाणं, भाषां च परिवर्तयन्तु।"] });
@@ -1387,7 +1386,7 @@ async function startLive(info, t) {
   }
   drawList(); live.idx = -1; liveTick(t);
 }
-function stopLive() { $("#live").hidden = true; live.idx = -1; document.body.classList.remove("lvfull"); }
+function stopLive() { $("#lvLangs").hidden = true; closeF(); $("#live").hidden = true; live.idx = -1; document.body.classList.remove("lvfull"); }
 function liveTick(t) {
   live.t = t;
   if (!pref.live || !live.segs.length) return;
@@ -1414,24 +1413,17 @@ function drawLive() {
   const langs = LV_LANGS.filter(([k]) => !(k === "gu" && src === "gu"));
   if (!langs.some(([k]) => k === pref.lvl)) pref.lvl = "orig";
   const only = store.get("k_lvo", "0") === "1";
-  const lvName = (k) => (langs.find(([x]) => x === k) || [])[1] || T[ui].lvOrig;
-  if (pref.lvb !== "row") {
-    $("#lvLangs").className = "lv-pick";
-    $("#lvLangs").innerHTML = `<button type="button" id="lvPickB" aria-expanded="false">🌐 <span class="${pref.lvl === "hi" || pref.lvl === "sa" ? "dev" : ""}">${lvName(pref.lvl)}${only && pref.lvl !== "orig" ? " ✓" : ""}</span><i>▼</i></button>`;
-    $("#lvPickB").onclick = (e) => { e.stopPropagation(); const b = $("#lvPickB"), open = b.getAttribute("aria-expanded") === "true"; closeF(); if (open) return;
-      const pop = document.createElement("div"); pop.className = "fpop";
-      pop.innerHTML = langs.map(([k, w]) => `<button type="button" data-lv="${k}" class="${k === pref.lvl ? "on" : ""}${k === "hi" || k === "sa" ? " dev" : ""}">${w || T[ui].lvOrig}</button>`).join("")
-        + `<div class="sep"></div><button type="button" data-only class="${only ? "on" : ""}">${only ? "✓ " : ""}${T[ui].lvOnly}</button>`;
-      pop.querySelectorAll("[data-lv]").forEach((x) => x.onclick = (ev) => { ev.stopPropagation(); pref.lvl = x.dataset.lv; store.set("k_lvl", pref.lvl); if (x.dataset.lv === "hi" || x.dataset.lv === "sa") loadFont("dev"); closeF(); drawLive(); });
-      pop.querySelector("[data-only]").onclick = (ev) => { ev.stopPropagation(); store.set("k_lvo", only ? "0" : "1"); closeF(); drawLive(); };
-      b.after(pop); b.setAttribute("aria-expanded", "true"); };
-  } else {
-  $("#lvLangs").className = "";
-  $("#lvLangs").innerHTML = langs.map(([k, w]) => `<button type="button" class="lv-lang${k === pref.lvl ? " on" : ""}${k === "hi" || k === "sa" ? " dv" : ""}" data-lv="${k}">${w || T[ui].lvOrig}</button>`).join(" ")
-    + (pref.lvl !== "orig" ? ` <button type="button" class="lv-mode${only ? " on" : ""}" id="lvOnly">${only ? "✓ " : ""}${T[ui].lvOnly}</button>` : "");
-  $("#lvLangs").querySelectorAll("[data-lv]").forEach((b) => b.onclick = () => { pref.lvl = b.dataset.lv; store.set("k_lvl", pref.lvl); if (b.dataset.lv === "hi" || b.dataset.lv === "sa") loadFont("dev"); drawLive(); });
-  if ($("#lvOnly")) $("#lvOnly").onclick = () => { store.set("k_lvo", only ? "0" : "1"); drawLive(); };
-  }
+  const SHORT = { orig: T[ui].lvOrig, gu: "ગુ", hi: "हि", sa: "सं", en: "En" };
+  $("#lvLangs").hidden = false;
+  $("#lvLangs").innerHTML = `<button type="button" id="lvPickB" aria-expanded="false" aria-label="Language">🌐 <span class="${pref.lvl === "hi" || pref.lvl === "sa" ? "dev" : ""}">${SHORT[pref.lvl] || ""}${only && pref.lvl !== "orig" ? " ✓" : ""}</span><i>▼</i></button>`;
+  $("#lvPickB").onclick = (e) => { e.stopPropagation(); const b = $("#lvPickB"), open = b.getAttribute("aria-expanded") === "true"; closeF(); if (open) return;
+    const pop = document.createElement("div"); pop.className = "fpop lv-fix";
+    pop.innerHTML = langs.map(([k, w]) => `<button type="button" data-lv="${k}" class="${k === pref.lvl ? "on" : ""}${k === "hi" || k === "sa" ? " dev" : ""}">${w || T[ui].lvOrig}</button>`).join("")
+      + `<div class="sep"></div><button type="button" data-only class="${only ? "on" : ""}">${only ? "✓ " : ""}${T[ui].lvOnly}</button>`;
+    const r = b.getBoundingClientRect(); pop.style.left = Math.max(8, r.left) + "px"; pop.style.top = (r.bottom + 6) + "px";
+    pop.querySelectorAll("[data-lv]").forEach((x) => x.onclick = (ev) => { ev.stopPropagation(); pref.lvl = x.dataset.lv; store.set("k_lvl", pref.lvl); if (x.dataset.lv === "hi" || x.dataset.lv === "sa") loadFont("dev"); closeF(); drawLive(); });
+    pop.querySelector("[data-only]").onclick = (ev) => { ev.stopPropagation(); store.set("k_lvo", only ? "0" : "1"); closeF(); drawLive(); };
+    document.body.appendChild(pop); b.setAttribute("aria-expanded", "true"); };
   $("#lvCur").textContent = scText(s.text, s.roman);
   const prev = live.segs[live.idx - 1], next = live.segs[live.idx + 1];
   $("#lvPrev").textContent = prev ? "‹ " + fmt(prev.start_sec) : ""; $("#lvNext").textContent = next ? fmt(next.start_sec) + " ›" : "";
