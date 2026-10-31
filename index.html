@@ -135,6 +135,21 @@ body.playing .overlay{top:calc(min(56.25vw,42vh,360px) + 50px + env(safe-area-in
 .abtns button.on{background:var(--maroon);border-color:var(--maroon);color:var(--on-accent)}
 .abtns button.danger{color:#b3261e;border-color:#e2b4ae}
 .abtns button.danger.sure{background:#b3261e;border-color:#b3261e;color:#fff}
+.abtns button.show,.tx-p.hid button{border:2px solid #4f8a3a;background:#eef6e8;color:#2d5a1e;font-weight:700}
+.vrow.hid{border-color:#8a8a8a;background:repeating-linear-gradient(135deg,var(--card) 0 10px,var(--paper) 10px 20px)}
+.vrow.hid b{opacity:.65}
+.hid-pill{justify-self:start;background:#5d5d5d;color:#fff;border-radius:20px;padding:2px 10px;font-size:12.5px;font-weight:600}
+.tx-sheet{position:fixed;inset:0;z-index:60;background:var(--paper);display:flex;flex-direction:column}
+.tx-sheet[hidden]{display:none!important}
+.tx-head{background:var(--maroon);color:var(--on-accent);padding:calc(10px + env(safe-area-inset-top,0px)) 12px 10px;display:flex;gap:10px;align-items:center;font-size:14.5px;font-weight:700}
+.tx-head span{flex:1;min-width:0}
+.tx-head button{background:transparent;border:1px solid rgba(255,255,255,.5);color:inherit;border-radius:9px;height:34px;min-width:40px;font-size:16px}
+.tx-list{overflow:auto;flex:1;padding:4px 0 30px}
+.tx-p{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:start;padding:10px 12px;border-bottom:1px solid var(--rule);font-size:14.5px;line-height:1.65;background:var(--card)}
+.tx-p .t{color:var(--maroon-2);font-size:12px;font-family:var(--latin);padding-top:3px}
+.tx-p button{border:1px solid var(--rule);background:var(--paper);border-radius:8px;height:32px;min-width:38px;font-size:14px}
+.tx-p.hid{background:repeating-linear-gradient(135deg,var(--card) 0 10px,var(--paper) 10px 20px)}
+.tx-p.hid .x{opacity:.55;text-decoration:line-through}
 .lang-chips{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .lang-chips button{border:1px solid var(--rule);border-radius:10px;background:var(--card);color:var(--ink);padding:10px 4px;font-size:15px;cursor:pointer}
 .lang-chips button.on{background:var(--maroon);border-color:var(--maroon);color:var(--on-accent)}
@@ -538,6 +553,7 @@ body.playing .gear{display:none}
       <div id="plPick" class="pl-pick" hidden></div>
       <div id="vlist" class="admin" style="margin-top:6px"></div>
       <div id="rlist" class="admin"></div>
+      <div id="txSheet" class="tx-sheet" hidden><div class="tx-head"><span id="txTitle"></span><button type="button" id="txClose" aria-label="બંધ">✕</button></div><div id="txList" class="tx-list"></div></div>
       <a href="#" class="link" style="font-family:var(--latin)">← સર્ચ પેજ પર જાઓ</a>
     </div>
   </main>
@@ -826,16 +842,21 @@ async function refreshReports() {
 async function refreshList() {
   const { videos } = await adm({ action: "list" });
   const label = { done: "✔ તૈયાર", processing: "⏳ લખાણ બની રહ્યું છે…", error: "✖ ભૂલ", pending: "રાહ" };
-  $("#vlist").innerHTML = (videos || []).map((v) => `<div class="vrow ${v.status}"><div><b>${esc(v.title || v.youtube_id)}</b></div>
+  $("#vlist").innerHTML = (videos || []).map((v) => `<div class="vrow ${v.status}${v.hidden ? " hid" : ""}"><div><b>${esc(v.title || v.youtube_id)}</b></div>
     <div class="vmeta">🎙 ${esc(v.speaker || "વક્તા નથી")} · 📚 ${esc(v.series || "સિરીઝ નથી")}</div>
     <div class="st">${label[v.status] || v.status}${v.status === "done" ? ` · ${v.passages} ફકરા` : ""} · ${({ gu: "ગુજરાતી", hi: "હિન્દી", sa: "સંસ્કૃત" })[v.lang] || "ગુજરાતી"}</div>
-    <div class="abtns"><button type="button" data-ed="${v.id}">✏️ વક્તા</button><button type="button" data-retry="${v.id}">↻ ફરી કરો</button><button type="button" class="danger" data-del="${v.id}">🗑 કાઢો</button></div>
+    ${v.hidden ? `<span class="hid-pill">🙈 છુપાયેલી · સાઈટ પર નથી દેખાતી</span>` : ""}
+    <div class="abtns"><button type="button" data-ed="${v.id}">✏️ વક્તા</button>${v.passages ? `<button type="button" data-tx="${v.id}">📄 લખાણ</button>` : ""}<button type="button" data-hide="${v.id}" class="${v.hidden ? "show" : ""}">${v.hidden ? "👁 બતાવો" : "🙈 છુપાવો"}</button><button type="button" data-retry="${v.id}">↻ ફરી કરો</button><button type="button" class="danger" data-del="${v.id}">🗑 કાઢો</button></div>
     ${v.error ? `<div class="err">${esc(v.error)}</div>` : ""}</div>`).join("") || "<small>હજી કોઈ કથા ઉમેરી નથી.</small>";
   $("#vlist").querySelectorAll("[data-ed]").forEach((b) => b.onclick = async () => {
     const v = videos.find((x) => x.id === +b.dataset.ed);
     const sp = prompt("વક્તાનું નામ", v.speaker || ""); if (sp === null) return;
     const se = prompt("કથા સિરીઝ", v.series || ""); if (se === null) return;
     await adm({ action: "edit", id: v.id, title: v.title, speaker: sp.trim() || null, series: se.trim() || null, lang: v.lang }); refreshList(); });
+  $("#vlist").querySelectorAll("[data-hide]").forEach((b) => b.onclick = async () => {
+    const v = videos.find((x) => x.id === +b.dataset.hide);
+    await adm({ action: "hide", id: v.id, hidden: !v.hidden }); toast(v.hidden ? "👁 કથા ફરી સાઈટ પર દેખાશે" : "🙈 કથા સાઈટ પરથી છુપાવી"); refreshList(); });
+  $("#vlist").querySelectorAll("[data-tx]").forEach((b) => b.onclick = () => openTx(videos.find((x) => x.id === +b.dataset.tx)));
   $("#vlist").querySelectorAll("[data-retry]").forEach((b) => b.onclick = async () => { await adm({ action: "retry", id: +b.dataset.retry }); refreshList(); });
   $("#vlist").querySelectorAll("[data-del]").forEach((b) => b.onclick = async () => {
     if (b.dataset.sure) { await adm({ action: "delete", id: +b.dataset.del }); refreshList(); } else { b.dataset.sure = 1; b.classList.add("sure"); b.textContent = "⚠️ ખાતરી? ફરી દબાવો";
@@ -872,6 +893,25 @@ $("#addBtn").onclick = async () => {
 };
 // kirtan, raas and bhajan evenings are usually not kathas: left unticked to start with
 const NOT_KATHA = /bhajan|kirtan|raas|ras\b|garba|aarti|arti|maharaas|ભજન|કીર્તન|રાસ/i;
+// admin: whole transcript of one katha, each passage can be hidden from the site
+async function openTx(v) {
+  const sh = $("#txSheet"), list = $("#txList");
+  list.innerHTML = "<small style='padding:12px;display:block'>લખાણ ખૂલે છે…</small>"; sh.hidden = false;
+  const { passages } = await adm({ action: "passages", id: v.id });
+  const ps = passages || [];
+  const head = () => { $("#txTitle").textContent = `📄 ${v.title || v.youtube_id} · ${ps.length} ફકરા · ${ps.filter((p) => p.hidden).length} છુપાયેલા`; };
+  const row = (p) => `<div class="tx-p${p.hidden ? " hid" : ""}" data-pid="${p.id}"><span class="t">${fmt0(p.start_sec)}</span><span class="x">${esc(p.text)}</span><button type="button" aria-label="${p.hidden ? "બતાવો" : "છુપાવો"}">${p.hidden ? "👁" : "🙈"}</button></div>`;
+  list.innerHTML = ps.map(row).join("") || "<small style='padding:12px;display:block'>હજી લખાણ નથી.</small>"; head();
+  list.onclick = async (e) => {
+    const btn = e.target.closest("button"); if (!btn) return;
+    const el = btn.closest(".tx-p"), p = ps.find((x) => x.id === +el.dataset.pid);
+    btn.disabled = true;
+    try { await adm({ action: "hide_passage", id: p.id, hidden: !p.hidden }); p.hidden = !p.hidden; el.outerHTML = row(p); head(); toast(p.hidden ? "🙈 ફકરો છુપાવ્યો" : "👁 ફકરો ફરી દેખાશે"); }
+    catch (err) { btn.disabled = false; toast(err.message); }
+  };
+}
+$("#txClose").onclick = () => { $("#txSheet").hidden = true; };
+
 function showPick(pl, base) {
   const box = $("#plPick");
   box.innerHTML = `<b>Playlist: ${pl.items.length} વીડિયો</b><small>જે કથા જોઈએ એ જ ✓ રાખો. ભજન, રાસ વગેરે પહેલેથી કાઢી રાખ્યાં છે.</small>
@@ -1320,7 +1360,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.10.31.6";
+const APP_VER = "2026.10.31.7";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",

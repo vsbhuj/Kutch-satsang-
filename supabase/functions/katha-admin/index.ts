@@ -226,9 +226,10 @@ async function translate(passageId: number, to: string) {
   if (!TARGET[to] || !passageId) return json({ error: "bad request" }, 400);
   const { data: hit } = await db.from("katha_translations").select("text").eq("passage_id", passageId).eq("lang", to).maybeSingle();
   if (hit) return json({ text: hit.text, cached: true });
-  const { data: p } = await db.from("katha_passages").select("id,text,video_id").eq("id", passageId).maybeSingle();
-  if (!p) return json({ error: "not found" }, 404);
-  const { data: v } = await db.from("katha_videos").select("lang").eq("id", p.video_id).maybeSingle();
+  const { data: p } = await db.from("katha_passages").select("id,text,video_id,hidden").eq("id", passageId).maybeSingle();
+  if (!p || p.hidden) return json({ error: "not found" }, 404);
+  const { data: v } = await db.from("katha_videos").select("lang,hidden").eq("id", p.video_id).maybeSingle();
+  if (!v || v.hidden) return json({ error: "not found" }, 404);
   const from = v?.lang || "gu";
   if (from === to) return json({ same: true });
   // keep the free Gemini key safe from a flood of new requests
@@ -405,6 +406,22 @@ Deno.serve(async (req: Request) => {
     if (b.action === "chunks") {
       const { data } = await db.from("katha_chunks").select("idx,start_sec,end_sec,status,attempts,passages,error").eq("video_id", b.id).order("start_sec");
       return json({ chunks: data });
+    }
+
+    // hide a whole katha, or one passage, from the public site (admin still sees it)
+    if (b.action === "hide") {
+      await db.from("katha_videos").update({ hidden: !!b.hidden }).eq("id", b.id);
+      return json({ ok: true });
+    }
+
+    if (b.action === "passages") {
+      const { data } = await db.from("katha_passages").select("id,start_sec,text,hidden").eq("video_id", b.id).order("start_sec").limit(5000);
+      return json({ passages: data });
+    }
+
+    if (b.action === "hide_passage") {
+      await db.from("katha_passages").update({ hidden: !!b.hidden }).eq("id", b.id);
+      return json({ ok: true });
     }
 
     if (b.action === "delete") {
