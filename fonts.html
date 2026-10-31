@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="gu"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ફોન્ટ પસંદ કરો · કચ્છ સત્સંગ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Gujarati:wght@400;700&family=Rasa:wght@400;700&family=Hind+Vadodara:wght@400;700&family=Mukta+Vaani:wght@400;700&family=Baloo+Bhai+2:wght@400;700&family=Shrikhand&family=Kumar+One&family=Farsan&family=Anek+Gujarati:wght@400;700&family=IM+Fell+English:ital@0;1&display=swap">
+<style>
+body{margin:0;background:#ecd9b0;color:#3a2414;font-family:"Noto Serif Gujarati",serif;padding:16px}
+h1{color:#7a1f17;font-size:24px;margin:6px 0 4px}
+p.lead{margin:0 0 18px;font-size:15px;color:#6e5236}
+.f{background:#fbf4e4;border:1px solid #b8862f;padding:14px 16px;margin-bottom:14px;box-shadow:inset 0 0 0 4px #fbf4e4,inset 0 0 0 5px rgba(184,134,47,.45)}
+.f .n{font-family:"IM Fell English",serif;font-size:14px;color:#7a1f17;display:flex;justify-content:space-between}
+.f .n b{background:#7a1f17;color:#f6e2b8;padding:0 8px;font-family:"Noto Serif Gujarati";font-size:14px}
+.f h2{margin:6px 0 2px;font-size:40px;color:#7a1f17;font-weight:700;line-height:1.3}
+.f .t{font-size:19px;line-height:1.7}
+.f .d{font-size:13px;color:#6e5236;margin-top:6px}
+</style></head><body>
+<h1>ફોન્ટ પસંદ કરો</h1>
+<p class="lead">દરેક ફોન્ટમાં મથાળું અને કથાનું લખાણ કેવું દેખાશે તે જુઓ. ગમે તે ફોન્ટનો નંબર મને કહો.</p>
+<div id="list"></div>
+<script>
+const F=[
+ ["Noto Serif Gujarati","જૂના છાપેલા ગ્રંથ જેવા, સ્પષ્ટ. વાંચવામાં સૌથી સરળ."],
+ ["Rasa","પુસ્તક જેવા, થોડા સાહિત્યિક અને નાજુક."],
+ ["Anek Gujarati","આધુનિક અને સ્વચ્છ, પણ થોડા પરંપરાગત."],
+ ["Hind Vadodara","એકદમ સાદા, આધુનિક. મોબાઇલ પર સ્પષ્ટ."],
+ ["Mukta Vaani","ગોળાકાર અને મૃદુ, આધુનિક."],
+ ["Baloo Bhai 2","ગોળ અને ભરાવદાર, મૈત્રીપૂર્ણ."],
+ ["Shrikhand","સુશોભિત અને જાડા. ફક્ત મથાળા માટે."],
+ ["Kumar One","જાડા, પોસ્ટર જેવા. ફક્ત મથાળા માટે."],
+ ["Farsan","હાથે લખેલા જેવા, રમતિયાળ. ફક્ત મથાળા માટે."],
+];
+document.getElementById('list').innerHTML=F.map((f,i)=>`<div class="f"><div class="n"><span>${f[0]}</span><b>${i+1}</b></div>
+<h2 style="font-family:'${f[0]}'">કચ્છ સત્સંગ</h2>
+<div class="t" style="font-family:'${f[0]}'">મહારાજે આચાર્યને સ્થાપિત કર્યા અને એ આચાર્યને <b style="color:#7a1f17">ગુરુમંત્ર</b> આપ્યો અને દીક્ષા આપવાનો અધિકાર આપ્યો.</div>
+<div class="d">${f[1]}</div></div>`).join('');
+</script>
+</body></html>
