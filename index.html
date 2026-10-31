@@ -201,6 +201,35 @@ body.mini .player .vid{width:160px;max-width:40vw;aspect-ratio:16/9;margin:6px a
 body.mini.playing{padding-top:calc(90px + 56px + env(safe-area-inset-top,0px))}
 body.mini.playing .overlay{top:calc(90px + 56px + env(safe-area-inset-top,0px))}
 
+/* ---------- sections 5-7 ---------- */
+:root{--lhm:1}
+html[data-lh="s"]{--lhm:.85} html[data-lh="l"]{--lhm:1.2}
+.card .txt{line-height:calc(1.85 * var(--lhm))} .seg p,.mine .item p{line-height:calc(1.8 * var(--lhm))}
+.txt2{display:block;margin:8px 0 0;font-size:calc(15px * var(--fs));line-height:calc(1.7 * var(--lhm));color:var(--ink-2);overflow-wrap:anywhere}
+html[data-hlc="gold"] mark{background:#f2d58c;color:#2a1a08}
+html[data-hlc="green"] mark{background:#cfe6c2;color:#13300f}
+html[data-hlc="yellow"] mark{background:#fff27a;color:#2b2400}
+html[data-hlc="maroon"] mark{background:transparent;color:var(--maroon);text-decoration:underline 2px;text-underline-offset:4px}
+html.hc{--ink:#000;--ink-2:#2b2b2b;--rule:#8a7a68}
+html.hc[data-look="ratri"]{--ink:#fff;--ink-2:#e6dccb;--rule:#8f7a5c}
+html.hc :is(.txt,.seg p,.txt2,.mine .item p){font-weight:600}
+html.rm *,html.rm *::before,html.rm *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+.hlsw{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.hlsw button{border:2px solid transparent;border-radius:10px;background:var(--card);padding:10px 4px;cursor:pointer;font-size:15px;color:var(--ink)}
+.hlsw button.on{border-color:var(--maroon)}
+.hlsw b{padding:0 4px;border-radius:2px}
+.recent{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.recent .r{border:1px dashed var(--rule);background:none;border-radius:99px;padding:3px 12px;font-size:14px;color:var(--ink-2);cursor:pointer}
+.recent small{color:var(--ink-2);font-size:13px}
+.acts .rep{margin-left:0;font-size:13px;color:var(--ink-2)}
+.form{display:grid;gap:10px;padding:14px 0}
+.form textarea,.form input{width:100%;border:1px solid var(--rule);background:var(--card);padding:10px;font-size:16px;color:var(--ink);border-radius:8px}
+.form textarea{min-height:130px}
+.form .ctx{font-size:13px;color:var(--ink-2)}
+.about p{font-size:16px;line-height:1.8;margin:12px 0}
+.rptrow{background:var(--card);border-left:3px solid var(--saffron);padding:10px 12px;display:grid;gap:4px;font-size:14px}
+.rptrow.fixed{border-color:#4f8a3a;opacity:.7}.rptrow.seen{border-color:var(--rule)}
+
 /* ---------- ⚙️ button + bottom sheet ---------- */
 .gear{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:max(12px,env(safe-area-inset-right,0px));z-index:22;width:44px;height:44px;border-radius:50%;
   border:1px solid var(--rule);background:var(--card);color:var(--maroon);font-size:22px;line-height:1;cursor:pointer;box-shadow:0 1px 6px rgba(60,30,10,.15);display:grid;place-items:center}
@@ -254,6 +283,7 @@ body.playing .gear{display:none}
       <input id="q" type="search" autocomplete="off" enterkeyhint="search" aria-label="Search">
       <button class="btn" type="submit" data-t="search">Search</button>
     </form>
+    <div class="recent" id="recent" hidden></div>
 
     <div class="filters">
       <div class="field"><label for="fseries" data-t="series">Katha series</label><select id="fseries"><option value="" data-t="allseries">All series</option></select></div>
@@ -291,6 +321,7 @@ body.playing .gear{display:none}
       <button class="btn" id="addBtn" type="button">ઉમેરો</button>
       <small>દરેક કથાનું લખાણ બનતાં થોડી મિનિટ લાગે. આ પેજ ખુલ્લું રાખશો તો સ્થિતિ આપમેળે બદલાશે.</small>
       <div id="vlist" class="admin" style="margin-top:6px"></div>
+      <div id="rlist" class="admin"></div>
       <a href="#" class="link" style="font-family:var(--latin)">← સર્ચ પેજ પર જાઓ</a>
     </div>
   </main>
@@ -358,6 +389,33 @@ body.playing .gear{display:none}
     <button type="button" class="rowbtn" id="openFav"><span>❤️</span><b data-t="s_fav">મનપસંદ ક્ષણો</b><span class="n" id="favN"></span><span class="chev">›</span></button>
     <button type="button" class="rowbtn" id="openHist"><span>🕘</span><b data-t="s_hist">ઇતિહાસ</b><span class="n" id="histN"></span><span class="chev">›</span></button>
     <div class="tgl off"><div><span data-t="s_notif">🔔 નવી કથાની સૂચના</span><small data-t="s_notif2">આ સુવિધા જલ્દી આવશે</small></div><span class="soon" data-t="soon">જલ્દી</span></div>
+
+    <h3 data-t="s_read">વાંચવું</h3>
+    <div class="lbl" data-t="s_lh">લીટી વચ્ચેની જગ્યા</div>
+    <div class="seg4 n3" data-pref="lh"><button type="button" data-v="s" data-t="lhS">ઓછી</button><button type="button" data-v="m" data-t="lhM">સામાન્ય</button><button type="button" data-v="l" data-t="lhL">વધુ</button></div>
+    <div class="lbl" data-t="s_hlc">શોધેલા શબ્દનો રંગ</div>
+    <div class="hlsw" data-pref="hlc"><button type="button" data-v="maroon"><b style="color:var(--maroon);text-decoration:underline 2px">મંત્ર</b></button><button type="button" data-v="theme"><b style="background:var(--mark)">મંત્ર</b></button><button type="button" data-v="gold"><b style="background:#f2d58c;color:#2a1a08">મંત્ર</b></button><button type="button" data-v="green"><b style="background:#cfe6c2;color:#13300f">મંત્ર</b></button></div>
+    <label class="tgl"><div><span data-t="s_dual">બંને લિપિ સાથે</span><small data-t="s_dual2">ગુજરાતી નીચે ABC પણ દેખાય</small></div><input type="checkbox" id="dualTgl"></label>
+    <label class="tgl"><div><span data-t="s_wake">સ્ક્રીન બંધ ન થાય</span><small data-t="s_wake2">વાંચતી કે સાંભળતી વખતે ફોનની સ્ક્રીન ચાલુ રહે</small></div><input type="checkbox" id="wakeTgl"></label>
+    <label class="tgl"><div><span data-t="s_hc">વધુ સ્પષ્ટ અને જાડા અક્ષર</span><small data-t="s_hc2">વડીલો અને તડકામાં વાંચવા માટે</small></div><input type="checkbox" id="hcTgl"></label>
+    <label class="tgl"><div><span data-t="s_rm">હલનચલન ઓછું</span><small data-t="s_rm2">કાર્ડ અને પાનાંની હલનચલન બંધ</small></div><input type="checkbox" id="rmTgl"></label>
+
+    <h3 data-t="s_search">શોધ</h3>
+    <div class="lbl" data-t="s_whole">શોધનો પ્રકાર</div>
+    <div class="seg4 n2" data-pref="whole"><button type="button" data-v="0" data-t="wPart">શબ્દનો ભાગ પણ</button><button type="button" data-v="1" data-t="wWhole">ફક્ત આખો શબ્દ</button></div>
+    <p class="lbl" style="font-weight:400;font-size:13px;color:var(--ink-2);margin:6px 2px 0" data-t="s_whole2">ઉદાહરણ: "મંત્ર" શોધો તો "ગુરુમંત્ર" પણ મળે, કે ફક્ત "મંત્ર"</p>
+    <div class="lbl" data-t="s_lim">એક સાથે કેટલાં પરિણામ</div>
+    <div class="seg4 n3" data-pref="lim"><button type="button" data-v="20"></button><button type="button" data-v="50"></button><button type="button" data-v="100"></button></div>
+    <div class="lbl" data-t="s_ord">પરિણામનો ક્રમ</div>
+    <div class="seg4 n3" data-pref="ord"><button type="button" data-v="new" data-t="oNew">નવી કથા પહેલાં</button><button type="button" data-v="old" data-t="oOld">જૂની પહેલાં</button><button type="button" data-v="best" data-t="oBest">સૌથી સારો મેળ</button></div>
+    <label class="tgl"><div><span data-t="s_keepf">વક્તા/સિરીઝ યાદ રાખો</span><small data-t="s_keepf2">છેલ્લે પસંદ કરેલો filter ફરી ખોલો ત્યારે પહેલેથી પસંદ</small></div><input type="checkbox" id="keepfTgl"></label>
+    <label class="tgl"><div><span data-t="s_rh">તાજેતરની શોધ યાદ રાખો</span><small data-t="s_rh2">શોધ ખાના નીચે છેલ્લા શબ્દો દેખાય</small></div><input type="checkbox" id="rhTgl"></label>
+
+    <h3 data-t="s_more">બીજું</h3>
+    <button type="button" class="rowbtn" id="installBtn"><span>📲</span><b data-t="s_inst">એપ તરીકે ઉમેરો</b><span class="chev">›</span></button>
+    <button type="button" class="rowbtn" id="reportBtn"><span>⚑</span><b data-t="s_rep">ભૂલ જણાવો</b><span class="chev">›</span></button>
+    <button type="button" class="rowbtn" id="aboutBtn"><span>ℹ️</span><b data-t="s_about">અમારા વિશે</b><span class="chev">›</span></button>
+    <button type="button" class="rowbtn" id="resetBtn"><span>↺</span><b data-t="s_reset">બધાં સેટિંગ મૂળ સ્થિતિમાં</b></button>
   </div>
 </div>
 
@@ -478,7 +536,8 @@ const fmt0 = (s) => { s = Math.max(0, s | 0); const h = s / 3600 | 0, m = (s % 3
 const fmt = (s) => num(fmt0(s));
 function hl(text, q) {
   const t = esc(text); if (!q) return t;
-  const re = new RegExp(esc(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi");
+  // take any following vowel signs into the highlight so a letter is never split from its matra
+  const re = new RegExp(esc(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\p{M}*", "giu");
   return t.replace(re, (m) => `<mark>${m}</mark>`);
 }
 function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.h); toast.h = setTimeout(() => t.hidden = true, 1800); }
@@ -488,6 +547,7 @@ async function loadStats() {
     const s = await rpc("katha_stats", {}); stats = s;
     const fill = (sel, arr) => { const keep = sel.value; while (sel.options.length > 1) sel.remove(1); arr.sort().forEach((v) => { const o = document.createElement("option"); o.value = o.textContent = v; sel.appendChild(o); }); sel.value = keep; };
     fill($("#fseries"), s.series || []); fill($("#fspeaker"), s.speakers || []);
+    if (pref.keepf) { const f = getList("k_filters"); if (f[0]) $("#fseries").value = f[0]; if (f[1]) $("#fspeaker").value = f[1]; }
   } catch (e) { console.warn(e); }
   applyUI();
 }
@@ -497,24 +557,27 @@ async function search(q) {
   $("#q").value = q;
   $("#out").innerHTML = `<p class="empty">${T[ui].loading}</p>`;
   try {
-    const rows = await rpc("katha_search", { q, p_series: $("#fseries").value || null, p_speaker: $("#fspeaker").value || null, p_limit: 80 });
+    const rows = await rpc("katha_search", { q, p_series: $("#fseries").value || null, p_speaker: $("#fspeaker").value || null, p_limit: +pref.lim || 50 });
+    addRecent(q);
     last = { rows, q }; render(rows, q);
     $("#out").scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (e) { $("#out").innerHTML = `<p class="empty">Error: ${esc(e.message)}</p>`; }
 }
 function render(rows, q) {
+  rows = arrange(rows, q);
   if (!rows.length) { $("#out").innerHTML = `<p class="count">${num(T[ui].matches(0))}</p><p class="empty">${T[ui].none}</p>`; return; }
   $("#out").innerHTML = `<p class="count">${num(T[ui].matches(rows.length))}</p><div class="results">` + rows.map((r, i) => {
     const body = scText(r.text, r.roman);
     const active = cur && cur.yid === r.youtube_id && cur.t === r.start_sec;
-    return `<article class="card"><h4>${esc(r.title || r.series || "Katha")}</h4><p class="txt">${hl(body, scQuery(q))}</p>
+    return `<article class="card"><h4>${esc(r.title || r.series || "Katha")}</h4><p class="txt">${hl(body, scQuery(q))}</p>${dualLine(r.text, r.roman, q)}
       <div class="meta">${r.speaker ? `<span class="tag sp">${esc(r.speaker)}</span>` : ""}${r.series ? `<span class="tag">${esc(r.series)}</span>` : ""}<span class="time">${fmt(r.start_sec)}</span></div>
-      <div class="acts"><button class="play${active ? " active" : ""}" data-i="${i}">▶ ${T[ui].play}</button><button class="link" data-r="${i}">${T[ui].read}</button>${heart(r.youtube_id, r.start_sec, `data-f="${i}"`)}</div>${trButton(r.passage_id, r.text, "")}</article>`;
+      <div class="acts"><button class="play${active ? " active" : ""}" data-i="${i}">▶ ${T[ui].play}</button><button class="link" data-r="${i}">${T[ui].read}</button><button type="button" class="link rep" data-rp="${i}" aria-label="${T[ui].s_rep}">⚑</button>${heart(r.youtube_id, r.start_sec, `data-f="${i}"`)}</div>${trButton(r.passage_id, r.text, "")}</article>`;
   }).join("") + `</div>`;
   $("#out").querySelectorAll("[data-i]").forEach((b) => b.onclick = () => { const r = rows[b.dataset.i]; play(r.youtube_id, r.start_sec, r); });
   $("#out").querySelectorAll("[data-r]").forEach((b) => b.onclick = () => openTranscript(rows[b.dataset.r], q));
   $("#out").querySelectorAll("[data-f]").forEach((b) => b.onclick = () => toggleFav(rows[b.dataset.f], b));
   $("#out").querySelectorAll(".trb").forEach((b) => b.onclick = () => showTr(b));
+  $("#out").querySelectorAll("[data-rp]").forEach((b) => b.onclick = () => showReport(rows[b.dataset.rp]));
 }
 
 function play(yid, t, info) {
@@ -540,7 +603,7 @@ async function openTranscript(r, q) {
   const res = await fetch(`${SB}/rest/v1/katha_passages?select=id,start_sec,text,roman&video_id=eq.${r.video_id}&order=start_sec`, { headers: { apikey: KEY, Authorization: "Bearer " + KEY } });
   const segs = await res.json();
   const segRow = (s) => ({ ...r, start_sec: s.start_sec, text: s.text, roman: s.roman });
-  $("#ovBody").innerHTML = segs.map((s, i) => `<div class="seg" id="seg${s.start_sec}"><button data-s="${i}">${fmt(s.start_sec)}</button><p>${hl(scText(s.text, s.roman), scQuery(q))}</p>${heart(r.youtube_id, s.start_sec, `data-sf="${i}"`)}${trButton(s.id, s.text, "")}</div>`).join("");
+  $("#ovBody").innerHTML = segs.map((s, i) => `<div class="seg" id="seg${s.start_sec}"><button data-s="${i}">${fmt(s.start_sec)}</button><p>${hl(scText(s.text, s.roman), scQuery(q))}${dualLine(s.text, s.roman, q, "span")}</p>${heart(r.youtube_id, s.start_sec, `data-sf="${i}"`)}${trButton(s.id, s.text, "")}</div>`).join("");
   $("#ovBody").querySelectorAll("button[data-s]").forEach((b) => b.onclick = () => { const s = segs[b.dataset.s]; play(r.youtube_id, s.start_sec, segRow(s)); });
   $("#ovBody").querySelectorAll("[data-sf]").forEach((b) => b.onclick = () => toggleFav(segRow(segs[b.dataset.sf]), b));
   $("#ovBody").querySelectorAll(".trb").forEach((b) => b.onclick = () => showTr(b));
@@ -558,6 +621,19 @@ async function adm(body) {
   const r = await fetch(FN, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ pass, ...body }) });
   const j = await r.json(); if (!r.ok) throw new Error(j.error || r.status); return j;
 }
+async function refreshReports() {
+  try {
+    const { reports } = await adm({ action: "reports" });
+    const nNew = (reports || []).filter((r) => r.status === "new").length;
+    const st = { new: "નવું", seen: "જોયું", fixed: "સુધાર્યું" };
+    $("#rlist").innerHTML = `<h3 style="margin:18px 0 4px;color:var(--maroon)">⚑ ભૂલ અહેવાલ${nNew ? ` (${nNew} નવા)` : ""}</h3>` + ((reports || []).map((r) => `<div class="rptrow ${r.status}">
+      <div>${esc(r.message)}</div>
+      <div style="color:var(--ink-2);font-size:12px">${esc(r.name || "નામ નથી")} · ${new Date(r.created_at).toLocaleString("gu-IN")} · ${st[r.status] || r.status}
+        ${r.youtube_id ? ` · <a href="https://www.youtube.com/watch?v=${r.youtube_id}&t=${r.start_sec || 0}s" target="_blank" rel="noopener">${fmt0(r.start_sec || 0)} પર જુઓ</a>` : ""}</div>
+      <div class="row"><button class="link" data-rs="${r.id}" data-to="seen">જોયું</button><button class="link" data-rs="${r.id}" data-to="fixed">સુધાર્યું</button></div></div>`).join("") || "<small>હજી કોઈ અહેવાલ નથી.</small>");
+    $("#rlist").querySelectorAll("[data-rs]").forEach((b) => b.onclick = async () => { await adm({ action: "report_status", id: +b.dataset.rs, status: b.dataset.to }); refreshReports(); });
+  } catch (e) { console.warn(e); }
+}
 async function refreshList() {
   const { videos } = await adm({ action: "list" });
   const label = { done: "✔ તૈયાર", processing: "⏳ લખાણ બની રહ્યું છે…", error: "✖ ભૂલ", pending: "રાહ" };
@@ -570,6 +646,7 @@ async function refreshList() {
   $("#vlist").querySelectorAll("[data-del]").forEach((b) => b.onclick = async () => {
     if (b.dataset.sure) { await adm({ action: "delete", id: +b.dataset.del }); refreshList(); } else { b.dataset.sure = 1; b.textContent = "ખાતરી? ફરી દબાવો"; } });
   clearTimeout(poll); if ((videos || []).some((v) => v.status === "processing")) poll = setTimeout(refreshList, 6000);
+  refreshReports();
 }
 async function login() {
   try { await adm({ action: "check" }); store.set("k_pass", pass); $("#login").hidden = true; $("#panel").hidden = false; refreshList(); }
@@ -598,7 +675,10 @@ const THEMES = [ // id, page, header, card, line, frame
   ["ratri", "#17110c", "#d6a74c", "#221912", "#efdfbf", "#c9963f"],
 ];
 const pref = { theme: store.get("k_theme", "sadi"), fs: store.get("k_fs", "m"), font: store.get("k_font", "noto"), night: store.get("k_night", "0") === "1",
-  rate: store.get("k_rate", "1"), pre: store.get("k_pre", "5"), mini: store.get("k_mini", "0") === "1", bell: store.get("k_bell", "0") === "1", tr: store.get("k_tr", "off") };
+  rate: store.get("k_rate", "1"), pre: store.get("k_pre", "5"), mini: store.get("k_mini", "0") === "1", bell: store.get("k_bell", "0") === "1", tr: store.get("k_tr", "off"),
+  lh: store.get("k_lh", "m"), hlc: store.get("k_hlc", "theme"), dual: store.get("k_dual", "0") === "1", wake: store.get("k_wake", "0") === "1",
+  hc: store.get("k_hc", "0") === "1", rm: store.get("k_rm", "0") === "1", whole: store.get("k_whole", "0"), lim: store.get("k_lim", "50"),
+  ord: store.get("k_ord", "new"), keepf: store.get("k_keepf", "0") === "1", rh: store.get("k_rh", "1") === "1" };
 const isNight = () => { const h = new Date().getHours(); return h >= 19 || h < 6; };
 function applyLook() {
   const el = document.documentElement;
@@ -708,7 +788,7 @@ $("#miniTgl").onchange = (e) => { pref.mini = e.target.checked; store.set("k_min
 $("#bellTgl").onchange = (e) => { pref.bell = e.target.checked; store.set("k_bell", pref.bell ? "1" : "0"); if (pref.bell) bell(); };
 
 function applyPrefs() {
-  const val = { ui, sc, dig, rate: pref.rate, pre: pref.pre, tr: pref.tr };
+  const val = { ui, sc, dig, rate: pref.rate, pre: pref.pre, tr: pref.tr, lh: pref.lh, hlc: pref.hlc, whole: pref.whole, lim: pref.lim, ord: pref.ord };
   document.querySelectorAll("[data-pref]").forEach((g) => g.querySelectorAll("[data-v]").forEach((b) => b.classList.toggle("on", b.dataset.v === String(val[g.dataset.pref]))));
   document.querySelectorAll('[data-pref="pre"] [data-v]').forEach((b) => b.textContent = num(T[ui].sec(b.dataset.v)));
   document.querySelectorAll('[data-pref="rate"] [data-v]').forEach((b) => b.textContent = num(b.dataset.v) + "×");
@@ -717,8 +797,173 @@ function applyPrefs() {
   document.body.classList.toggle("mini", pref.mini);
   $("#spd").textContent = num(pref.rate) + "×";
   counts();
+  if (typeof applyPrefs2 === "function") applyPrefs2();
 }
 applyPrefs();
+
+/* ---------- ⚙️ settings: sections 5-7 ---------- */
+Object.assign(T.gu, { s_read: "વાંચવું", s_lh: "લીટી વચ્ચેની જગ્યા", lhS: "ઓછી", lhM: "સામાન્ય", lhL: "વધુ", s_hlc: "શોધેલા શબ્દનો રંગ",
+  s_dual: "બંને લિપિ સાથે", s_dual2: "ગુજરાતી નીચે ABC પણ દેખાય", s_wake: "સ્ક્રીન બંધ ન થાય", s_wake2: "વાંચતી કે સાંભળતી વખતે ફોનની સ્ક્રીન ચાલુ રહે",
+  s_hc: "વધુ સ્પષ્ટ અને જાડા અક્ષર", s_hc2: "વડીલો અને તડકામાં વાંચવા માટે", s_rm: "હલનચલન ઓછું", s_rm2: "કાર્ડ અને પાનાંની હલનચલન બંધ",
+  s_search: "શોધ", s_whole: "શોધનો પ્રકાર", wPart: "શબ્દનો ભાગ પણ", wWhole: "ફક્ત આખો શબ્દ", s_whole2: "ઉદાહરણ: \u201cમંત્ર\u201d શોધો તો \u201cગુરુમંત્ર\u201d પણ મળે, કે ફક્ત \u201cમંત્ર\u201d",
+  s_lim: "એક સાથે કેટલાં પરિણામ", s_ord: "પરિણામનો ક્રમ", oNew: "નવી કથા પહેલાં", oOld: "જૂની પહેલાં", oBest: "સૌથી સારો મેળ",
+  s_keepf: "વક્તા/સિરીઝ યાદ રાખો", s_keepf2: "છેલ્લે પસંદ કરેલો filter ફરી ખોલો ત્યારે પહેલેથી પસંદ", s_rh: "તાજેતરની શોધ યાદ રાખો", s_rh2: "શોધ ખાના નીચે છેલ્લા શબ્દો દેખાય",
+  recent: "તાજેતરની શોધ:", s_more: "બીજું", s_inst: "એપ તરીકે ઉમેરો", s_rep: "ભૂલ જણાવો", s_about: "અમારા વિશે", s_reset: "બધાં સેટિંગ મૂળ સ્થિતિમાં",
+  resetSure: "ખાતરી? ફરી દબાવો (મનપસંદ અને ઇતિહાસ સચવાઈ રહેશે)", wakeNo: "આ ફોન/બ્રાઉઝરમાં સ્ક્રીન ચાલુ રાખવાની સુવિધા નથી",
+  instIos: "iPhone માં: નીચે Share (□↑) દબાવો, પછી \u201cAdd to Home Screen\u201d.", instOther: "બ્રાઉઝરના ⋮ મેનુમાં \u201cAdd to Home screen\u201d કે \u201cInstall app\u201d દબાવો.", instDone: "આ એપ પહેલેથી ઉમેરાયેલી છે",
+  repTitle: "⚑ ભૂલ જણાવો", repPh: "શું ભૂલ છે? જેમ કે: લખાણમાં શબ્દ ખોટો છે, સમય ખોટો છે, વીડિયો નથી ચાલતો…", repName: "તમારું નામ (મરજી હોય તો)",
+  repSend: "મોકલો", repOk: "આભાર! તમારી વાત પહોંચી ગઈ.", repErr: "હમણાં મોકલી ન શકાયું, થોડી વાર પછી ફરી પ્રયત્ન કરો.", repCtx: "આ ફકરા વિશે:",
+  aboutTitle: "ℹ️ અમારા વિશે", aboutBody: "કચ્છ સત્સંગ એ સ્વામિનારાયણ કથાઓનો શોધી શકાય એવો સંગ્રહ છે. કથામાં બોલાયેલો કોઈ પણ શબ્દ શોધો અને સીધા એ જ ક્ષણથી સાંભળો.",
+  aboutAi: "કથાનું લખાણ અને અનુવાદ AI થી બને છે, એટલે ક્યાંક ભૂલ હોઈ શકે. ભૂલ દેખાય તો ⚑ દબાવીને જણાવજો." });
+Object.assign(T.en, { s_read: "Reading", s_lh: "Line spacing", lhS: "Tight", lhM: "Normal", lhL: "Loose", s_hlc: "Colour of the searched word",
+  s_dual: "Both scripts together", s_dual2: "Show ABC under the Gujarati", s_wake: "Keep the screen on", s_wake2: "The phone screen stays on while you read or listen",
+  s_hc: "Clearer, bolder text", s_hc2: "For elders and for reading in sunlight", s_rm: "Less motion", s_rm2: "Turns off card and page animations",
+  s_search: "Search", s_whole: "Match", wPart: "Part of a word", wWhole: "Whole word only", s_whole2: "Searching \u201cmantra\u201d also finds \u201cgurumantra\u201d, or only \u201cmantra\u201d",
+  s_lim: "Results at a time", s_ord: "Order of results", oNew: "Newest katha first", oOld: "Oldest first", oBest: "Best match",
+  s_keepf: "Remember speaker/series", s_keepf2: "Your last filter is already chosen next time", s_rh: "Remember recent searches", s_rh2: "Shows your last words under the search box",
+  recent: "Recent:", s_more: "More", s_inst: "Add as an app", s_rep: "Report a mistake", s_about: "About", s_reset: "Reset all settings",
+  resetSure: "Sure? Tap again (favourites and history are kept)", wakeNo: "This phone or browser cannot keep the screen on",
+  instIos: "On iPhone: tap Share (□↑) at the bottom, then \u201cAdd to Home Screen\u201d.", instOther: "Open the browser ⋮ menu and tap \u201cAdd to Home screen\u201d or \u201cInstall app\u201d.", instDone: "The app is already added",
+  repTitle: "⚑ Report a mistake", repPh: "What is wrong? For example: a word in the text, the time, the video does not play…", repName: "Your name (optional)",
+  repSend: "Send", repOk: "Thank you! Your note has been sent.", repErr: "Could not send it right now. Please try again shortly.", repCtx: "About this passage:",
+  aboutTitle: "ℹ️ About", aboutBody: "Kutch Satsang is a searchable archive of Swaminarayan kathas. Search any word that was spoken and listen from that very moment.",
+  aboutAi: "The text and translations are made by AI, so there may be mistakes. If you see one, tap ⚑ to tell us." });
+Object.assign(T.hi, { s_read: "पढ़ना", s_lh: "पंक्तियों के बीच जगह", lhS: "कम", lhM: "सामान्य", lhL: "ज़्यादा", s_hlc: "खोजे शब्द का रंग",
+  s_dual: "दोनों लिपि साथ", s_dual2: "गुजराती के नीचे ABC भी", s_wake: "स्क्रीन बंद न हो", s_wake2: "पढ़ते या सुनते समय स्क्रीन चालू रहे",
+  s_hc: "ज़्यादा साफ़ और मोटे अक्षर", s_hc2: "बुज़ुर्गों और धूप में पढ़ने के लिए", s_rm: "हलचल कम", s_rm2: "कार्ड और पन्नों की हलचल बंद",
+  s_search: "खोज", s_whole: "खोज का प्रकार", wPart: "शब्द का हिस्सा भी", wWhole: "सिर्फ़ पूरा शब्द", s_whole2: "उदाहरण: \u201cमंत्र\u201d खोजें तो \u201cगुरुमंत्र\u201d भी मिले, या सिर्फ़ \u201cमंत्र\u201d",
+  s_lim: "एक साथ कितने परिणाम", s_ord: "परिणाम का क्रम", oNew: "नई कथा पहले", oOld: "पुरानी पहले", oBest: "सबसे अच्छा मेल",
+  s_keepf: "वक्ता/सीरीज़ याद रखें", s_keepf2: "पिछला चुना फ़िल्टर अगली बार पहले से चुना", s_rh: "हाल की खोज याद रखें", s_rh2: "खोज के नीचे पिछले शब्द दिखें",
+  recent: "हाल की खोज:", s_more: "और", s_inst: "ऐप की तरह जोड़ें", s_rep: "गलती बताएँ", s_about: "हमारे बारे में", s_reset: "सभी सेटिंग मूल स्थिति में",
+  resetSure: "पक्का? फिर दबाएँ (पसंदीदा और इतिहास बने रहेंगे)", wakeNo: "इस फ़ोन/ब्राउज़र में स्क्रीन चालू रखने की सुविधा नहीं है",
+  instIos: "iPhone में: नीचे Share (□↑) दबाएँ, फिर \u201cAdd to Home Screen\u201d।", instOther: "ब्राउज़र के ⋮ मेनू में \u201cAdd to Home screen\u201d या \u201cInstall app\u201d दबाएँ।", instDone: "ऐप पहले से जुड़ा है",
+  repTitle: "⚑ गलती बताएँ", repPh: "क्या गलत है? जैसे: पाठ में शब्द, समय, वीडियो नहीं चलता…", repName: "आपका नाम (चाहें तो)",
+  repSend: "भेजें", repOk: "धन्यवाद! आपकी बात पहुँच गई।", repErr: "अभी नहीं भेज सके, थोड़ी देर बाद फिर कोशिश करें।", repCtx: "इस अनुच्छेद के बारे में:",
+  aboutTitle: "ℹ️ हमारे बारे में", aboutBody: "कच्छ सत्संग स्वामिनारायण कथाओं का खोजने योग्य संग्रह है। कथा में बोला गया कोई भी शब्द खोजें और सीधे उसी पल से सुनें।",
+  aboutAi: "पाठ और अनुवाद AI से बनते हैं, इसलिए कहीं गलती हो सकती है। गलती दिखे तो ⚑ दबाकर बताएँ।" });
+Object.assign(T.sa, { s_read: "पठनम्", s_lh: "पङ्क्त्यन्तरम्", lhS: "अल्पम्", lhM: "सामान्यम्", lhL: "अधिकम्", s_hlc: "अन्विष्टपदस्य वर्णः",
+  s_dual: "लिपिद्वयं सह", s_dual2: "गुर्जरलिप्याः अधः ABC अपि", s_wake: "पटलं न निर्वाप्यताम्", s_wake2: "पठने श्रवणे च पटलं प्रज्वलितं तिष्ठेत्",
+  s_hc: "स्पष्टतराणि स्थूलाक्षराणि", s_hc2: "वृद्धेभ्यः आतपे पठनाय च", s_rm: "अल्पं चलनम्", s_rm2: "पत्राणां चलनं निवर्त्यते",
+  s_search: "अन्वेषणम्", s_whole: "अन्वेषणप्रकारः", wPart: "पदांशः अपि", wWhole: "केवलं पूर्णं पदम्", s_whole2: "उदाहरणम्: \u201cमन्त्र\u201d अन्विष्टे \u201cगुरुमन्त्र\u201d अपि, अथवा केवलं \u201cमन्त्र\u201d",
+  s_lim: "युगपत् कति फलानि", s_ord: "फलानां क्रमः", oNew: "नूतनकथा प्रथमम्", oOld: "पुरातनी प्रथमम्", oBest: "उत्तमः मेलः",
+  s_keepf: "वक्तारं मालां च स्मरतु", s_keepf2: "अन्तिमं चितं पुनः स्वयमेव चितम्", s_rh: "अद्यतनान्वेषणानि स्मरतु", s_rh2: "अन्वेषणपेटिकायाः अधः अन्तिमपदानि",
+  recent: "अद्यतनानि:", s_more: "अन्यत्", s_inst: "अनुप्रयोगरूपेण योजयन्तु", s_rep: "दोषं सूचयन्तु", s_about: "अस्माकं विषये", s_reset: "सर्वान् विन्यासान् मूलस्थितौ",
+  resetSure: "निश्चितम्? पुनः नुदन्तु (प्रियाणि इतिहासश्च रक्ष्यन्ते)", wakeNo: "अस्मिन् दूरवाण्यां पटलं प्रज्वलितं स्थापयितुं न शक्यते",
+  instIos: "iPhone मध्ये: अधः Share (□↑) नुदन्तु, ततः \u201cAdd to Home Screen\u201d।", instOther: "ब्राउज़र-⋮-सूच्यां \u201cAdd to Home screen\u201d नुदन्तु।", instDone: "अनुप्रयोगः पूर्वमेव योजितः",
+  repTitle: "⚑ दोषं सूचयन्तु", repPh: "कः दोषः? यथा: पाठे पदम्, समयः, चलच्चित्रं न चलति…", repName: "भवतः नाम (इच्छया)",
+  repSend: "प्रेषयन्तु", repOk: "धन्यवादाः! भवतः सन्देशः प्राप्तः।", repErr: "इदानीं प्रेषयितुं न शक्यम्, किञ्चित्कालानन्तरं पुनः प्रयतन्ताम्।", repCtx: "अस्य अनुच्छेदस्य विषये:",
+  aboutTitle: "ℹ️ अस्माकं विषये", aboutBody: "कच्छसत्सङ्गः स्वामिनारायणकथानाम् अन्वेषणीयः सङ्ग्रहः। कथायाम् उक्तं किमपि पदम् अन्विष्य तस्मात् एव क्षणात् शृण्वन्तु।",
+  aboutAi: "पाठः अनुवादश्च AI द्वारा निर्मीयन्ते, अतः दोषाः सम्भवन्ति। दोषं दृष्ट्वा ⚑ नुदन्तु।" });
+
+// ---- search: whole word, order, recent words
+const PUNCT = "\\s.,;:!?'\"()\\[\\]\\-–—।॥|";
+function hasWhole(text, q) {
+  if (!text || !q) return false;
+  const e = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(^|[${PUNCT}])${e}($|[${PUNCT}])`, "i").test(text);
+}
+function arrange(rows, q) {
+  let out = rows.slice();
+  if (pref.whole === "1" && q) {
+    const vs = [q, toGu(q), toDev(q)];
+    out = out.filter((r) => vs.some((v) => hasWhole(r.text, v)) || hasWhole((r.roman || "").toLowerCase(), q.toLowerCase()));
+  }
+  if (pref.ord === "best" && q) {
+    const n = (t) => { let c = 0; for (const v of new Set([q, toGu(q), toDev(q)])) c += (String(t).split(v).length - 1); return c; };
+    out.sort((a, b) => n(b.text) + n((b.roman || "").toLowerCase()) - n(a.text) - n((a.roman || "").toLowerCase()));
+  } else if (pref.ord === "old") {
+    const order = []; out.forEach((r) => { if (!order.includes(r.video_id)) order.push(r.video_id); });
+    order.reverse();
+    out.sort((a, b) => order.indexOf(a.video_id) - order.indexOf(b.video_id) || a.start_sec - b.start_sec);
+  }
+  return out;
+}
+const dualLine = (txt, ro, q, tag = "p") => !pref.dual ? "" : sc === "ro" ? `<${tag} class="txt2">${hl(toGu(txt), toGu(q))}</${tag}>` : ro ? `<${tag} class="txt2">${hl(ro, q)}</${tag}>` : "";
+function addRecent(q) {
+  if (!pref.rh || !q) return;
+  setList("k_recent", [q, ...getList("k_recent").filter((x) => x !== q)].slice(0, 8));
+  renderRecent();
+}
+function renderRecent() {
+  const list = pref.rh ? getList("k_recent") : [];
+  $("#recent").hidden = !list.length;
+  $("#recent").innerHTML = list.length ? `<small>${T[ui].recent}</small>` + list.map((w) => `<button type="button" class="r">${esc(w)}</button>`).join("") : "";
+  $("#recent").querySelectorAll(".r").forEach((b) => b.onclick = () => search(b.textContent));
+}
+const saveFilters = () => { if (pref.keepf) setList("k_filters", [$("#fseries").value, $("#fspeaker").value]); };
+$("#fseries").addEventListener("change", saveFilters); $("#fspeaker").addEventListener("change", saveFilters);
+
+// ---- keep the screen on
+let wakeLock = null;
+async function setWake(on) {
+  try {
+    if (on) { if (!("wakeLock" in navigator)) { toast(T[ui].wakeNo); return false; } wakeLock = await navigator.wakeLock.request("screen"); }
+    else if (wakeLock) { await wakeLock.release(); wakeLock = null; }
+  } catch { if (on) toast(T[ui].wakeNo); return false; }
+  return true;
+}
+document.addEventListener("visibilitychange", () => { if (pref.wake && document.visibilityState === "visible") setWake(true); });
+
+// ---- toggles in sections 6-7
+const bindTgl = (id, key, after) => { $(id).onchange = (e) => { pref[key] = e.target.checked; store.set("k_" + key, pref[key] ? "1" : "0"); if (after) after(pref[key]); applyUI(); }; };
+bindTgl("#dualTgl", "dual"); bindTgl("#hcTgl", "hc"); bindTgl("#rmTgl", "rm"); bindTgl("#rhTgl", "rh", renderRecent);
+bindTgl("#keepfTgl", "keepf", (on) => { if (on) saveFilters(); else setList("k_filters", []); });
+bindTgl("#wakeTgl", "wake", async (on) => { const ok = await setWake(on); if (on && !ok) { pref.wake = false; store.set("k_wake", "0"); $("#wakeTgl").checked = false; } });
+
+function applyPrefs2() {
+  const el = document.documentElement;
+  el.dataset.lh = pref.lh; el.dataset.hlc = pref.hlc;
+  el.classList.toggle("hc", pref.hc); el.classList.toggle("rm", pref.rm);
+  $("#dualTgl").checked = pref.dual; $("#wakeTgl").checked = pref.wake; $("#hcTgl").checked = pref.hc; $("#rmTgl").checked = pref.rm;
+  $("#keepfTgl").checked = pref.keepf; $("#rhTgl").checked = pref.rh;
+  document.querySelectorAll('[data-pref="lim"] [data-v]').forEach((b) => b.textContent = num(b.dataset.v));
+  renderRecent();
+}
+
+// ---- section 5: install, report, about, reset
+let installEvt = null;
+window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); installEvt = e; });
+const standalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+$("#installBtn").onclick = async () => {
+  if (standalone()) return toast(T[ui].instDone);
+  if (installEvt) { installEvt.prompt(); try { await installEvt.userChoice; } catch {} installEvt = null; return; }
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  showInfo(T[ui].s_inst, `<div class="about"><p>${ios ? T[ui].instIos : T[ui].instOther}</p></div>`);
+};
+function showInfo(title, html) {
+  openSettings(false);
+  $("#ovTitle").textContent = title; $("#ovWho").textContent = "";
+  $("#ovBody").innerHTML = html; $("#ov").hidden = false;
+}
+function showReport(r) {
+  const ctx = r ? `<div class="ctx">${T[ui].repCtx} <b>${esc(r.title || "")}</b> · ${fmt(r.start_sec)}<br>${esc(String(scText(r.text, r.roman)).slice(0, 140))}…</div>` : "";
+  showInfo(T[ui].repTitle, `<form class="form" id="repForm">${ctx}
+    <textarea id="repMsg" required maxlength="2000" placeholder="${esc(T[ui].repPh)}"></textarea>
+    <input id="repName" maxlength="100" placeholder="${esc(T[ui].repName)}" autocomplete="name">
+    <button class="btn" type="submit" style="padding:12px 18px;justify-self:start">${T[ui].repSend}</button></form>`);
+  $("#repForm").onsubmit = async (e) => {
+    e.preventDefault();
+    const msg = $("#repMsg").value.trim(); if (msg.length < 2) return;
+    try {
+      const res = await fetch(FN, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "report", message: msg, name: $("#repName").value,
+        youtube_id: r?.youtube_id || cur?.yid || null, start_sec: r ? r.start_sec : cur ? cur.t : null, passage_id: r?.passage_id || null, page: location.hash || "home" }) });
+      if (!res.ok) throw 0;
+      $("#ovBody").innerHTML = `<div class="about"><p>✅ ${T[ui].repOk}</p></div>`;
+    } catch { toast(T[ui].repErr); }
+  };
+}
+$("#reportBtn").onclick = () => showReport(null);
+$("#aboutBtn").onclick = () => showInfo(T[ui].aboutTitle, `<div class="about"><p>${T[ui].aboutBody}</p><p>${num(T[ui].stats(stats.kathas, stats.passages))}</p><p>${T[ui].aboutAi}</p></div>`);
+const PREF_KEYS = ["k_theme", "k_fs", "k_font", "k_night", "k_ui", "k_sc", "k_dig", "k_rate", "k_pre", "k_mini", "k_bell", "k_tr", "k_lh", "k_hlc", "k_dual", "k_wake", "k_hc", "k_rm", "k_whole", "k_lim", "k_ord", "k_keepf", "k_filters", "k_rh"];
+$("#resetBtn").onclick = () => {
+  const b = $("#resetBtn");
+  if (!b.dataset.sure) { b.dataset.sure = 1; b.querySelector("b").textContent = T[ui].resetSure; return; }
+  PREF_KEYS.forEach((k) => { try { localStorage.removeItem(k); } catch {} });
+  location.reload();
+};
+if (standalone()) $("#installBtn").hidden = true;
+if (pref.wake) setWake(true);
+applyPrefs2();
 
 function route() {
   const isAdmin = location.hash === "#admin";
