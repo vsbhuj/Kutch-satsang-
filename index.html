@@ -126,6 +126,13 @@ body.playing .overlay{top:calc(min(56.25vw,42vh,360px) + 50px + env(safe-area-in
 .vrow .st{font-family:var(--latin);font-weight:600}
 .vrow .err{color:#b3261e;font-size:12px;overflow-wrap:anywhere}
 .vrow .row{display:flex;gap:12px;flex-wrap:wrap}
+.pl-pick{background:var(--card);border:1px solid var(--gold);border-radius:12px;padding:12px;display:grid;gap:6px}
+.pl-pick>small{color:var(--ink-2);font-size:13px}
+.pl-row{display:flex;gap:10px;align-items:flex-start;padding:8px 4px;border-top:1px dashed var(--rule);font-size:14px;line-height:1.4;cursor:pointer}
+.pl-row input{width:20px;height:20px;flex:none;margin-top:1px;accent-color:var(--maroon)}
+.pl-row small{display:block;color:var(--ink-2);font-size:12px;margin-top:2px}
+.pl-row.have{opacity:.55}
+.pl-acts{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--maroon);color:var(--card);padding:8px 16px;border-radius:999px;font-size:14px;z-index:50}
 @media (prefers-reduced-motion:no-preference){.card{animation:in .3s ease both}@keyframes in{from{opacity:.4;transform:translateY(4px)}}}
 
@@ -515,6 +522,7 @@ body.playing .gear{display:none}
       </select>
       <button class="btn" id="addBtn" type="button">ઉમેરો</button>
       <small>દરેક કથાનું લખાણ બનતાં થોડી મિનિટ લાગે. આ પેજ ખુલ્લું રાખશો તો સ્થિતિ આપમેળે બદલાશે.</small>
+      <div id="plPick" class="pl-pick" hidden></div>
       <div id="vlist" class="admin" style="margin-top:6px"></div>
       <div id="rlist" class="admin"></div>
       <a href="#" class="link" style="font-family:var(--latin)">← સર્ચ પેજ પર જાઓ</a>
@@ -836,15 +844,34 @@ $("#addBtn").onclick = async () => {
     const base = { speaker: sp || $("#dspeaker").value.trim(), series: se || $("#dseries").value.trim(), lang: $("#dlang").value };
     try {
       // a playlist link (list= without v=) brings in every video of the playlist
-      if (/[?&]list=/.test(url) && !/[?&]v=/.test(url)) {
-        const pl = await adm({ action: "playlist", url }); skip += pl.already || 0;
-        for (const id of pl.ids) { toast(`ઉમેરાય છે ${++n}…`); await adm({ action: "add", url: id, ...base }); }
-      } else { await adm({ action: "add", url, ...base }); n++; }
+      if (/[?&]list=/.test(url) && !/[?&]v=/.test(url)) { toast("Playlist વંચાય છે…"); showPick(await adm({ action: "playlist", url }), base); continue; }
+      else { await adm({ action: "add", url, ...base }); n++; }
     } catch (e) { toast(url + ": " + e.message); }
   }
   $("#links").value = ""; $("#addBtn").disabled = false;
-  toast(`${n} કથા ઉમેરાઈ` + (skip ? ` · ${skip} પહેલેથી હતી` : "")); refreshList();
+  if (n) { toast(`${n} કથા ઉમેરાઈ`); refreshList(); }
 };
+// kirtan, raas and bhajan evenings are usually not kathas: left unticked to start with
+const NOT_KATHA = /bhajan|kirtan|raas|ras\b|garba|aarti|arti|maharaas|ભજન|કીર્તન|રાસ/i;
+function showPick(pl, base) {
+  const box = $("#plPick");
+  box.innerHTML = `<b>Playlist: ${pl.items.length} વીડિયો</b><small>જે કથા જોઈએ એ જ ✓ રાખો. ભજન, રાસ વગેરે પહેલેથી કાઢી રાખ્યાં છે.</small>
+    <div class="pl-acts"><button type="button" class="link" data-all="1">બધી ✓</button><button type="button" class="link" data-all="0">બધી ✗</button></div>`
+    + pl.items.map((it, i) => `<label class="pl-row${it.have ? " have" : ""}"><input type="checkbox" data-i="${i}" ${!it.have && !NOT_KATHA.test(it.title) ? "checked" : ""} ${it.have ? "disabled" : ""}>
+      <span>${esc(it.title || it.id)}<small>${it.have ? "✔ પહેલેથી ઉમેરેલી" : esc(base.speaker || it.speaker || "વક્તા: —")}</small></span></label>`).join("")
+    + `<div class="pl-acts"><button class="btn" type="button" id="plGo"></button><button type="button" class="link" id="plNo">રદ કરો</button></div>`;
+  box.hidden = false; box.scrollIntoView({ block: "start" });
+  const count = () => { $("#plGo").textContent = `✓ ${box.querySelectorAll("input:checked").length} કથા ઉમેરો`; };
+  box.querySelectorAll("input").forEach((c) => c.onchange = count); count();
+  box.querySelectorAll("[data-all]").forEach((b) => b.onclick = () => { box.querySelectorAll("input:not(:disabled)").forEach((c) => c.checked = b.dataset.all === "1"); count(); });
+  $("#plNo").onclick = () => { box.hidden = true; };
+  $("#plGo").onclick = async () => {
+    const pick = [...box.querySelectorAll("input:checked")].map((c) => pl.items[c.dataset.i]);
+    $("#plGo").disabled = true; let k = 0;
+    for (const it of pick) { $("#plGo").textContent = `ઉમેરાય છે ${++k}/${pick.length}…`; try { await adm({ action: "add", url: it.id, ...base }); } catch (e) { toast(e.message); } }
+    box.hidden = true; toast(`${k} કથા ઉમેરાઈ`); refreshList();
+  };
+}
 
 /* ---------- ⚙️ settings: section 1 (appearance) ---------- */
 const THEMES = [ // id, page, header, card, line, frame

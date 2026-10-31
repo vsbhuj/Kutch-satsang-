@@ -441,7 +441,13 @@ Deno.serve(async (req: Request) => {
       if (!ids.length) return json({ error: "Playlist માં વીડિયો ન મળ્યા" }, 400);
       const { data: have } = await db.from("katha_videos").select("youtube_id").in("youtube_id", ids);
       const old = new Set((have ?? []).map((x: any) => x.youtube_id));
-      return json({ ok: true, ids: ids.filter((x) => !old.has(x)), already: ids.filter((x) => old.has(x)).length });
+      // titles, so the sevak can tick only the kathas they want
+      const items = await Promise.all(ids.map(async (id) => {
+        let title = "";
+        try { const o = await fetch(`https://www.youtube.com/oembed?format=json&url=https://www.youtube.com/watch?v=${id}`); if (o.ok) title = (await o.json()).title || ""; } catch (_) { /* ignore */ }
+        return { id, title, speaker: speakerFromTitle(title), have: old.has(id) };
+      }));
+      return json({ ok: true, items, ids: ids.filter((x) => !old.has(x)), already: ids.filter((x) => old.has(x)).length });
     }
 
     if (b.action === "add") {
