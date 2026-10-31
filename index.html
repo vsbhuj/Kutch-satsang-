@@ -135,6 +135,13 @@ body.playing .overlay{top:calc(min(56.25vw,42vh,360px) + 50px + env(safe-area-in
 .abtns button.on{background:var(--maroon);border-color:var(--maroon);color:var(--on-accent)}
 .abtns button.danger{color:#b3261e;border-color:#e2b4ae}
 .abtns button.danger.sure{background:#b3261e;border-color:#b3261e;color:#fff}
+.edbox{background:var(--paper);border:1px solid var(--rule);border-radius:12px;padding:10px;display:grid;gap:8px;margin-top:2px}
+.edbox label{font-size:13px;color:var(--ink-2);font-weight:600}
+.edbox input{width:100%;border:1px solid var(--rule);background:var(--card);color:var(--ink);border-radius:9px;padding:9px 10px;font-size:15px;font-family:inherit}
+.edbox .opts{display:flex;flex-wrap:wrap;gap:6px}
+.edbox .opts button{border:1px solid var(--rule);background:var(--card);color:var(--ink);border-radius:16px;padding:3px 10px;font-size:13px;font-family:inherit}
+.edbox .opts button.on{background:var(--maroon);border-color:var(--maroon);color:var(--on-accent)}
+.abtns button.ok{background:var(--maroon);border-color:var(--maroon);color:var(--on-accent);font-weight:700}
 .abtns button.show,.tx-p.hid button{border:2px solid #4f8a3a;background:#eef6e8;color:#2d5a1e;font-weight:700}
 .vrow.hid{border-color:#8a8a8a;background:repeating-linear-gradient(135deg,var(--card) 0 10px,var(--paper) 10px 20px)}
 .vrow.hid b{opacity:.65}
@@ -859,7 +866,9 @@ async function refreshReports() {
     $("#rlist").querySelectorAll("[data-rs]").forEach((b) => b.onclick = async () => { await adm({ action: "report_status", id: +b.dataset.rs, status: b.dataset.to }); refreshReports(); });
   } catch (e) { console.warn(e); }
 }
+let editing = 0; // a speaker box is open: don't redraw the list under the sevak's fingers
 async function refreshList() {
+  if (editing) { clearTimeout(poll); poll = setTimeout(refreshList, 6000); return; }
   const { videos } = await adm({ action: "list" });
   const label = { done: "✔ તૈયાર", processing: "⏳ લખાણ બની રહ્યું છે…", error: "✖ ભૂલ", pending: "રાહ" };
   $("#vlist").innerHTML = (videos || []).map((v) => `<div class="vrow ${v.status}${v.hidden ? " hid" : ""}"><div><b>${esc(v.title || v.youtube_id)}</b></div>
@@ -868,11 +877,30 @@ async function refreshList() {
     ${v.hidden ? `<span class="hid-pill">🙈 છુપાયેલી · સાઈટ પર નથી દેખાતી</span>` : ""}
     <div class="abtns"><button type="button" data-ed="${v.id}">✏️ વક્તા</button>${v.passages ? `<button type="button" data-tx="${v.id}">📄 લખાણ</button>` : ""}<button type="button" data-hide="${v.id}" class="${v.hidden ? "show" : ""}">${v.hidden ? "👁 બતાવો" : "🙈 છુપાવો"}</button><button type="button" data-retry="${v.id}">↻ ફરી કરો</button><button type="button" class="danger" data-del="${v.id}">🗑 કાઢો</button></div>
     ${v.error ? `<div class="err">${esc(v.error)}</div>` : ""}</div>`).join("") || "<small>હજી કોઈ કથા ઉમેરી નથી.</small>";
-  $("#vlist").querySelectorAll("[data-ed]").forEach((b) => b.onclick = async () => {
-    const v = videos.find((x) => x.id === +b.dataset.ed);
-    const sp = prompt("વક્તાનું નામ", v.speaker || ""); if (sp === null) return;
-    const se = prompt("કથા સિરીઝ", v.series || ""); if (se === null) return;
-    await adm({ action: "edit", id: v.id, title: v.title, speaker: sp.trim() || null, series: se.trim() || null, lang: v.lang }); refreshList(); });
+  // ✏️ opens a themed box right under the buttons (never the phone's black prompt)
+  const known = (k) => [...new Set((videos || []).map((x) => (x[k] || "").trim()).filter(Boolean))].sort();
+  $("#vlist").querySelectorAll("[data-ed]").forEach((b) => b.onclick = () => {
+    const v = videos.find((x) => x.id === +b.dataset.ed), row = b.closest(".vrow");
+    const old = row.querySelector(".edbox"); if (old) { old.remove(); editing = 0; return; }
+    $("#vlist").querySelectorAll(".edbox").forEach((x) => x.remove());
+    const opts = (k, val) => known(k).map((n) => `<button type="button" data-k="${k}" class="${n === val ? "on" : ""}">${esc(n)}</button>`).join("");
+    const box = document.createElement("div"); box.className = "edbox";
+    box.innerHTML = `<label>🎙 વક્તાનું નામ</label><input data-in="speaker" value="${esc(v.speaker || "")}" placeholder="દા.ત. Hariswarup Swami"><div class="opts">${opts("speaker", v.speaker)}</div>
+      <label>📚 કથા સિરીઝ</label><input data-in="series" value="${esc(v.series || "")}" placeholder="દા.ત. શ્રીમદ્ સત્સંગીજીવન"><div class="opts">${opts("series", v.series)}</div>
+      <div class="abtns"><button type="button" class="ok" data-save>✓ સાચવો</button><button type="button" data-cancel>✕ રદ કરો</button></div>`;
+    b.closest(".abtns").after(box); editing = v.id;
+    box.querySelectorAll(".opts button").forEach((o) => o.onclick = () => {
+      box.querySelector(`[data-in="${o.dataset.k}"]`).value = o.textContent;
+      box.querySelectorAll(`.opts [data-k="${o.dataset.k}"]`).forEach((x) => x.classList.toggle("on", x === o)); });
+    box.querySelector("[data-cancel]").onclick = () => { box.remove(); editing = 0; };
+    box.querySelector("[data-save]").onclick = async (e) => {
+      const sp = box.querySelector('[data-in="speaker"]').value.trim(), se = box.querySelector('[data-in="series"]').value.trim();
+      e.target.disabled = true; e.target.textContent = "સચવાય છે…";
+      try { await adm({ action: "edit", id: v.id, title: v.title, speaker: sp || null, series: se || null, lang: v.lang }); editing = 0; toast("✓ સચવાયું"); refreshList(); }
+      catch (err) { e.target.disabled = false; e.target.textContent = "✓ સાચવો"; toast(err.message); }
+    };
+    box.querySelector("input").focus();
+  });
   $("#vlist").querySelectorAll("[data-hide]").forEach((b) => b.onclick = async () => {
     const v = videos.find((x) => x.id === +b.dataset.hide);
     await adm({ action: "hide", id: v.id, hidden: !v.hidden }); toast(v.hidden ? "👁 કથા ફરી સાઈટ પર દેખાશે" : "🙈 કથા સાઈટ પરથી છુપાવી"); refreshList(); });
@@ -1380,7 +1408,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.11.01.1";
+const APP_VER = "2026.11.01.2";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
