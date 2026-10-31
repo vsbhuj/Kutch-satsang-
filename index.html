@@ -16,12 +16,10 @@
 :root{
   --paper:#f3e9d8; --paper-2:#efe2cc; --card:#fbf5ea; --ink:#2b1a12; --ink-2:#6d5646;
   --maroon:#6e1f14; --maroon-2:#8a2c1c; --saffron:#c0662a; --rule:#dcc9ad; --mark:#f3d3bb;
+  color-scheme:light;
   --gu:"Noto Serif Gujarati","Shruti","Nirmala UI",serif;
   --latin:"Cormorant Garamond","Georgia",serif;
 }
-@media (prefers-color-scheme: dark){:root{
-  --paper:#1d1410; --paper-2:#241913; --card:#2a1d16; --ink:#f1e4d0; --ink-2:#bfa68e;
-  --maroon:#d98a6a; --maroon-2:#e7a184; --saffron:#e0874a; --rule:#4a382b; --mark:#5a2e1c; color-scheme:dark}}
 *{box-sizing:border-box}
 html,body{margin:0}
 body{background:linear-gradient(180deg,var(--paper),var(--paper-2)) fixed;color:var(--ink);font-family:var(--gu);
@@ -39,7 +37,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .pill .sep{width:1px;height:14px;background:var(--rule);margin:0 4px}
 .pill button.gu{font-family:var(--gu);font-size:13px}
 
-header{text-align:center;padding:26px 0 8px}
+header{text-align:center;padding:22px 0 8px}
+.pill{margin-bottom:4px}
 .eyebrow{font-family:var(--latin);letter-spacing:.32em;font-size:12px;color:var(--maroon-2);text-transform:uppercase}
 h1{font-family:var(--gu);font-weight:700;color:var(--maroon);font-size:clamp(40px,11vw,56px);margin:10px 0 4px;line-height:1.2}
 .sub{font-family:var(--latin);font-style:italic;color:var(--ink-2);font-size:17px}
@@ -51,7 +50,6 @@ h1{font-family:var(--gu);font-weight:700;color:var(--maroon);font-size:clamp(40p
 .search input{flex:1;min-width:0;border:0;background:none;font-size:19px;padding:8px 6px;outline:none}
 .search input::placeholder{font-family:var(--latin);font-style:italic;color:var(--ink-2);opacity:.8}
 .btn{background:var(--maroon);color:#fbf1e4;border:0;padding:0 16px;font-family:var(--latin);letter-spacing:.14em;font-size:13px;font-weight:600;cursor:pointer;text-transform:uppercase}
-@media (prefers-color-scheme: dark){.btn{color:#1d1410}}
 
 .filters{margin-top:22px;display:grid;gap:16px}
 .field label{display:block;font-family:var(--latin);letter-spacing:.24em;font-size:11px;color:var(--ink-2);text-transform:uppercase}
