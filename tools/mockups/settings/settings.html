@@ -1,0 +1,235 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=430"><title>સેટિંગ નમૂનો</title>
+<style>
+:root{--paper:#ecd9b0;--paper-hi:#f6ead0;--edge:#b98a4e;--ink:#3a2414;--ink2:#6e5236;--m:#7a1f17;--md:#561410;--g:#b8862f;--gh:#e2b964;
+ --gu:"FreeSerif",serif;--lat:"TeX Gyre Pagella","Lora","DejaVu Serif",serif}
+*{box-sizing:border-box}html,body{margin:0}
+body{width:430px;font-family:var(--gu);color:var(--ink);background:#2b1a10}
+.screen{position:relative;width:430px;overflow:hidden;margin-bottom:20px;
+ background:radial-gradient(ellipse at 50% 35%,var(--paper-hi) 0%,var(--paper) 60%,#d9bd86 90%,var(--edge) 100%)}
+.screen::before{content:"";position:absolute;inset:0;opacity:.45;mix-blend-mode:multiply;pointer-events:none;
+ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .45  0 0 0 0 .32  0 0 0 0 .18  0 0 0 .35 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.frame{position:absolute;inset:10px;border:2px solid var(--m);pointer-events:none;z-index:3}
+.frame::after{content:"";position:absolute;inset:4px;border:1px solid var(--m)}
+.content{position:relative;z-index:2;padding:26px 26px 30px}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.top .gear{width:40px;height:40px;border-radius:50%;background:var(--m);color:var(--gh);display:grid;place-items:center;font-size:22px;border:1px solid var(--g);box-shadow:inset 0 0 0 2px var(--md)}
+.top h1{flex:1;margin:0;color:var(--m);font-size:30px;line-height:1.1}
+.top h1 small{display:block;font-size:14px;color:var(--ink2);font-weight:400}
+.top .x{font-size:26px;color:var(--m)}
+.pagelbl{text-align:center;font-size:14px;color:var(--ink2);margin:2px 0 10px}
+.divider{display:block;margin:6px auto 14px;width:220px;height:16px}
+.grp{background:rgba(251,244,228,.85);border:1px solid rgba(184,134,47,.6);margin:0 0 16px;padding:4px 14px 6px;position:relative;
+ box-shadow:0 6px 14px -10px rgba(80,40,10,.5)}
+.grp::before{content:"";position:absolute;inset:3px;border:1px solid rgba(184,134,47,.3);pointer-events:none}
+.gh{display:flex;align-items:center;gap:8px;margin:-4px -14px 4px;padding:7px 14px;background:linear-gradient(180deg,#8e2a1f,var(--md));color:#f6e2b8;font-weight:700;font-size:17px;border-bottom:1px solid var(--g)}
+.gh .n{font-family:var(--lat);font-size:12px;border:1px solid var(--gh);border-radius:50%;width:22px;height:22px;display:grid;place-items:center;color:var(--gh)}
+.gh .tag{margin-left:auto;font-size:11px;font-weight:400;background:rgba(226,185,100,.25);border:1px solid rgba(226,185,100,.6);padding:1px 7px;border-radius:9px}
+.row{padding:9px 0;border-bottom:1px dashed rgba(184,134,47,.55)}
+.row:last-child{border-bottom:none}
+.row.flex{display:flex;align-items:center;gap:10px}
+.lbl{font-size:16.5px;line-height:1.35}
+.lbl small{display:block;font-size:13px;color:var(--ink2)}
+.row.flex .lbl{flex:1}
+.num{font-family:var(--lat);font-size:11px;color:var(--g);margin-right:3px}
+.seg{display:flex;margin-top:7px;border:1px solid var(--g);border-radius:3px;overflow:hidden;background:rgba(246,234,208,.6)}
+.seg span{flex:1;text-align:center;padding:5px 2px;font-size:14.5px;border-right:1px solid rgba(184,134,47,.5);color:var(--ink2)}
+.seg span:last-child{border-right:none}
+.seg span.on{background:var(--m);color:#f6e2b8;font-weight:700}
+.tg{width:48px;height:26px;border-radius:13px;background:#cdb894;border:1px solid var(--g);position:relative;flex:none}
+.tg::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#f6ead0;border:1px solid var(--g);box-shadow:0 1px 2px rgba(0,0,0,.3)}
+.tg.on{background:var(--m)}.tg.on::after{left:24px;background:var(--gh)}
+.themes{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:8px}
+.th{border:1px solid var(--g);padding:5px;text-align:center;font-size:13px;background:rgba(246,234,208,.5)}
+.th.on{outline:3px solid var(--m);outline-offset:1px}
+.th .sw{height:44px;margin-bottom:4px;position:relative;display:grid;place-items:center;font-size:17px;font-weight:700}
+.th .sw i{position:absolute;bottom:4px;left:6px;right:6px;height:5px;border-radius:2px}
+.dots{display:flex;gap:10px;margin-top:8px}
+.dot{flex:1;text-align:center;font-size:13px}
+.dot b{display:block;height:28px;border-radius:4px;margin-bottom:3px;border:1px solid rgba(0,0,0,.15)}
+.dot.on b{outline:3px solid var(--ink);outline-offset:1px}
+.prev{margin-top:8px;padding:10px 12px;background:#fbf4e4;border:1px solid rgba(184,134,47,.5);font-size:17px;line-height:1.7}
+.prev .r{display:block;font-family:var(--lat);font-style:italic;font-size:13.5px;color:var(--ink2);line-height:1.5;margin-top:2px}
+mark{background:none;color:var(--m);font-weight:700;border-bottom:2px solid var(--g)}
+.select{margin-top:7px;border-bottom:1px solid var(--g);padding:5px 2px;display:flex;justify-content:space-between;font-size:15.5px}
+.select::after{content:"▾";color:var(--m)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.chip{border:1px solid var(--g);padding:3px 11px;font-size:14px;border-radius:12px 3px 12px 3px;background:rgba(246,234,208,.6)}
+.chip.on{background:var(--m);color:#f6e2b8;border-color:var(--md)}
+.btn{display:inline-block;margin-top:7px;padding:6px 14px;font-size:15px;border:1px solid var(--m);color:var(--m);background:rgba(246,234,208,.7);border-radius:2px}
+.btn.f{background:var(--m);color:#f6e2b8;border-color:var(--g)}
+.info{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.info div{border:1px solid rgba(184,134,47,.55);padding:7px;text-align:center;background:#fbf4e4;font-size:13px;color:var(--ink2)}
+.info b{display:block;color:var(--m);font-size:21px}
+.note{font-size:12.5px;color:var(--ink2);margin-top:4px;line-height:1.4}
+.legend{font-size:13px;color:var(--ink2);text-align:center;margin-top:4px}
+.legend b{color:var(--m)}
+/* player mock */
+.player{background:#1d120b;border:3px double var(--g);margin:0 0 16px}
+.vid{height:170px;background:radial-gradient(ellipse at 50% 60%,#d98b4a 0%,#a5502a 35%,#5a2a17 70%,#2a160c 100%);display:grid;place-items:center;position:relative}
+.vid::after{content:"❚❚";color:#fff;font-size:22px;background:rgba(0,0,0,.45);width:60px;height:42px;display:grid;place-items:center;border-radius:10px}
+.vid .t{position:absolute;right:8px;top:8px;background:rgba(122,31,23,.92);color:#f6e2b8;font-size:13px;padding:3px 9px;border:1px solid var(--gh)}
+.pbar{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:8px}
+.pbar span{font-size:13px;color:var(--gh);border:1px solid rgba(226,185,100,.5);padding:3px 9px;font-family:var(--lat)}
+.pbar span.gu{font-family:var(--gu)}
+.pbar span.on{background:var(--gh);color:#1d120b}
+/* share */
+.wa{background:#e5ddd5;padding:12px;margin-top:8px;border-radius:4px}
+.bub{background:#dcf8c6;border-radius:8px;padding:8px 10px;font-family:var(--gu);font-size:14.5px;line-height:1.55;box-shadow:0 1px 1px rgba(0,0,0,.15);margin-left:30px;position:relative}
+.bub .lk{display:flex;gap:8px;background:#cfeebc;border-radius:5px;padding:6px;margin-bottom:6px}
+.bub .lk i{width:58px;height:58px;flex:none;background:linear-gradient(135deg,var(--m),var(--md));display:grid;place-items:center;color:var(--gh);font-style:normal;font-size:12px;text-align:center;line-height:1.2;border:2px solid var(--gh)}
+.bub .lk div{font-size:13px;line-height:1.35}
+.bub .lk b{display:block;font-size:13.5px}
+.bub .tm{display:block;text-align:right;font-size:11px;color:#6b7b6b;font-family:var(--lat)}
+.card{margin-top:10px;padding:18px 16px;text-align:center;position:relative;background:radial-gradient(ellipse,#f6ead0,#e6cf9e);border:2px solid var(--m);outline:1px solid var(--g);outline-offset:-7px}
+.card q{display:block;font-size:18px;line-height:1.7;color:var(--ink);quotes:"“" "”"}
+.card .by{font-size:13px;color:var(--m);margin-top:8px}
+.notif{display:flex;gap:10px;background:rgba(255,255,255,.92);border-radius:14px;padding:10px 12px;margin-top:8px;box-shadow:0 4px 12px rgba(0,0,0,.25);font-family:var(--gu)}
+.notif .ic{width:38px;height:38px;flex:none;border-radius:9px;background:var(--m);color:var(--gh);display:grid;place-items:center;font-weight:700;font-size:16px}
+.notif b{font-size:14px}.notif p{margin:2px 0 0;font-size:13.5px;line-height:1.4}
+.notif .tm{margin-left:auto;font-size:11px;color:#777;font-family:var(--lat)}
+</style></head><body>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="dv" viewBox="0 0 250 22"><g stroke="#7a1f17" fill="none" stroke-width="1.2"><path d="M6 11 H96"/><path d="M154 11 H244"/>
+<path d="M96 11 c8 -8 16 -8 20 0 c-4 8 -12 8 -20 0z" fill="#b8862f" stroke="none"/><path d="M154 11 c-8 -8 -16 -8 -20 0 c4 8 12 8 20 0z" fill="#b8862f" stroke="none"/></g>
+<path d="M125 1 l4 6 6 4 -6 4 -4 6 -4 -6 -6 -4 6 -4z" fill="#7a1f17"/><circle cx="125" cy="11" r="2.2" fill="#e2b964"/></symbol>
+</defs></svg>
+
+<!-- ===== 1: દેખાવ + વાંચવું ===== -->
+<section class="screen" id="p1"><div class="frame"></div><div class="content">
+ <div class="top"><div class="gear">⚙</div><h1>સેટિંગ<small>તમારી પસંદ પ્રમાણે ગોઠવો</small></h1><div class="x">✕</div></div>
+ <div class="pagelbl">પાનું ૧ / ૪ · દેખાવ અને વાંચવું</div>
+ <svg class="divider"><use href="#dv"/></svg>
+
+ <div class="grp"><div class="gh"><span class="n">B</span>દેખાવ<span class="tag">નં. 9–16</span></div>
+  <div class="row"><div class="lbl"><span class="num">9</span>થીમ (રંગ અને શૈલી)</div>
+   <div class="themes">
+    <div class="th on"><div class="sw" style="background:linear-gradient(#f6ead0,#e3c992);color:#7a1f17;border:2px solid #7a1f17">ક<i style="background:#b8862f"></i></div>રાજવી પોથી ✓</div>
+    <div class="th"><div class="sw" style="background:#efe3cc;color:#5b3a1e;border:1px solid #5b3a1e;font-style:italic">ક<i style="background:#8a6a3e"></i></div>સાદી વેલ</div>
+    <div class="th"><div class="sw" style="background:#f9efd6;color:#6a1a13;border:5px solid #6a1a13">ક<i style="background:#c9973c"></i></div>મરૂન કિનાર</div>
+    <div class="th"><div class="sw" style="background:#f0e5c9;color:#2f4a2c;border:2px solid #2f4a2c">ક<i style="background:#a8843c"></i></div>લીલી પોથી</div>
+    <div class="th"><div class="sw" style="background:#2e1c11;color:#e8c070;border:2px solid #c9973c">ક<i style="background:#c9973c"></i></div>રાત્રિ ગ્રંથ</div>
+    <div class="th"><div class="sw" style="background:#fbf8f2;color:#7a1f17;border:1px solid #ccb">ક<i style="background:#7a1f17"></i></div>હાલની સાદી</div>
+   </div></div>
+  <div class="row"><div class="lbl"><span class="num">10</span>અક્ષરનું કદ</div>
+   <div class="seg"><span style="font-size:13px">અ નાના</span><span class="on" style="font-size:15px">અ મધ્યમ</span><span style="font-size:18px">અ મોટા</span><span style="font-size:21px">અ</span></div></div>
+  <div class="row"><div class="lbl"><span class="num">12–14</span>ભાષા · લિપિ · અંક</div>
+   <div class="seg"><span class="on">ગુજરાતી</span><span>English</span><span>हिन्दी</span></div>
+   <div class="seg"><span class="on">ગુજરાતી લિપિ</span><span>ABC</span><span>देवनागरी</span></div>
+   <div class="seg"><span class="on">૧ ૨ ૩</span><span>1 2 3</span></div></div>
+  <div class="row flex"><div class="lbl"><span class="num">15</span>બટનનો ઘંટનાદ 🔔</div><div class="tg"></div></div>
+  <div class="row flex"><div class="lbl"><span class="num">16</span>રાત્રે આપમેળે ઘેરી થીમ<small>સાંજે 7 થી સવારે 6</small></div><div class="tg on"></div></div>
+ </div>
+
+ <div class="grp"><div class="gh"><span class="n">6</span>વાંચવું</div>
+  <div class="row"><div class="lbl"><span class="num">6.1</span>લીટી વચ્ચેની જગ્યા</div>
+   <div class="seg"><span>ઓછી</span><span class="on">સામાન્ય</span><span>વધુ</span></div></div>
+  <div class="row flex"><div class="lbl"><span class="num">6.2</span>ગુજરાતી નીચે ABC પણ</div><div class="tg on"></div></div>
+  <div class="row"><div class="lbl"><span class="num">6.3</span>શોધેલા શબ્દનો રંગ</div>
+   <div class="dots"><div class="dot on"><b style="background:#7a1f17"></b>મરૂન</div><div class="dot"><b style="background:#d4a23a"></b>સોનેરી</div><div class="dot"><b style="background:#2f6a3a"></b>લીલો</div><div class="dot"><b style="background:#f3d93a"></b>પીળો</div></div>
+   <div class="prev">મહારાજે આચાર્યને <mark>ગુરુમંત્ર</mark> આપ્યો અને દીક્ષા આપવાનો અધિકાર આપ્યો.<span class="r">maharaje acharyane gurumantra apyo ane diksha apvano adhikar apyo.</span></div>
+   <div class="note">↑ નમૂનો: 6.2 ચાલુ હોય ત્યારે ગુજરાતી નીચે ABC દેખાય</div></div>
+  <div class="row flex"><div class="lbl"><span class="num">6.4</span>સ્ક્રીન બંધ ન થાય<small>કથા સાંભળતી વખતે</small></div><div class="tg on"></div></div>
+  <div class="row flex"><div class="lbl"><span class="num">6.5</span>વધુ સ્પષ્ટ, જાડા અક્ષર</div><div class="tg"></div></div>
+  <div class="row flex"><div class="lbl"><span class="num">6.6</span>એનિમેશન ઓછું</div><div class="tg"></div></div>
+ </div>
+ <div class="legend">ટૉગલ: <b>મરૂન = ચાલુ</b> · આછું = બંધ</div>
+</div></section>
+
+<!-- ===== 2: શોધ + સાંભળવું ===== -->
+<section class="screen" id="p2"><div class="frame"></div><div class="content">
+ <div class="top"><div class="gear">⚙</div><h1>સેટિંગ<small>શોધ અને સાંભળવું</small></h1><div class="x">✕</div></div>
+ <div class="pagelbl">પાનું ૨ / ૪</div>
+ <svg class="divider"><use href="#dv"/></svg>
+
+ <div class="grp"><div class="gh"><span class="n">7</span>શોધ</div>
+  <div class="row"><div class="lbl"><span class="num">7.1</span>શોધનો પ્રકાર</div>
+   <div class="seg"><span class="on">શબ્દનો ભાગ પણ</span><span>ફક્ત આખો શબ્દ</span></div>
+   <div class="note">ઉદા. "મંત્ર" શોધો → "ગુરુમંત્ર" પણ મળે</div></div>
+  <div class="row"><div class="lbl"><span class="num">7.2</span>એક સાથે કેટલાં પરિણામ</div>
+   <div class="seg"><span>20</span><span class="on">50</span><span>100</span></div></div>
+  <div class="row"><div class="lbl"><span class="num">7.3</span>પરિણામનો ક્રમ</div>
+   <div class="seg"><span>નવી પહેલાં</span><span>જૂની પહેલાં</span><span class="on">સૌથી સારું મેળ</span></div></div>
+  <div class="row"><div class="lbl"><span class="num">7.4</span>મનપસંદ વક્તા / સિરીઝ</div>
+   <div class="select"><span>નિત્યસ્વરૂપદાસજી સ્વામી</span></div>
+   <div class="select"><span>વચનામૃત વિવેચન</span></div></div>
+  <div class="row flex"><div class="lbl"><span class="num">7.5</span>શોધનો ઇતિહાસ યાદ રાખવો</div><div class="tg on"></div></div>
+  <div class="row"><div class="chips"><span class="note" style="margin:0 4px 0 0">તાજેતરની શોધ:</span><span class="chip">ગુરુમંત્ર</span><span class="chip">એકાદશી</span><span class="chip">ભક્તિ</span></div></div>
+ </div>
+
+ <div class="grp"><div class="gh"><span class="n">8</span>સાંભળવું</div>
+  <div class="player">
+   <div class="vid"><span class="t">⏲ 23:41 પછી બંધ</span></div>
+   <div class="pbar"><span>−10s</span><span>0.75×</span><span class="on">1×</span><span>1.25×</span><span>1.5×</span><span>+10s</span><span class="gu">⏲ ટાઇમર</span></div>
+  </div>
+  <div class="row flex"><div class="lbl"><span class="num">8.1</span>આગળનો ફકરો / કથા આપમેળે</div><div class="tg on"></div></div>
+  <div class="row"><div class="lbl"><span class="num">8.2</span>⏲ ઊંઘનો ટાઇમર</div>
+   <div class="seg"><span>બંધ</span><span>15 મિ.</span><span class="on">30 મિ.</span><span>60 મિ.</span></div>
+   <div class="note">↑ ઉપર વીડિયો પર બાકી સમય દેખાય, પછી કથા ધીમે ધીમે બંધ</div></div>
+  <div class="row"><div class="lbl"><span class="num">8.3</span>વીડિયો ગુણવત્તા</div>
+   <div class="seg"><span>ઓછી (ડેટા બચાવો)</span><span class="on">આપમેળે</span><span>ઊંચી</span></div></div>
+  <div class="row"><div class="lbl"><span class="num">8.4</span>આગળ/પાછળ બટનમાં સેકન્ડ</div>
+   <div class="seg"><span>5</span><span class="on">10</span><span>30</span></div></div>
+  <div class="row flex"><div class="lbl"><span class="num">8.5</span>YouTube ના સબટાઇટલ</div><div class="tg"></div></div>
+ </div>
+</div></section>
+
+<!-- ===== 3: શેર + સૂચના ===== -->
+<section class="screen" id="p3"><div class="frame"></div><div class="content">
+ <div class="top"><div class="gear">⚙</div><h1>સેટિંગ<small>શેર અને સૂચના</small></h1><div class="x">✕</div></div>
+ <div class="pagelbl">પાનું ૩ / ૪</div>
+ <svg class="divider"><use href="#dv"/></svg>
+
+ <div class="grp"><div class="gh"><span class="n">9</span>શેર</div>
+  <div class="row flex"><div class="lbl"><span class="num">9.1</span>લિંક સાથે ફકરાનું લખાણ</div><div class="tg on"></div></div>
+  <div class="row flex"><div class="lbl"><span class="num">9.3</span>નીચે "— કચ્છ સત્સંગ"</div><div class="tg on"></div></div>
+  <div class="row"><div class="note">WhatsApp માં આવું દેખાશે:</div>
+   <div class="wa"><div class="bub">
+    <div class="lk"><i>કચ્છ<br>સત્સંગ</i><div><b>વડતાલ પ્રકરણ 18 · ૧૦:૦૦</b>નિત્યસ્વરૂપદાસજી સ્વામી<br><span style="color:#2a6">vsbhuj.github.io</span></div></div>
+    "મહારાજે આચાર્યને ગુરુમંત્ર આપ્યો અને દીક્ષા આપવાનો અધિકાર આપ્યો."<br>▶ સીધું ૧૦:૦૦ થી સાંભળો<br>— કચ્છ સત્સંગ
+    <span class="tm">6:02 am ✓✓</span></div></div></div>
+  <div class="row"><div class="lbl"><span class="num">9.2</span>સુવિચાર કાર્ડ (સ્ટેટસ માટે)</div>
+   <div class="seg"><span class="on">થીમ પ્રમાણે</span><span>પસંદગીની</span></div>
+   <div class="card"><q>ભગવાનનો મહિમા સમજીને જે ભક્તિ કરે, તેની ભક્તિ કદી ડગે નહીં.</q><div class="by">— નિત્યસ્વરૂપદાસજી સ્વામી · કચ્છ સત્સંગ</div></div>
+   <div class="note">↑ નમૂનાનું વાક્ય. સાચામાં કથાનો ફકરો આવશે.</div></div>
+ </div>
+
+ <div class="grp"><div class="gh"><span class="n">10</span>સૂચના (notification)<span class="tag">સર્વર જોઈએ</span></div>
+  <div class="row"><div class="lbl"><span class="num">10.1</span>કયા વક્તાની નવી કથા</div>
+   <div class="chips"><span class="chip on">✓ નિત્યસ્વરૂપદાસજી</span><span class="chip on">✓ કૃષ્ણસ્વરૂપ સ્વામી</span><span class="chip">+ બીજા</span></div></div>
+  <div class="row flex"><div class="lbl"><span class="num">10.2</span>આજનો સુવિચાર<small>સમય: સવારે 6:00</small></div><div class="tg on"></div></div>
+  <div class="row flex"><div class="lbl"><span class="num">10.3</span>એકાદશી / પૂનમની યાદ</div><div class="tg on"></div></div>
+  <div class="row"><div class="note">ફોન પર આવું આવશે:</div>
+   <div class="notif"><div class="ic">ક</div><div><b>આજનો સુવિચાર 🌅</b><p>"ભગવાનનો મહિમા સમજીને…" — ટૅપ કરી સાંભળો</p></div><span class="tm">6:00</span></div>
+   <div class="notif"><div class="ic">ક</div><div><b>આવતી કાલે એકાદશી</b><p>એકાદશી વિશેની કથાઓ જુઓ</p></div><span class="tm">7:30 pm</span></div></div>
+ </div>
+</div></section>
+
+<!-- ===== 4: ડેટા + માહિતી ===== -->
+<section class="screen" id="p4"><div class="frame"></div><div class="content">
+ <div class="top"><div class="gear">⚙</div><h1>સેટિંગ<small>ડેટા અને માહિતી</small></h1><div class="x">✕</div></div>
+ <div class="pagelbl">પાનું ૪ / ૪</div>
+ <svg class="divider"><use href="#dv"/></svg>
+
+ <div class="grp"><div class="gh"><span class="n">11</span>ડેટા અને ગોપનીયતા</div>
+  <div class="row flex"><div class="lbl"><span class="num">11.1</span>ડેટા બચાવો<small>ઓછાં ચિત્ર, નાનો વીડિયો</small></div><div class="tg"></div></div>
+  <div class="row"><div class="lbl"><span class="num">11.2</span>ઑફલાઇન વાંચવા સાચવેલું<small>❤️ મનપસંદ 12 ફકરા · 48 KB</small></div>
+   <span class="btn">⬇ ડાઉનલોડ કરો</span></div>
+  <div class="row flex"><div class="lbl"><span class="num">11.3</span>ખાનગી મોડ<small>મારો ઇતિહાસ સાચવવો નહીં</small></div><div class="tg"></div></div>
+  <div class="row"><div class="lbl"><span class="num">11.4</span>બીજા ફોનમાં લઈ જવું</div>
+   <div class="prev" style="text-align:center;font-family:var(--lat);font-size:24px;letter-spacing:.2em;color:var(--m)">KS-4827-91</div>
+   <div class="note">આ કોડ બીજા ફોનમાં નાખો એટલે સેટિંગ અને મનપસંદ આવી જાય</div></div>
+  <div class="row"><div class="lbl"><span class="num">11.5</span>નવું વર્ઝન લાવો</div><span class="btn">⟳ જૂની નકલ સાફ કરો</span></div>
+ </div>
+
+ <div class="grp"><div class="gh"><span class="n">12</span>માહિતી</div>
+  <div class="row"><div class="lbl"><span class="num">12.1–12.2</span>સંગ્રહ</div>
+   <div class="info"><div><b>૧૨૪</b>કથા</div><div><b>૮,૩૫૭</b>ફકરા</div><div><b>૧ નવે.</b>છેલ્લે ઉમેરાઈ</div><div><b>v 1.4</b>એપ વર્ઝન</div></div></div>
+  <div class="row"><div class="lbl"><span class="num">12.3</span>કેવી રીતે વાપરવું</div><span class="btn f">▶ 1 મિનિટનો મદદ વીડિયો</span></div>
+  <div class="row"><div class="lbl"><span class="num">12.4</span>સાઈટ ખોલતાં પહેલું પાનું</div>
+   <div class="seg"><span class="on">શોધ</span><span>નવી કથા</span><span>આજનો સુવિચાર</span></div></div>
+ </div>
+ <div class="legend">આંકડા ફક્ત નમૂના માટે છે</div>
+</div></section>
+</body></html>
