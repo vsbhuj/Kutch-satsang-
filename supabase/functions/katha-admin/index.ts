@@ -366,7 +366,7 @@ const OUT_LANG: Record<string, string> = { gu: "Gujarati (Gujarati script)", hi:
 async function studioSource(ids: number[]) {
   const { data: vids } = await db.from("katha_videos").select("id,youtube_id,title,speaker,series").in("id", ids);
   const list = (vids ?? []).sort((a: any, b: any) => ids.indexOf(a.id) - ids.indexOf(b.id));
-  let text = "", budget = 700_000;
+  let text = "", budget = 400_000;
   for (let i = 0; i < list.length; i++) {
     const v: any = list[i];
     const { data: ps } = await db.from("katha_passages").select("start_sec,text").eq("video_id", v.id).eq("hidden", false).order("start_sec").limit(5000);
@@ -426,13 +426,24 @@ const SCHEMA: Record<string, any> = {
 async function studioGemini(c: Record<string, string>, prompt: string, schema: any) {
   const models = [c.model || "gemini-3.5-flash", "gemini-3.5-flash", "gemini-3.8-flash", "gemini-3.7-flash", "gemini-flash-latest"];
   const errs: string[] = [];
+  // the edge worker is stopped after ~150 s, so keep every call short: little thinking, a hard time limit
+  const started = Date.now();
   for (const m of [...new Set(models)]) {
+    let think = true;
     for (let attempt = 0; attempt < 2; attempt++) {
-      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`, {
-        method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": c.gemini_key },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.4, maxOutputTokens: 32768, responseMimeType: "application/json", responseSchema: schema } }),
-      });
-      const t = await r.text();
+      const left = 130_000 - (Date.now() - started);
+      if (left < 20_000) { errs.push("time"); break; }
+      const gc: any = { temperature: 0.4, maxOutputTokens: 16384, responseMimeType: "application/json", responseSchema: schema };
+      if (think) gc.thinkingConfig = { thinkingLevel: "low" };
+      let r: Response, t: string;
+      try {
+        r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`, {
+          method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": c.gemini_key },
+          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: gc }), signal: AbortSignal.timeout(left),
+        });
+        t = await r.text();
+      } catch (_) { errs.push(m + ": time"); break; }
+      if (r.status === 400 && think && /thinking/i.test(t)) { think = false; attempt--; continue; }
       if (r.ok) {
         const out = JSON.parse(t).candidates?.[0]?.content?.parts?.map((p: any) => p.text ?? "").join("") ?? "";
         try { return JSON.parse(out); } catch (_) { errs.push(m + ": bad JSON"); break; }
@@ -445,6 +456,7 @@ async function studioGemini(c: Record<string, string>, prompt: string, schema: a
     }
   }
   const quota = errs.length && errs.every((e) => / daily| 404/.test(e));
+  if (!quota && errs.some((e) => /time/.test(e))) throw new Error("⏱ સમય વધી ગયો. ટૂંકું (ઓછી સ્લાઈડ) કે ઓછી કથા પસંદ કરીને ↻ ફરી બનાવો.");
   throw new Error(quota ? "⏸ Gemini ની આજની મફત મર્યાદા પૂરી થઈ છે. થોડા કલાક પછી ↻ ફરી બનાવો દબાવો." : "બની શક્યું નહીં: " + errs.join(" | "));
 }
 
@@ -551,6 +563,8 @@ Deno.serve(async (req: Request) => {
     }
 
     if (b.action === "studio_list") {
+      await db.from("katha_studio").update({ status: "error", error: "⏱ સમય વધી ગયો (સર્વર વચ્ચેથી અટકી ગયું). ↻ ફરી બનાવો દબાવો." })
+        .eq("status", "processing").lt("updated_at", new Date(Date.now() - 4 * 60_000).toISOString());
       const { data } = await db.from("katha_studio").select("id,kind,title,video_ids,series,options,prompt,status,error,published,created_at").order("created_at", { ascending: false }).limit(200);
       const since = new Date(Date.now() - 24 * 3600_000).toISOString();
       const { count: today } = await db.from("katha_studio").select("id", { count: "exact", head: true }).gt("created_at", since);
