@@ -337,6 +337,15 @@ async function tick(pass: string) {
         await db.from("katha_videos").update({ error: `⏸ Gemini ની આજની મફત મર્યાદા પૂરી થઈ. ભારતના સમય પ્રમાણે ${hh} પછી આપમેળે આગળ ચાલશે.` }).eq("id", v.id);
         return "quota";
       }
+      // length unknown and every model says 400 INVALID_ARGUMENT for a chunk after the first one:
+      // this chunk starts after the end of the video, so the katha is finished – drop the chunk
+      const msg = String(e?.message ?? e);
+      if (!v.duration_sec && ck.start_sec > 0 && /INVALID_ARGUMENT/.test(msg) && !/ (?:401|403|404|429|5\d\d) /.test(msg)) {
+        await db.from("katha_chunks").delete().eq("id", ck.id);
+        await refreshVideo(v.id);
+        kick(pass);
+        return "worked";
+      }
       const final = e.fatal || ck.attempts >= 4;
       await db.from("katha_chunks").update({
         status: final ? "error" : "pending", error: String(e?.message ?? e).slice(0, 800), updated_at: new Date().toISOString(),
