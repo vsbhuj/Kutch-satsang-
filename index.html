@@ -1523,7 +1523,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.11.01.4";
+const APP_VER = "2026.11.07.1";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
@@ -1639,7 +1639,15 @@ let live = { vid: null, segs: [], idx: -1, t: 0 };
 async function startLive(info, t) {
   live.t = t;
   if (typeof armSleep === "function") armSleep();
-  if (!pref.live || !info?.video_id) { $("#live").hidden = true; return; }
+  if (!info?.video_id) { $("#live").hidden = true; $("#lvLangs").hidden = true; return; }
+  if (!pref.live) {
+    // live text is off: still show the 🌐 button; tapping it turns live text on, so the languages are never hidden
+    $("#live").hidden = true; document.body.classList.remove("lvfull");
+    $("#lvLangs").hidden = false;
+    $("#lvLangs").innerHTML = `<button type="button" id="lvPickB" aria-label="Language">🌐 <span>${T[ui].lvOffS}</span><i>▼</i></button>`;
+    $("#lvPickB").onclick = () => { pref.live = true; store.set("k_live", "1"); $("#liveTgl").checked = true; startLive(info, live.t || t).then(() => setTimeout(() => $("#lvPickB") && $("#lvPickB").click(), 300)); };
+    return;
+  }
   $("#live").hidden = false; document.body.classList.add("lvfull");
   if (live.vid !== info.video_id) {
     live = { vid: info.video_id, segs: [], idx: -1, t };
@@ -1727,7 +1735,7 @@ window.addEventListener("message", (e) => {
 // keep the page below the player whatever its height
 try { new ResizeObserver(() => document.body.style.setProperty("--ph", $("#player").offsetHeight + "px")).observe($("#player")); } catch {}
 $("#liveTgl").checked = pref.live; $("#ccTgl").checked = pref.cc;
-$("#liveTgl").onchange = (e) => { pref.live = e.target.checked; store.set("k_live", pref.live ? "1" : "0"); if (cur) { if (pref.live) startLive(cur.info, live.t || cur.t); else stopLive(); } };
+$("#liveTgl").onchange = (e) => { pref.live = e.target.checked; store.set("k_live", pref.live ? "1" : "0"); if (cur) { if (pref.live) startLive(cur.info, live.t || cur.t); else { stopLive(); startLive(cur.info, live.t || cur.t); } } };
 $("#ccTgl").onchange = (e) => { pref.cc = e.target.checked; store.set("k_cc", pref.cc ? "1" : "0"); };
 
 function route() {
