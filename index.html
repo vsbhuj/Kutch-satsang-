@@ -794,6 +794,7 @@ function applyUI() {
   if (last) render(last.rows, last.q);
   if (typeof drawThemes === "function") drawThemes();
   if (typeof applyPrefs === "function") applyPrefs();
+  if (typeof fillSpk === "function" && stats.speakers) fillSpk();
   if (typeof syncF === "function") syncF();
   if (ui === "hi" || ui === "sa" || sc === "dev") loadFont("dev");
   try { if (live.segs.length) { drawList(); live.idx = -1; liveTick(live.t); } } catch {}
@@ -846,11 +847,18 @@ function hl(text, q) {
 }
 function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.h); toast.h = setTimeout(() => t.hidden = true, 1800); }
 
+/* speaker names follow the site language (names table katha_speakers; unknown names stay as written) */
+const spn = (k) => { const n = stats.speaker_names && stats.speaker_names[k]; return n ? (n[ui] || n.en || k) : (k || ""); };
+function fillSpk() {
+  const sel = $("#fspeaker"), keep = sel.value; while (sel.options.length > 1) sel.remove(1);
+  (stats.speakers || []).map((k) => [k, spn(k)]).sort((a, b) => a[1].localeCompare(b[1], ui === "en" ? "en" : ui === "gu" ? "gu" : "hi")).forEach(([k, n]) => { const o = document.createElement("option"); o.value = k; o.textContent = n; sel.appendChild(o); });
+  sel.value = keep;
+}
 async function loadStats() {
   try {
     const s = await rpc("katha_stats", {}); stats = s;
     const fill = (sel, arr) => { const keep = sel.value; while (sel.options.length > 1) sel.remove(1); arr.sort().forEach((v) => { const o = document.createElement("option"); o.value = o.textContent = v; sel.appendChild(o); }); sel.value = keep; };
-    fill($("#fseries"), s.series || []); fill($("#fspeaker"), s.speakers || []);
+    fill($("#fseries"), s.series || []); fillSpk();
     if (pref.keepf) { const f = getList("k_filters"); if (f[0]) $("#fseries").value = f[0]; if (f[1]) $("#fspeaker").value = f[1]; }
   } catch (e) { console.warn(e); }
   applyUI();
@@ -874,7 +882,7 @@ function render(rows, q) {
     const body = scText(r.text, r.roman);
     const active = cur && cur.yid === r.youtube_id && cur.t === r.start_sec;
     return `<article class="card"><h4>${esc(r.title || r.series || "Katha")}${stForVid(r.video_id).length ? `<button type="button" class="st-mark" data-stv="${r.video_id}">✨ Studio</button>` : ""}</h4><p class="txt">${hl(body, scQuery(q))}</p>${dualLine(r.text, r.roman, q)}
-      <div class="meta">${r.speaker ? `<span class="tag sp">${esc(r.speaker)}</span>` : ""}${r.series ? `<span class="tag">${esc(r.series)}</span>` : ""}<span class="time">${fmt(r.start_sec)}</span></div>
+      <div class="meta">${r.speaker ? `<span class="tag sp">${esc(spn(r.speaker))}</span>` : ""}${r.series ? `<span class="tag">${esc(r.series)}</span>` : ""}<span class="time">${fmt(r.start_sec)}</span></div>
       <div class="acts"><button class="play${active ? " active" : ""}" data-i="${i}">▶ ${T[ui].play}</button><button class="link" data-r="${i}">${T[ui].read}</button><button type="button" class="link rep" data-sh="${i}" aria-label="Share">📤</button><button type="button" class="link rep" data-rp="${i}" aria-label="${T[ui].s_rep}">⚑</button>${heart(r.youtube_id, r.start_sec, `data-f="${i}"`)}</div>${trButton(r.passage_id, r.text, "")}</article>`;
   }).join("") + `</div>`;
   $("#out").querySelectorAll("[data-i]").forEach((b) => b.onclick = () => { const r = rows[b.dataset.i]; play(r.youtube_id, r.start_sec, r); });
@@ -928,7 +936,7 @@ $("#share").onclick = () => { if (!cur) return;
 
 async function openTranscript(r, q) {
   $("#ovTitle").textContent = r.title || r.series || "Katha";
-  $("#ovWho").textContent = [r.speaker, r.series].filter(Boolean).join(" · ");
+  $("#ovWho").textContent = [spn(r.speaker), r.series].filter(Boolean).join(" · ");
   $("#ovBody").innerHTML = `<p class="empty">…</p>`; $("#ov").hidden = false;
   const res = await fetch(`${SB}/rest/v1/katha_passages?select=id,start_sec,text,roman&video_id=eq.${r.video_id}&order=start_sec`, { headers: { apikey: KEY, Authorization: "Bearer " + KEY } });
   const segs = await res.json();
@@ -1192,7 +1200,7 @@ function showMine(kind) {
   const when = (at) => { try { return new Date(at).toLocaleDateString(ui === "en" ? "en-IN" : ui + "-IN", { day: "numeric", month: "short" }); } catch { return ""; } };
   $("#ovBody").innerHTML = `<div class="mine">` + (list.length ? list.map((m, i) => `<div class="item">
       <p>${esc(scText(m.text, m.roman)) || "—"}</p>
-      <div class="m"><b>${esc(m.title)}</b>${m.speaker ? ` · ${esc(m.speaker)}` : ""}</div>
+      <div class="m"><b>${esc(m.title)}</b>${m.speaker ? ` · ${esc(spn(m.speaker))}` : ""}</div>
       <div class="m"><button type="button" class="play" data-mp="${i}">▶ ${fmt(m.t)}</button>${kind === "hist" ? `<span>${num(when(m.at))}</span>` : ""}
         <button type="button" class="link" data-mx="${i}" style="margin-left:auto">${kind === "fav" ? T[ui].remove : ""}</button></div></div>`).join("")
     + (kind === "hist" ? `<div class="bar2"><span></span><button type="button" class="link" id="clearHist">${T[ui].clear}</button></div>` : "")
@@ -1527,7 +1535,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.11.07.3";
+const APP_VER = "2026.11.23.1";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
