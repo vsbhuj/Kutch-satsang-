@@ -962,7 +962,9 @@ const fmt = (s) => num(fmt0(s));
 function hl(text, q) {
   const t = esc(text); if (!q) return t;
   // take any following vowel signs into the highlight so a letter is never split from its matra
-  const re = new RegExp(esc(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\p{M}*", "giu");
+  const parts = String(q).split(/[,،]/).map((x) => esc(x.trim())).filter(Boolean).sort((x, y) => y.length - x.length);
+  if (!parts.length) return t;
+  const re = new RegExp("(?:" + parts.map((x) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")\\p{M}*", "giu");
   return t.replace(re, (m) => `<mark>${m}</mark>`);
 }
 /* શ્લોક / ચાલીસા / પદ જેવા પઠનના ફકરા: પ્રસંગ-સુવિધાઓ (ભાવ, વાત, સંકલ્પ) માં ન બતાવવા */
@@ -1043,7 +1045,7 @@ async function search(q) {
   $("#q").value = q;
   $("#out").innerHTML = `<p class="empty">${T[ui].loading}</p>`;
   try {
-    const rows = await rpc("katha_search", { q, p_series: $("#fseries").value || null, p_speaker: $("#fspeaker").value || null, p_limit: +pref.lim || 50 });
+    const rows = await rpc(/[,،]/.test(q) && q.split(/[,،]/).filter((x) => x.trim()).length > 1 ? "katha_search_multi" : "katha_search", { q: q.replace(/،/g, ","), p_series: $("#fseries").value || null, p_speaker: $("#fspeaker").value || null, p_limit: +pref.lim || 50 });
     addRecent(q);
     // એક ગુજરાતી શબ્દ શોધ્યો હોય તો ફક્ત શબ્દની શરૂઆતવાળા ફકરા (દા.ત. "પાણી" ← "મેપાણી" અટક નહીં); કંઈ ન બચે તો બધા જ
     if (!/\s/.test(q) && /[\u0A80-\u0AFF]/.test(q)) { const f = rows.filter((r) => wsHas(r.text, q)); if (f.length) rows.splice(0, rows.length, ...f); }
@@ -2485,11 +2487,11 @@ function mxLabels() {
 /* 🔲 ટાઇલ: ભંડારનાં ચાર બટન અને હોમ પરનાં છ બટન. લાંબું લખાણ બટન દબાવ્યા પછી જ દેખાય */
 function bhTiles() {
   const L = bhT(), strip = (x) => String(x || "").replace(/^\S+\s+/, ""), t = $("#bhTiles"); if (!t) return;
-  $("#bhTopT").hidden = $("#bhTop").hidden = true; visDraw(); $("#bhGridT").hidden = $("#bhGrid").hidden = bhSec !== "az";
+  $("#bhTopT").hidden = $("#bhTop").hidden = true; visDraw(); vgDraw(); $("#bhGridT").hidden = $("#bhGrid").hidden = bhSec !== "az";
   t.hidden = !!bhSec; $("#bhSecBack").hidden = !bhSec; $("#bhSecBack").textContent = "← " + strip(L.title);
   const g = ui === "en" ? "A" : ui === "gu" ? "અ" : "अ", bn = BN[ui] || BN.en, sk = skGet(); let sub = "";
   if (sk) { const d = dayDiff(sk.start, istDay()); if (d >= 0 && d <= 6) sub = X("skDay", d + 1); }
-  t.innerHTML = [["vis", "🏷\ufe0f", VZ.t[ui] || VZ.t.gu], ["az", `<span style="color:var(--maroon);font-weight:700">${g}</span>`, strip(L.gridT)], ["hist", "🕘", strip(L.h)],
+  t.innerHTML = [["vis", "🏷\ufe0f", VZ.t[ui] || VZ.t.gu], ["vg", "📚", "વર્ગીકરણ (શાસ્ત્ર + કથા)"], ["az", `<span style="color:var(--maroon);font-weight:700">${g}</span>`, strip(L.gridT)], ["hist", "🕘", strip(L.h)],
     ["today", "🪔", strip((TD[ui] || TD.en)[0])], ["mood", "😌", X("mood")], ["vaat", "🧠", strip(X("vaat"))],
     ["sk", "🌱", X("skTile"), "", sub], ["fav", "❤️", bn[2]]]
     .map(([id, ic, lb, cls, sb]) => `<button type="button" class="hm-t ${cls || ""}" data-bt="${id}"><span class="ic">${ic}</span><b>${esc(lb)}</b>${sb ? `<small>${esc(sb)}</small>` : ""}</button>`).join("");
@@ -2592,6 +2594,31 @@ async function vzRev(box) {
       cs.onchange = fill; fill(); m.querySelector("button").onclick = () => act(r, "move", +cs.value, +ss.value);
     });
   });
+}
+
+/* 📚 વર્ગીકરણ (શાસ્ત્ર એપની યાદી varg.json): 10 જૂથ → વિભાગ → નામ. કથામાં કેટલી વાર આવ્યા તે ગણતરી; નામ દબાવો તો કથાના ફકરા */
+let vgData = null;
+async function vgLoad() { if (vgData) return; try { vgData = await (await fetch("varg.json")).json(); } catch { vgData = []; } }
+function vgDraw() {
+  let box = $("#bhVg"); if (!box) { $("#bhHome").insertAdjacentHTML("beforeend", `<div id="bhVg" hidden></div>`); box = $("#bhVg"); }
+  const on = bhSec.startsWith("vg"); box.hidden = !on; if (!on) return;
+  if (!vgData) { box.innerHTML = `<p class="vz-n">${VZ.wait}</p>`; vgLoad().then(() => { if (bhSec.startsWith("vg")) vgDraw(); }); return; }
+  const cnt = new Map((bhWords || []).map((x) => [x.word, x.n])), [, g0, d0] = bhSec.split(":");
+  const tot = (it) => it[1].concat([it[0]]).reduce((a, f, i, arr) => arr.indexOf(f) === i ? a + (cnt.get(f) || 0) : a, 0);
+  const ORD = ["કુદરત", "લોકો", "દેવ અને પુરાણ", "સ્થળ", "વસ્તુઓ", "ભોજન", "સમય-તિથિ", "શરીર", "સંખ્યા-માપ", "ગુણ અને પ્રસંગ"], groups = [...new Set(vgData.map((d) => d.group))].sort((x, y) => ORD.indexOf(x) - ORD.indexOf(y));
+  if (g0 && d0) {
+    const d = vgData.find((x) => x.group === g0 && x.dept === d0); if (!d) { box.innerHTML = ""; return; }
+    const its = d.items.map((it) => ({ it, n: tot(it) })).sort((a, b) => b.n - a.n);
+    box.innerHTML = `<div class="vz-h"><span>${esc(d0)} · ${num(its.length)} નામ</span><u></u></div><div class="bh-find">${its.map((x) => { const w = x.it[1].concat([x.it[0]]).filter((f, i, a) => a.indexOf(f) === i).sort((a, b) => (cnt.get(b) || 0) - (cnt.get(a) || 0))[0]; return `<button type="button" class="bh-w" data-w="${esc(w)}" ${x.n ? "" : "style=\"opacity:.5\""}><span>${esc(x.it[0])}</span><b>${x.n ? num(x.n) : "—"}</b></button>`; }).join("")}</div><p class="vz-n">— = કથામાં હજી આવ્યું નથી. શાસ્ત્રની ગણતરી જોડવી બાકી.</p>`;
+    bhBind(box); return;
+  }
+  if (g0) {
+    const ds = vgData.filter((d) => d.group === g0);
+    box.innerHTML = `<div class="vz-h"><span>${esc(g0)} · ${num(ds.length)} વિભાગ</span><u></u></div><div class="vz-g">${ds.map((d) => { const n = d.items.reduce((a, it) => a + tot(it), 0); return `<button type="button" class="vz-c" data-vd="${esc(d.dept)}"><b>${esc(d.dept)}</b><small>${num(d.items.length)} નામ${n ? " · કથામાં " + num(n) : ""}</small></button>`; }).join("")}</div>`;
+    box.querySelectorAll("[data-vd]").forEach((b) => b.onclick = () => vzGo("vg:" + g0 + ":" + b.dataset.vd)); return;
+  }
+  box.innerHTML = `<div class="vz-h"><span>📚 વર્ગીકરણ · ${num(groups.length)} જૂથ</span><u></u></div><div class="vz-g">${groups.map((g, i) => { const ds = vgData.filter((d) => d.group === g); const n = ds.reduce((a, d) => a + d.items.reduce((b, it) => b + tot(it), 0), 0); return `<button type="button" class="vz-c" data-vg="${esc(g)}"><b>${num(i + 1)}. ${esc(g)}</b><small>${num(ds.length)} વિભાગ${n ? " · કથામાં " + num(n) : ""}</small></button>`; }).join("")}</div>`;
+  box.querySelectorAll("[data-vg]").forEach((b) => b.onclick = () => vzGo("vg:" + b.dataset.vg));
 }
 </script>
 </body>
