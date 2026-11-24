@@ -75,6 +75,12 @@ h1{font-family:var(--gu);font-weight:700;color:var(--maroon);font-size:clamp(40p
 .spop{max-height:min(70vh,440px)}.spop .srow{min-height:48px;padding:6px 10px}.spop .cbx{width:22px;height:22px;border:2px solid var(--maroon);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-size:15px;flex:none;background:var(--card);color:var(--on-accent)}.spop .cbx.on{background:var(--maroon)}
 .spop .st{flex:1;min-width:0}.spop .st small{display:block;font-size:calc(12px * var(--fs));color:var(--ink-2)}.spop .sn{font-size:calc(12px * var(--fs));color:var(--ink-2)}
 .spop .sbar{display:flex;gap:6px;position:sticky;bottom:0;background:var(--paper);padding-top:4px}.spop .sbar button{flex:1;justify-content:center;font-size:calc(13px * var(--fs));padding:0 4px}
+.today{margin:14px 0 4px;background:var(--card);border:2px solid var(--maroon);border-radius:14px;padding:12px 14px;box-shadow:0 4px 14px rgba(60,30,10,.15)}
+.today .td-tg{color:var(--saffron);font-size:calc(12px * var(--fs));font-weight:700;letter-spacing:.4px}
+.today .td-tq{font-size:calc(17px * var(--fs));line-height:1.6;margin:6px 0;color:var(--ink)}
+.today .td-tm{font-size:calc(12px * var(--fs));color:var(--ink-2);margin-bottom:10px}
+.today .td-tb{display:flex;gap:6px}.today .td-tb button{flex:1;min-width:0;border:1px solid var(--maroon);background:var(--paper);color:var(--ink);border-radius:8px;padding:8px 2px;font-family:var(--gu);font-size:calc(13px * var(--fs));cursor:pointer}
+.today .td-tb button.on{background:var(--maroon);color:var(--on-accent)}
 .fpop button.on{background:var(--maroon);border-color:var(--maroon);color:var(--on-accent)}
 .explore{text-align:center;margin:30px 0 8px}
 .explore h3{font-family:var(--latin);letter-spacing:.22em;font-size:12px;color:var(--maroon-2);margin:0 0 12px;font-weight:600;text-transform:uppercase}
@@ -638,6 +644,7 @@ header h1{font-size:30px;margin:0;line-height:1.3}
       <div class="field"><label data-t="speaker">Speaker</label><select id="fspeaker"><option value="" data-t="allspeakers">All speakers</option></select></div>
     </div>
 
+    <section id="today" class="today" hidden></section>
     <div id="stStrip" class="st-strip" hidden></div>
 
     <section class="explore" id="explore">
@@ -673,6 +680,11 @@ header h1{font-size:30px;margin:0;line-height:1.3}
       <button class="btn" id="addBtn" type="button">ઉમેરો</button>
       <small>દરેક કથાનું લખાણ બનતાં થોડી મિનિટ લાગે. આ પેજ ખુલ્લું રાખશો તો સ્થિતિ આપમેળે બદલાશે.</small>
       <div id="plPick" class="pl-pick" hidden></div>
+      <h3 style="margin:18px 0 4px;color:var(--maroon)">🪔 આજનો પ્રસંગ</h3>
+      <small>શબ્દ શોધીને પ્રસંગ પસંદ કરો અને દિવસ નક્કી કરો. કંઈ ન મૂક્યું હોય તે દિવસે સાઈટ જાતે એક સારો ફકરો બતાવે છે.</small>
+      <div style="display:flex;gap:6px"><input id="dpq" placeholder="શબ્દ શોધો…" style="flex:1"><input id="dpday" type="date" style="width:150px"></div>
+      <button class="btn" id="dpGo" type="button">🔍 શોધો</button>
+      <div id="dpres" class="admin"></div><div id="dplist" class="admin"></div>
       <div id="vlist" class="admin" style="margin-top:6px"></div>
       <div id="rlist" class="admin"></div>
       <div id="txSheet" class="tx-sheet" hidden><div class="tx-head"><span id="txTitle"></span><button type="button" id="txClose" aria-label="બંધ">✕</button></div><div id="txList" class="tx-list"></div></div>
@@ -798,6 +810,7 @@ function applyUI() {
   if (typeof drawThemes === "function") drawThemes();
   if (typeof applyPrefs === "function") applyPrefs();
   if (typeof fillSpk === "function" && stats.speakers) fillSpk();
+  if (typeof drawToday === "function") drawToday();
   if (typeof syncF === "function") syncF();
   if (ui === "hi" || ui === "sa" || sc === "dev") loadFont("dev");
   try { if (live.segs.length) { drawList(); live.idx = -1; liveTick(live.t); } } catch {}
@@ -850,6 +863,26 @@ function hl(text, q) {
 }
 function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.h); toast.h = setTimeout(() => t.hidden = true, 1800); }
 
+/* 🪔 today's moment: a sevak's pick for the day, otherwise one good passage chosen by the server */
+const TD = { gu: ["🪔 આજનો પ્રસંગ", "▶ અહીં સાંભળો", "📤 શેર", "🔄 બીજો"], en: ["🪔 Today's moment", "▶ Listen here", "📤 Share", "🔄 Another"], hi: ["🪔 आज का प्रसंग", "▶ यहाँ सुनें", "📤 शेयर", "🔄 दूसरा"], sa: ["🪔 अद्यतनः प्रसङ्गः", "▶ अत्र शृणुत", "📤 प्रेषयतु", "🔄 अन्यत्"] };
+const istDay = (add = 0) => new Date(Date.now() + add * 864e5).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+let todayN = 0, todayRow = null;
+async function loadToday(n = 0) {
+  todayN = n;
+  try { const r = (await rpc("katha_today", { p_day: istDay(), p_n: n }))[0]; todayRow = r || null; } catch { todayRow = null; }
+  drawToday();
+}
+function drawToday() {
+  const el = $("#today"), r = todayRow; if (!r) { el.hidden = true; return; }
+  const L = TD[ui] || TD.en, d = new Date().toLocaleDateString(ui === "en" ? "en-IN" : ui + "-IN", { day: "numeric", month: "short", timeZone: "Asia/Kolkata" });
+  el.hidden = false;
+  el.innerHTML = `<div class="td-tg">${L[0]} · ${esc(num(d))}</div><div class="td-tq">“${esc(String(scText(r.text, r.roman)).trim())}”</div>
+    <div class="td-tm">🎙 ${esc(spn(r.speaker))}${r.series ? " · 📚 " + esc(r.series) : ""} · ${fmt(r.start_sec)}</div>
+    <div class="td-tb"><button type="button" class="on" id="tdPlay">${L[1]}</button><button type="button" id="tdShare">${L[2]}</button><button type="button" id="tdMore">${L[3]}</button></div>`;
+  $("#tdPlay").onclick = () => play(r.youtube_id, r.start_sec, { youtube_id: r.youtube_id, video_id: r.video_id, start_sec: r.start_sec, title: r.title, speaker: r.speaker, series: r.series, text: r.text, roman: r.roman });
+  $("#tdShare").onclick = () => showShare({ ...r, speaker: spn(r.speaker) });
+  $("#tdMore").onclick = () => loadToday(todayN + 1);
+}
 /* speaker names follow the site language (names table katha_speakers; unknown names stay as written) */
 const spn = (k) => { const n = stats.speaker_names && stats.speaker_names[k]; return n ? (n[ui] || n.en || k) : (k || ""); };
 function fillSpk() {
@@ -1017,7 +1050,28 @@ async function refreshReports() {
   } catch (e) { console.warn(e); }
 }
 let editing = 0; // a speaker box is open: don't redraw the list under the sevak's fingers
+/* admin: pick today's moment */
+$("#dpday").value = istDay(1);
+async function dpRefresh() {
+  try {
+    const rows = await rpc("katha_daily_list", { p_pass: pass });
+    $("#dplist").innerHTML = rows.length ? "<small><b>નક્કી કરેલા દિવસો</b></small>" + rows.map((x) => `<div class="vrow"><div class="vmeta">${esc(x.day)} · 🎙 ${esc(x.speaker || "")}<br>${esc(x.text)}…</div><div class="abtns"><button type="button" data-dpx="${x.day}">🗑 કાઢો</button></div></div>`).join("") : "";
+    $("#dplist").querySelectorAll("[data-dpx]").forEach((b) => b.onclick = async () => { await rpc("katha_daily_set", { p_pass: pass, p_day: b.dataset.dpx, p_passage: null }); toast("✓"); dpRefresh(); loadToday(); });
+  } catch (e) { $("#dplist").innerHTML = ""; }
+}
+$("#dpGo").onclick = async () => {
+  const q = $("#dpq").value.trim(); if (!q) return;
+  $("#dpres").innerHTML = "…";
+  try {
+    const rows = await rpc("katha_search", { q, p_limit: 15 });
+    $("#dpres").innerHTML = rows.map((r, i) => `<div class="vrow"><div class="vmeta">🎙 ${esc(r.speaker || "")} · ${fmt(r.start_sec)}<br>${esc(String(r.text).slice(0, 160))}</div><div class="abtns"><button type="button" data-dpi="${i}">🪔 આ દિવસે મૂકો</button></div></div>`).join("") || "<small>કંઈ મળ્યું નહીં.</small>";
+    $("#dpres").querySelectorAll("[data-dpi]").forEach((b) => b.onclick = async () => {
+      try { await rpc("katha_daily_set", { p_pass: pass, p_day: $("#dpday").value, p_passage: rows[+b.dataset.dpi].passage_id }); toast("✓ " + $("#dpday").value); dpRefresh(); loadToday(); } catch (e) { toast("✗ " + e.message.slice(0, 60)); }
+    });
+  } catch (e) { $("#dpres").innerHTML = "Error: " + esc(e.message); }
+};
 async function refreshList() {
+  dpRefresh();
   if (editing) { clearTimeout(poll); poll = setTimeout(refreshList, 6000); return; }
   const { videos } = await adm({ action: "list" });
   const label = { done: "✔ તૈયાર", processing: "⏳ લખાણ બની રહ્યું છે…", error: "✖ ભૂલ", pending: "રાહ" };
@@ -1561,7 +1615,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.11.24.1";
+const APP_VER = "2026.11.24.2";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
@@ -1780,7 +1834,7 @@ function route() {
   const isAdmin = location.hash === "#admin";
   $("#home").hidden = isAdmin; $("#adminView").hidden = !isAdmin;
   if (isAdmin) { $("#apass").value = pass; if (pass) login(); }
-  else loadStats();
+  else { loadStats(); loadToday(); }
 }
 window.addEventListener("hashchange", route);
 applyUI(); route();
