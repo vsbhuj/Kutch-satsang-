@@ -738,6 +738,7 @@ header h1{font-size:30px;margin:0;line-height:1.3}
 
     <div id="out"></div>
     <p class="stats" id="stats">&nbsp;</p>
+    <button type="button" id="ytAll" style="display:block;margin:12px auto;padding:12px 22px;border:1px solid var(--bd);border-radius:14px;background:var(--card,#fbfaf0);font:inherit;font-weight:700;color:inherit">▶ બધી કથાઓની યાદી</button>
   </main>
 
   <main id="bhandar" hidden>
@@ -817,7 +818,7 @@ header h1{font-size:30px;margin:0;line-height:1.3}
 <div class="toast" id="toast" hidden></div>
 
 <button class="gear" id="gear" type="button" aria-label="Settings">⚙︎</button>
-<nav id="bnav" aria-label="Menu"><button type="button" data-n="gb"><span>📖</span><b id="bnG">શાસ્ત્રો</b></button><button type="button" data-n="yt"><span>▶</span><b id="bnY">YouTube</b></button><button type="button" data-n="bh"><span>🏺</span><b id="bnB"></b></button><button type="button" data-n="set"><span>⚙</span><b id="bnS"></b></button></nav>
+<nav id="bnav" aria-label="Menu"><button type="button" data-n="gb"><span>📖</span><b id="bnG">શાસ્ત્રો</b></button><button type="button" data-n="home"><span>▶</span><b id="bnY">YouTube</b></button><button type="button" data-n="bh"><span>🏺</span><b id="bnB"></b></button><button type="button" data-n="set"><span>⚙</span><b id="bnS"></b></button></nav>
 <main id="gbView" hidden></main>
 <div class="scrim" id="scrim" hidden></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="setTitle" hidden>
@@ -2022,7 +2023,7 @@ $("#bhWBack").onclick = () => history.back();
 $("#bhFocus").onclick = () => { bhOrder = "f"; bhDrawRes(); }; $("#bhAll").onclick = () => { bhOrder = "a"; bhDrawRes(); };
 const BN = { gu: ["શોધ", "શબ્દ ભંડાર", "મનપસંદ", "સેટિંગ"], en: ["Search", "Treasury", "Favourites", "Settings"], hi: ["खोज", "भंडार", "पसंदीदा", "सेटिंग"], sa: ["अन्वेषणम्", "कोशः", "प्रियाणि", "विन्यासः"] };
 function bnLabels() { const L = BN[ui] || BN.en; $("#bnB").textContent = L[1]; $("#bnS").textContent = L[3]; }
-function bnState() { const h = location.hash; document.body.classList.toggle("adm", h === "#admin"); document.querySelectorAll("#bnav [data-n]").forEach((b) => b.classList.toggle("on", (b.dataset.n === "bh" && h === "#bhandar") || (b.dataset.n === "gb" && h === "#shastra") || (b.dataset.n === "yt" && h === "#youtube"))); }
+function bnState() { const h = location.hash; document.body.classList.toggle("adm", h === "#admin"); document.querySelectorAll("#bnav [data-n]").forEach((b) => b.classList.toggle("on", (b.dataset.n === "bh" && h === "#bhandar") || (b.dataset.n === "gb" && h === "#shastra") || (b.dataset.n === "home" && h !== "#bhandar" && h !== "#shastra"))); }
 document.querySelectorAll("#bnav [data-n]").forEach((b) => b.onclick = () => {
   const n = b.dataset.n;
   if (n === "home") { if (location.hash) goTab("home"); else { scrollTo({ top: 0, behavior: "smooth" }); $("#q").focus(); } }
@@ -2061,6 +2062,7 @@ window.addEventListener("popstate", (e) => {
   if (location.hash === "#bhandar") { const st = e.state || {}, key = (st.bhl || "") + "|" + (st.bhw || ""), sec = st.bhs || ""; if (key !== bhKey || sec !== bhSec) { bhKey = key; bhSec = sec; bhLetter = st.bhl || ""; bhPage = 0; if (st.bhw) bhOpen(st.bhw, true); else { $("#bhWord").hidden = true; $("#bhList").hidden = false; bhDraw(); } } }
 });
 window.addEventListener("hashchange", routeIf);
+$("#ytAll").addEventListener("click", () => goTab("yt"));
 $("#homeT").addEventListener("click", () => { goTab("home"); scrollTo(0, 0); });
 applyUI(); routeIf();
 
