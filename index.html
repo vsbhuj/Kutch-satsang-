@@ -2055,7 +2055,7 @@ function layerHide(name) { if (name === "ov") $("#ov").hidden = true; else if (n
 LAYERS.forEach(([sel, name]) => { const el = $(sel); let vis = !el.hidden; new MutationObserver(() => { const v = !el.hidden; if (v === vis) return; vis = v; v ? layerOpen(name) : layerClosed(name); }).observe(el, { attributes: true, attributeFilter: ["hidden"] }); });
 window.addEventListener("popstate", (e) => {
   if (gbIgn) { gbIgn = false; return; }
-  if (gbDepth > 0 && (location.hash === "#shastra" || location.hash === "#youtube")) { const d = (e.state && e.state.gbd) || 0; if (d < gbDepth) { const k = gbDepth - d; gbDepth = d; const f = location.hash === "#youtube" ? $("#gbf_yt") : $("#gbf_gb"); if (f) f.contentWindow.postMessage({ gq: "back", n: k }, location.origin); return; } }
+  if (gbDepth > 0 && (location.hash === "#shastra" || location.hash === "#youtube")) { const d = (e.state && e.state.gbd) || 0; if (d < gbDepth) { const k = gbDepth - d; gbDepth = d; const f = $("#gbf_gb"); if (f) f.contentWindow.postMessage({ gq: "back", n: k }, location.origin); return; } }
   if (layerStack.length) { const name = layerStack[layerStack.length - 1]; if (!(e.state && e.state.L === name)) { layerStack.pop(); layerHide(name); } return; }
   routeIf();
   if (location.hash === "#bhandar") { const st = e.state || {}, key = (st.bhl || "") + "|" + (st.bhw || ""), sec = st.bhs || ""; if (key !== bhKey || sec !== bhSec) { bhKey = key; bhSec = sec; bhLetter = st.bhl || ""; bhPage = 0; if (st.bhw) bhOpen(st.bhw, true); else { $("#bhWord").hidden = true; $("#bhList").hidden = false; bhDraw(); } } }
@@ -2605,7 +2605,7 @@ async function vzRev(box) {
 }
 
 /* 📚 વર્ગીકરણ (શાસ્ત્ર એપની યાદી varg.json): 10 જૂથ → વિભાગ → નામ. કથામાં કેટલી વાર આવ્યા તે ગણતરી; નામ દબાવો તો કથાના ફકરા */
-let vgData = null, vgTab = "w", gbRdy = false, gbPend = null, gbDepth = 0, gbIgn = false;
+let vgData = null, vgTab = "w", gbRdy = false, gbPend = null, gbDepth = 0, gbIgn = false, gbWant = "";
 async function vgLoad() { if (vgData) return; try { vgData = await (await fetch("varg.json")).json(); } catch { vgData = []; } }
 let vgMc = null;
 function vgM() {
@@ -2668,8 +2668,9 @@ $("#exTwo").onclick = () => exportKatha(2); $("#exAll").onclick = () => exportKa
 
 /* 📖 શાસ્ત્રો અને ▶ YouTube: ગ્રંથ ભંડાર આ જ એપની અંદર (બે ફ્રેમ, એક વાર લોડ થાય) */
 function gbShow(which) {
-  const box = $("#gbView");
-  ["gb", "yt"].forEach((k) => { let f = $("#gbf_" + k); if (!f && k === which) { f = document.createElement("iframe"); f.id = "gbf_" + k; f.src = "granth.html?emb=" + (k === "yt" ? "yt" : "home"); f.title = k; box.appendChild(f); } if (f) f.hidden = k !== which; });
+  const box = $("#gbView"); let f = $("#gbf_gb");
+  if (!f) { box.insertAdjacentHTML("afterbegin", `<p class="vz-n" id="gbLoad" style="text-align:center;margin-top:40vh">⏳ ખુલે છે…</p>`); f = document.createElement("iframe"); f.id = "gbf_gb"; f.src = "granth.html?emb=home"; f.title = "granth"; f.addEventListener("load", () => { const l = $("#gbLoad"); if (l) l.remove(); }); box.appendChild(f); gbWant = which; }
+  else if (gbWant !== which) { gbWant = which; if (gbRdy) f.contentWindow.postMessage({ gq: "tab:" + (which === "yt" ? "yt" : "home") }, location.origin); }
 }
 window.addEventListener("message", (e) => { if (e.origin === location.origin && e.data && e.data.kg === "bhandar") goTab("bh"); });
 
@@ -2697,7 +2698,10 @@ function gbGo(m) { goTab("gb"); const f = $("#gbf_gb"); if (f && gbRdy) f.conten
 window.addEventListener("message", (e) => {
   if (e.origin !== location.origin || !e.data) return;
   if (e.data.kg === "depth") { const n = e.data.n | 0; if (!(location.hash === "#shastra" || location.hash === "#youtube")) return; if (n > gbDepth) { while (gbDepth < n) { gbDepth++; history.pushState({ sub: 1, gbd: gbDepth }, "", location.href); } } else if (n < gbDepth) { const k = gbDepth - n; gbDepth = n; gbIgn = true; history.go(-k); } return; }
-  if (e.data.kg === "ready") { gbRdy = true; if (gbPend) { const f = $("#gbf_gb"); if (f) f.contentWindow.postMessage({ gq: gbPend }, location.origin); gbPend = null; } } });
+  if (e.data.kg === "ready") { gbRdy = true; { const f0 = $("#gbf_gb"); if (f0 && gbWant === "yt" && !gbPend) f0.contentWindow.postMessage({ gq: "tab:yt" }, location.origin); } if (gbPend) { const f = $("#gbf_gb"); if (f) f.contentWindow.postMessage({ gq: gbPend }, location.origin); gbPend = null; } } });
+
+/* ઝડપ: શાસ્ત્રોની ફાઈલ ફક્ત ડાઉનલોડ (ખોલ્યા વગર) કરી રાખવી, જેથી ટૅબ ખોલતાં રાહ ઓછી */
+(window.requestIdleCallback || setTimeout)(() => { try { fetch("granth.html", { cache: "force-cache" }).catch(() => {}); } catch (e) {} }, 4000);
 </script>
 </body>
 </html>
