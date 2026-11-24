@@ -768,6 +768,7 @@ header h1{font-size:30px;margin:0;line-height:1.3}
     </div>
     <div class="admin" id="panel" hidden>
       <button type="button" class="st-big" id="stOpen"><span class="i">✨</span><span><b>Studio</b><small>સ્લાઈડ, Mind Map… એક કથા, ઘણી કથા કે આખી સિરીઝમાંથી</small></span><span class="ar">›</span></button>
+      <div class="vz-c" style="display:block;margin:12px 0" id="exCard"><b>📦 બીજી ઍપ માટે લખાણ (JSON)</b><small style="display:block">ગ્રંથ ભંડાર સાથે ભેગું કરવા માટે · વીડિયો, વક્તા, ફકરા + સમય (પાસવર્ડ/ચાવી નહીં)</small><div style="display:flex;gap:8px;margin-top:8px"><button type="button" class="btn" id="exTwo" style="flex:1">ફક્ત 2 વીડિયો (પ્રયોગ)</button><button type="button" class="btn" id="exAll" style="flex:1">⬇ બધું</button></div><small id="exSt" style="display:block;margin-top:6px"></small></div>
       <label for="links">YouTube લિંક — દરેક લાઇનમાં એક:</label>
       <textarea id="links" placeholder="https://youtu.be/xxxx | વક્તાનું નામ | કથા સિરીઝ"></textarea>
       <small>📋 <b>Playlist ની લિંક</b> પણ ચાલે: એમાંના બધા વીડિયો ઉમેરાશે. વક્તાનું ખાનું ખાલી રાખો તો નામ વીડિયોના શીર્ષકમાંથી ("By … Swami") આપમેળે લેવાશે.<br>ફોર્મેટ: <b>લિંક | વક્તા | સિરીઝ</b>. વક્તા અને સિરીઝ ખાલી રાખવા હોય તો નીચેના ખાનામાં એક વાર લખો, એ બધી લિંક માટે વપરાશે.</small>
@@ -2620,6 +2621,27 @@ function vgDraw() {
   box.innerHTML = `<div class="vz-h"><span>📚 વર્ગીકરણ · ${num(groups.length)} જૂથ</span><u></u></div><div class="vz-g">${groups.map((g, i) => { const ds = vgData.filter((d) => d.group === g); const n = ds.reduce((a, d) => a + d.items.reduce((b, it) => b + tot(it), 0), 0); return `<button type="button" class="vz-c" data-vg="${esc(g)}"><b>${num(i + 1)}. ${esc(g)}</b><small>${num(ds.length)} વિભાગ${n ? " · કથામાં " + num(n) : ""}</small></button>`; }).join("")}</div>`;
   box.querySelectorAll("[data-vg]").forEach((b) => b.onclick = () => vzGo("vg:" + b.dataset.vg));
 }
+
+/* 📦 બીજી ઍપ (ગ્રંથ ભંડાર) માટે JSON: વીડિયો + ફકરા + સમય. ફક્ત જાહેર ડેટા (છુપાવેલા નહીં) */
+async function exportKatha(limitVideos) {
+  const st = $("#exSt"), H = { apikey: KEY, Authorization: "Bearer " + KEY };
+  const get = async (u) => { const r = await fetch(`${SB}/rest/v1/${u}`, { headers: H }); if (!r.ok) throw new Error(r.status); return r.json(); };
+  try {
+    st.textContent = "વીડિયો લાવું છું…";
+    let vids = await get("katha_videos?select=id,youtube_id,title,speaker,series,duration_sec&status=eq.done&hidden=not.is.true&order=id");
+    if (limitVideos) vids = vids.slice(0, limitVideos);
+    const out = [];
+    for (const v of vids) {
+      st.textContent = `ફકરા: ${out.length + 1}/${vids.length}…`;
+      let rows = [], from = 0; for (;;) { const b = await get(`katha_passages?select=start_sec,text&video_id=eq.${v.id}&hidden=not.is.true&order=start_sec&limit=1000&offset=${from}`); rows = rows.concat(b); if (b.length < 1000) break; from += 1000; }
+      out.push({ ...v, passages: rows });
+    }
+    const blob = new Blob([JSON.stringify({ exported: new Date().toISOString(), videos: out })], { type: "application/json" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = limitVideos ? "katha-export-test.json" : "katha-export.json"; document.body.appendChild(a); a.click(); a.remove();
+    st.textContent = `✓ ${out.length} વીડિયો, ${out.reduce((n, v) => n + v.passages.length, 0)} ફકરા`;
+  } catch (e) { st.textContent = "✗ ન થયું: " + e.message; }
+}
+$("#exTwo").onclick = () => exportKatha(2); $("#exAll").onclick = () => exportKatha(0);
 </script>
 </body>
 </html>
