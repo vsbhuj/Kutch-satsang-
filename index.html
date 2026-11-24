@@ -675,6 +675,19 @@ header h1{font-size:30px;margin:0;line-height:1.3}
 .share .sh-poster .empty{margin:24px 0;text-align:center}
 .share details{margin-top:12px}.share summary{cursor:pointer;color:var(--ink-2);font-size:calc(14px * var(--fs))}
 .share details a{display:inline-block;margin-top:4px;color:var(--maroon)}
+
+/* ટાઇલ બટન: ભંડાર અને હોમ */
+.bh-tabs{display:none}
+.hm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.hm-t{border:1px solid var(--rule);border-radius:16px;background:var(--card);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:14px 4px 12px;min-height:104px;text-align:center;cursor:pointer;box-shadow:0 2px 0 rgba(60,40,20,.06);font-family:var(--gu)}
+.hm-t:active{transform:scale(.97)}
+.hm-t .ic{font-size:34px;line-height:1.1}.hm-t b{font-size:calc(15px * var(--fs));font-weight:700;color:var(--maroon);line-height:1.25}.hm-t small{font-size:calc(12px * var(--fs));color:var(--ink-2)}
+.hm-t.on{background:var(--maroon);border-color:var(--maroon)}.hm-t.on b,.hm-t.on small{color:var(--on-accent)}
+.hm-t.dim{opacity:.5;border-style:dashed;cursor:default}
+.bh-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bh-sec{font-size:calc(18px * var(--fs));color:var(--maroon);margin:8px 0 10px}
+.explore{display:none!important}
+#ovBody .today{margin-top:0}
 </style>
 </head>
 <body>
@@ -1717,7 +1730,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.11.24.9";
+const APP_VER = "2026.11.24.11";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
@@ -1930,13 +1943,13 @@ function bhDraw() {
   }
   $("#bhFind").hidden = true;
   if (bhLetter) { $("#bhHome").hidden = true; $("#bhLet").hidden = false; bhDrawLetter(); return; }
-  $("#bhLet").hidden = true; $("#bhHome").hidden = false;
+  $("#bhLet").hidden = true; $("#bhHome").hidden = false; bhTiles();
   $("#bhTop").innerHTML = words.slice(0, 16).map((x) => `<button type="button" data-w="${esc(x.word)}">${esc(x.word)}<b>${num(x.n)}</b></button>`).join(""); bhBind($("#bhTop"));
   const letters = [...new Set(words.map((x) => bhFirst(x.word)))].filter(Boolean).sort((a, c) => a.localeCompare(c, "gu"));
   $("#bhGrid").innerHTML = letters.map((l) => `<button type="button" data-l="${esc(l)}">${esc(l)}</button>`).join("");
-  $("#bhGrid").querySelectorAll("[data-l]").forEach((b) => b.onclick = () => { bhLetter = b.dataset.l; bhPage = 0; history.pushState({ sub: 1, bhl: bhLetter }, "", location.href); bhKey = bhLetter + "|"; bhDraw(); scrollTo(0, 0); });
+  $("#bhGrid").querySelectorAll("[data-l]").forEach((b) => b.onclick = () => { bhLetter = b.dataset.l; bhPage = 0; history.pushState({ sub: 1, bhl: bhLetter, bhs: bhSec }, "", location.href); bhKey = bhLetter + "|"; bhDraw(); scrollTo(0, 0); });
 }
-let bhPage = 0, bhKey = "|";
+let bhPage = 0, bhKey = "|", bhSec = "";
 function bhDrawLetter() {
   const L = bhT(); let list = (bhWords || []).filter((x) => bhFirst(x.word) === bhLetter);
   if (bhSort === "a") list = [...list].sort((a, b) => a.word.localeCompare(b.word, "gu"));
@@ -1948,7 +1961,7 @@ function bhDrawLetter() {
   $("#bhPn").querySelectorAll("[data-p]").forEach((b) => b.onclick = () => { bhPage = +b.dataset.p; bhDrawLetter(); scrollTo(0, 0); });
 }
 async function bhOpen(w, noPush) {
-  if (!noPush) { history.pushState({ sub: 1, bhl: bhLetter, bhw: w }, "", location.href); bhKey = bhLetter + "|" + w; }
+  if (!noPush) { history.pushState({ sub: 1, bhl: bhLetter, bhw: w, bhs: bhSec }, "", location.href); bhKey = bhLetter + "|" + w; }
   bhCur = w; $("#bhList").hidden = true; $("#bhWord").hidden = false; $("#bhRes").innerHTML = "…";
   const n = (bhWords || []).find((x) => x.word === w);
   $("#bhWT").innerHTML = `${esc(w)} <small>· ${n ? num(n.n) : ""} ${bhT().pas}</small>`;
@@ -2002,7 +2015,7 @@ function route() {
 let lastHash = null;
 function routeIf() { if (location.hash !== lastHash) { lastHash = location.hash; route(); } }
 function goTab(name) {
-  if (name === "bh") { if (location.hash !== "#bhandar") { history.pushState({ sub: 1 }, "", "#bhandar"); bhLetter = ""; bhKey = "|"; routeIf(); scrollTo(0, 0); } }
+  if (name === "bh") { if (location.hash !== "#bhandar") { history.pushState({ sub: 1 }, "", "#bhandar"); bhLetter = ""; bhKey = "|"; bhSec = ""; routeIf(); scrollTo(0, 0); } }
   else if (location.hash === "#bhandar") { if (history.state && history.state.sub) history.back(); else { history.replaceState(null, "", location.pathname + location.search); routeIf(); } }
 }
 const LAYERS = [["#ov", "ov"], ["#sheet", "sheet"], ["#player", "player"]];
@@ -2014,7 +2027,7 @@ LAYERS.forEach(([sel, name]) => { const el = $(sel); let vis = !el.hidden; new M
 window.addEventListener("popstate", (e) => {
   if (layerStack.length) { const name = layerStack[layerStack.length - 1]; if (!(e.state && e.state.L === name)) { layerStack.pop(); layerHide(name); } return; }
   routeIf();
-  if (location.hash === "#bhandar") { const st = e.state || {}, key = (st.bhl || "") + "|" + (st.bhw || ""); if (key !== bhKey) { bhKey = key; bhLetter = st.bhl || ""; bhPage = 0; if (st.bhw) bhOpen(st.bhw, true); else { $("#bhWord").hidden = true; $("#bhList").hidden = false; bhDraw(); } } }
+  if (location.hash === "#bhandar") { const st = e.state || {}, key = (st.bhl || "") + "|" + (st.bhw || ""), sec = st.bhs || ""; if (key !== bhKey || sec !== bhSec) { bhKey = key; bhSec = sec; bhLetter = st.bhl || ""; bhPage = 0; if (st.bhw) bhOpen(st.bhw, true); else { $("#bhWord").hidden = true; $("#bhList").hidden = false; bhDraw(); } } }
 });
 window.addEventListener("hashchange", routeIf);
 applyUI(); routeIf();
@@ -2197,36 +2210,36 @@ const MXT = {
   gu: { mood: "આજે મન કેવું છે?", moodSub: "ભાવ દબાવો, એને લગતા ફકરા મળશે", clear: "✕ બંધ", all: "બધા", playAll: "▶ બધા ક્રમમાં સાંભળો",
     vaat: "🧠 વાત શોધો", vaatPh: "જેટલું યાદ છે એટલું લખો…", vaatHint: "શબ્દોના મેળ પરથી શોધે છે", b3: "ખૂબ મળતું", b2: "મળતું", b1: "થોડું મળતું", none: "કંઈ મળ્યું નહીં", loading: "શોધું છું…",
     moodTitle: (l) => `ભાવ: ${l}`, vaatTitle: "🧠 વાત શોધો",
-    sk: "🌱 આ અઠવાડિયાનો સંકલ્પ", skPick: "એક સંકલ્પ પસંદ કરો, રોજ એક ફકરો મળશે", skDay: (n) => `દિવસ ${num(n)} / ${num(7)}`, skDid: "✓ પળાયો", skMissed: "થોડો ચૂક્યો", skAsk: "રાત્રે: આજે કેવું રહ્યું?", skSaved: "આજે નોંધ્યું 🙏",
+    skTile: "સંકલ્પ", sk: "🌱 આ અઠવાડિયાનો સંકલ્પ", skPick: "એક સંકલ્પ પસંદ કરો, રોજ એક ફકરો મળશે", skDay: (n) => `દિવસ ${num(n)} / ${num(7)}`, skDid: "✓ પળાયો", skMissed: "થોડો ચૂક્યો", skAsk: "રાત્રે: આજે કેવું રહ્યું?", skSaved: "આજે નોંધ્યું 🙏",
     skSum: (n) => `${num(7)} માંથી ${num(n)} દિવસ પળાયા 🙏`, skNew: "નવો સંકલ્પ", skChange: "સંકલ્પ બદલો", skSure: "⚠️ ખાતરી? ફરી દબાવો", listen: "▶ સાંભળો",
     making: "પોસ્ટર બની રહ્યું છે…", savePic: "ફોનમાં સાચવો", textOnly: "ફક્ત લખાણ મોકલો", sendText: "WhatsApp પર લખાણ", savedAttach: "પોસ્ટર સાચવ્યું. WhatsApp માં જોડો 🙏" },
   en: { mood: "How does the mind feel today?", moodSub: "Tap a feeling to see related passages", clear: "✕ Close", all: "All", playAll: "▶ Play all in order",
     vaat: "🧠 Find by story", vaatPh: "Type whatever you remember…", vaatHint: "Matches your words, not the meaning", b3: "Very close", b2: "Close", b1: "Partly", none: "Nothing found", loading: "Searching…",
     moodTitle: (l) => `Feeling: ${l}`, vaatTitle: "🧠 Find by story",
-    sk: "🌱 This week's resolve", skPick: "Pick one resolve, get one passage a day", skDay: (n) => `Day ${n} / 7`, skDid: "✓ Kept", skMissed: "Missed a bit", skAsk: "Tonight: how did today go?", skSaved: "Noted for today 🙏",
+    skTile: "Resolve", sk: "🌱 This week's resolve", skPick: "Pick one resolve, get one passage a day", skDay: (n) => `Day ${n} / 7`, skDid: "✓ Kept", skMissed: "Missed a bit", skAsk: "Tonight: how did today go?", skSaved: "Noted for today 🙏",
     skSum: (n) => `${n} of 7 days kept 🙏`, skNew: "New resolve", skChange: "Change resolve", skSure: "⚠️ Sure? Tap again", listen: "▶ Listen",
     making: "Making the poster…", savePic: "Save to phone", textOnly: "Send text only", sendText: "Text on WhatsApp", savedAttach: "Poster saved. Attach it in WhatsApp 🙏" },
   hi: { mood: "आज मन कैसा है?", moodSub: "भाव दबाइए, उससे जुड़े अंश मिलेंगे", clear: "✕ बंद", all: "सभी", playAll: "▶ सब क्रम से सुनें",
     vaat: "🧠 बात खोजें", vaatPh: "जितना याद है उतना लिखें…", vaatHint: "शब्दों के मेल से खोजता है", b3: "बहुत मिलता", b2: "मिलता", b1: "थोड़ा मिलता", none: "कुछ नहीं मिला", loading: "खोज रहा हूँ…",
     moodTitle: (l) => `भाव: ${l}`, vaatTitle: "🧠 बात खोजें",
-    sk: "🌱 इस सप्ताह का संकल्प", skPick: "एक संकल्प चुनें, रोज़ एक अंश मिलेगा", skDay: (n) => `दिन ${num(n)} / ${num(7)}`, skDid: "✓ निभाया", skMissed: "थोड़ा चूका", skAsk: "रात को: आज कैसा रहा?", skSaved: "आज दर्ज हुआ 🙏",
+    skTile: "संकल्प", sk: "🌱 इस सप्ताह का संकल्प", skPick: "एक संकल्प चुनें, रोज़ एक अंश मिलेगा", skDay: (n) => `दिन ${num(n)} / ${num(7)}`, skDid: "✓ निभाया", skMissed: "थोड़ा चूका", skAsk: "रात को: आज कैसा रहा?", skSaved: "आज दर्ज हुआ 🙏",
     skSum: (n) => `${num(7)} में से ${num(n)} दिन निभे 🙏`, skNew: "नया संकल्प", skChange: "संकल्प बदलें", skSure: "⚠️ पक्का? फिर दबाइए", listen: "▶ सुनें",
     making: "पोस्टर बन रहा है…", savePic: "फ़ोन में सहेजें", textOnly: "सिर्फ़ लिखा भेजें", sendText: "WhatsApp पर लिखा", savedAttach: "पोस्टर सहेजा। WhatsApp में जोड़ें 🙏" },
 };
 const X = (k, ...a) => { const d = MXT[ui] || MXT.hi; const v = d[k] !== undefined ? d[k] : MXT.gu[k]; return typeof v === "function" ? v(...a) : v; };
 const lab = (o) => o[ui] || (ui === "sa" ? o.hi : null) || o.gu;
 const MOODS = [
-  { id: "shanti", gu: "શાંતિ", en: "Peace", hi: "शांति", w: ["શાંતિ", "નિરાંત"] },
-  { id: "dukh", gu: "દુઃખ", en: "Sorrow", hi: "दुःख", w: ["દુઃખ", "પીડા"] },
-  { id: "bharoso", gu: "ભરોસો", en: "Trust", hi: "भरोसा", w: ["ભરોસ", "વિશ્વાસ", "શ્રદ્ધા"] },
-  { id: "krodh", gu: "ક્રોધ", en: "Anger", hi: "क्रोध", w: ["ક્રોધ", "ગુસ્સ"] },
-  { id: "dar", gu: "ડર", en: "Fear", hi: "डर", w: ["ડર", "ભય"] },
-  { id: "kshama", gu: "ક્ષમા", en: "Forgiveness", hi: "क्षमा", w: ["ક્ષમા"] },
-  { id: "dhiraj", gu: "ધીરજ", en: "Patience", hi: "धैर्य", w: ["ધીરજ"] },
-  { id: "santosh", gu: "સંતોષ", en: "Contentment", hi: "संतोष", w: ["સંતોષ"] },
-  { id: "seva", gu: "સેવા", en: "Service", hi: "सेवा", w: ["સેવા"] },
-  { id: "prem", gu: "પ્રેમ", en: "Love", hi: "प्रेम", w: ["પ્રેમ"] },
-  { id: "abhar", gu: "આભાર", en: "Gratitude", hi: "आभार", w: ["આભાર", "કૃપા"] },
+  { id: "shanti", ic: "🕊️", gu: "શાંતિ", en: "Peace", hi: "शांति", w: ["શાંતિ", "નિરાંત"] },
+  { id: "dukh", ic: "💧", gu: "દુઃખ", en: "Sorrow", hi: "दुःख", w: ["દુઃખ", "પીડા"] },
+  { id: "bharoso", ic: "🤝", gu: "ભરોસો", en: "Trust", hi: "भरोसा", w: ["ભરોસ", "વિશ્વાસ", "શ્રદ્ધા"] },
+  { id: "krodh", ic: "🔥", gu: "ક્રોધ", en: "Anger", hi: "क्रोध", w: ["ક્રોધ", "ગુસ્સ"] },
+  { id: "dar", ic: "😨", gu: "ડર", en: "Fear", hi: "डर", w: ["ડર", "ભય"] },
+  { id: "kshama", ic: "🙏", gu: "ક્ષમા", en: "Forgiveness", hi: "क्षमा", w: ["ક્ષમા"] },
+  { id: "dhiraj", ic: "⏳", gu: "ધીરજ", en: "Patience", hi: "धैर्य", w: ["ધીરજ"] },
+  { id: "santosh", ic: "🌾", gu: "સંતોષ", en: "Contentment", hi: "संतोष", w: ["સંતોષ"] },
+  { id: "seva", ic: "🪔", gu: "સેવા", en: "Service", hi: "सेवा", w: ["સેવા"] },
+  { id: "prem", ic: "❤️", gu: "પ્રેમ", en: "Love", hi: "प्रेम", w: ["પ્રેમ"] },
+  { id: "abhar", ic: "🌼", gu: "આભાર", en: "Gratitude", hi: "आभार", w: ["આભાર", "કૃપા"] },
 ];
 const SKS = [
   { id: "krodh", gu: "ક્રોધ ન કરવો", en: "Do not get angry", hi: "क्रोध न करना", w: ["ક્રોધ", "ગુસ્સ"] },
@@ -2289,6 +2302,8 @@ function mxDraw() {
   if (all) all.onclick = () => { pa = { list: shown.map((r) => ({ yid: r.youtube_id, t: r.start_sec, vid: r.video_id, title: r.title, speaker: r.speaker, series: r.series, text: r.text, roman: r.roman })), i: 0, t0: 0, at: 0 }; paPlay(0); };
 }
 async function moodGo(m) {
+  if (!$("#ov").hidden) $("#ov").hidden = true;
+  if (location.hash === "#bhandar") { await new Promise((r) => setTimeout(r, 250)); goTab("home"); await new Promise((r) => setTimeout(r, 300)); }
   $("#out").innerHTML = `<p class="empty">${X("loading")}</p>`;
   document.querySelectorAll("#mxMoods [data-m]").forEach((b) => b.classList.toggle("on", b.dataset.m === m.id));
   try { const rows = await mxMerge(m.w, 100); if (!rows.length) { mxOff(); $("#out").innerHTML = `<p class="empty">${X("none")}</p>`; return; } mxShow(rows, { title: X("moodTitle", lab(m)), words: m.w }); }
@@ -2429,12 +2444,12 @@ async function showShare(r) {
 /* wiring: build the little pieces of page, then keep their words in step with the site language */
 function mxLabels() {
   const v = $("#mxVaat"); if (!v) return;
-  v.textContent = X("vaat"); v.classList.toggle("on", vaatOn);
+  v.textContent = X("vaat"); v.classList.toggle("on", vaatOn); $(".mx-modes").hidden = !vaatOn;
   $("#mxVaatHint").textContent = vaatOn ? X("vaatHint") : ""; $("#mxVaatHint").hidden = !vaatOn;
   $("#q").placeholder = vaatOn ? X("vaatPh") : T[ui].ph;
-  $("#mxMoods").innerHTML = `<div class="mx-h">${X("mood")}</div><div class="mx-sub">${X("moodSub")}</div><div class="chips">${MOODS.map((m) => `<button type="button" class="chip" data-m="${m.id}">${esc(lab(m))}</button>`).join("")}</div>`;
+  $("#mxMoods").innerHTML = `<div class="hm-grid">${MOODS.map((m) => `<button type="button" class="hm-t" data-m="${m.id}"><span class="ic">${m.ic}</span><b>${esc(lab(m))}</b></button>`).join("")}</div>`;
   $("#mxMoods").querySelectorAll("[data-m]").forEach((b) => b.onclick = () => moodGo(MOODS.find((m) => m.id === b.dataset.m)));
-  drawSk();
+  drawSk(); if (typeof hmDraw === "function") hmDraw();
 }
 (function mxInit() {
   $(".filters").insertAdjacentHTML("afterend", `<div class="mx-modes"><button type="button" class="chip" id="mxVaat"></button><span class="mx-hint" id="mxVaatHint" hidden></span></div><section class="mx-moods" id="mxMoods"></section>`);
@@ -2445,6 +2460,41 @@ function mxLabels() {
   $("#sform").onsubmit = function (e) { if (vaatOn) { e.preventDefault(); vaatGo($("#q").value); return false; } return os.call(this, e); };
   const ap = applyUI; applyUI = function () { ap(); mxLabels(); };
   mxLabels();
+})();
+
+/* 🔲 ટાઇલ: ભંડારનાં ચાર બટન અને હોમ પરનાં છ બટન. લાંબું લખાણ બટન દબાવ્યા પછી જ દેખાય */
+function bhTiles() {
+  const L = bhT(), strip = (x) => String(x || "").replace(/^\S+\s+/, ""), t = $("#bhTiles"); if (!t) return;
+  $("#bhTopT").hidden = $("#bhTop").hidden = bhSec !== "top"; $("#bhGridT").hidden = $("#bhGrid").hidden = bhSec !== "az";
+  t.hidden = !!bhSec; $("#bhSecBack").hidden = !bhSec; $("#bhSecBack").textContent = "← " + strip(L.title);
+  const g = ui === "en" ? "A" : ui === "gu" ? "અ" : "अ", bn = BN[ui] || BN.en, sk = skGet(); let sub = "";
+  if (sk) { const d = dayDiff(sk.start, istDay()); if (d >= 0 && d <= 6) sub = X("skDay", d + 1); }
+  t.innerHTML = [["top", "🔥", strip(L.topT)], ["az", `<span style="color:var(--maroon);font-weight:700">${g}</span>`, strip(L.gridT)], ["hist", "🕘", strip(L.h)],
+    ["today", "🪔", strip((TD[ui] || TD.en)[0])], ["mood", "😌", X("mood")], ["vaat", "🧠", strip(X("vaat"))],
+    ["sk", "🌱", X("skTile"), "", sub], ["fav", "❤️", bn[2]], ["soon", "🏷\ufe0f", L.t, "dim"]]
+    .map(([id, ic, lb, cls, sb]) => `<button type="button" class="hm-t ${cls || ""}" data-bt="${id}"><span class="ic">${ic}</span><b>${esc(lb)}</b>${sb ? `<small>${esc(sb)}</small>` : ""}</button>`).join("");
+  t.querySelectorAll("[data-bt]").forEach((b) => b.onclick = () => {
+    const id = b.dataset.bt; if (id === "soon") return;
+    if (id === "hist" || id === "fav") { showMine(id); return; }
+    if (id === "today" || id === "mood" || id === "sk" || id === "vaat") { hmGo(id); return; }
+    bhSec = id; bhLetter = ""; history.pushState({ sub: 1, bhl: "", bhs: bhSec }, "", location.href); bhKey = "|"; bhDraw(); scrollTo(0, 0);
+  });
+}
+const HM = {};
+function hmDraw() {}
+function hmGo(id) {
+  if (id === "vaat") { vaatOn = true; mxLabels(); goTab("home"); setTimeout(() => $("#q").focus(), 350); return; }
+  const o = { today: [(TD[ui] || TD.en)[0], HM.today], mood: ["😌 " + X("mood"), HM.mood], sk: [X("sk"), HM.sk] }[id];
+  showInfo(o[0], ""); $("#ovBody").append(o[1]);
+}
+(function hmInit() {
+  $("#bhHome").insertAdjacentHTML("afterbegin", `<div id="bhTiles" class="bh-tiles"></div><button type="button" class="link bh-back" id="bhSecBack" hidden></button>`);
+  $("#bhSecBack").onclick = () => history.back();
+  $("#home").insertAdjacentHTML("beforeend", `<div id="hmPool" hidden></div>`);
+  const pool = $("#hmPool"); HM.today = $("#today"); HM.mood = $("#mxMoods"); HM.sk = $("#mxSk");
+  Object.values(HM).forEach((n) => pool.append(n));
+  new MutationObserver(() => Object.values(HM).forEach((n) => { if (!n.isConnected) pool.append(n); })).observe($("#ovBody"), { childList: true });
+  new MutationObserver(() => { if ($("#ov").hidden) Object.values(HM).forEach((n) => { if (n.parentNode !== pool) pool.append(n); }); }).observe($("#ov"), { attributes: true, attributeFilter: ["hidden"] });
 })();
 </script>
 </body>
