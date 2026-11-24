@@ -660,10 +660,6 @@ header h1{font-size:30px;margin:0;line-height:1.3}
       <div class="field"><label data-t="speaker">Speaker</label><select id="fspeaker"><option value="" data-t="allspeakers">All speakers</option></select></div>
     </div>
 
-    <section id="today" class="today" hidden></section>
-    <button type="button" class="bh-open" id="openBh"></button>
-    <div id="stStrip" class="st-strip" hidden></div>
-
     <section class="explore" id="explore">
       <h3 data-t="see">See what's in the archive</h3>
       <div class="chips"><span class="fe" data-t="fe">For example</span>
@@ -671,6 +667,10 @@ header h1{font-size:30px;margin:0;line-height:1.3}
       </div>
       <p class="hint" data-t="hint">Press enter to search the archive</p>
     </section>
+    <section id="today" class="today" hidden></section>
+    <button type="button" class="bh-open" id="openBh"></button>
+    <div id="stStrip" class="st-strip" hidden></div>
+
 
     <div id="out"></div>
     <p class="stats" id="stats">&nbsp;</p>
@@ -779,7 +779,7 @@ const store = { get(k, d) { try { return localStorage.getItem(k) ?? d } catch { 
 
 const T = {
   en: { eyebrow: "Kutch Satsang · Katha Archive", sub: "— a searchable archive of the kathas —", search: "Search", series: "Katha series", speaker: "Speaker",
-    allseries: "All series", allspeakers: "All speakers", see: "See what's in the archive", fe: "For example", hint: "Press enter to search the archive",
+    allseries: "All series", allspeakers: "All speakers", see: "See what's in the archive", fe: "Try searching:", hint: "Press enter to search the archive",
     ph: "Search the words that were spoken…", matches: (n) => `${n} matches`, none: "No passage contains this word yet.", play: "Play here", read: "Read full transcript →",
     stats: (k, p) => `${k.toLocaleString()} kathas · ${p.toLocaleString()} passages · jump straight to the moment`, loading: "Searching…", copied: "Link copied",
     settings: "Settings", s_look: "Appearance", s_theme: "Theme", s_size: "Text size", s_font: "Gujarati font", s_night: "Dark theme at night automatically", s_night2: "\u201cRaatri Granth\u201d from 7 pm to 6 am",
@@ -792,7 +792,7 @@ const T = {
     favAdd: "Added to favourites", favDel: "Removed from favourites", favEmpty: "No favourites yet. Tap ♡ on any passage to keep it here.",
     histEmpty: "Nothing played yet.", clear: "Clear history", sure: "Tap again to clear", cleared: "History cleared", remove: "Remove", s_tr: "Translation", s_tr2: "A \u201cTranslate\u201d button appears under each passage. It is an AI translation, so it may have mistakes.", off: "Off", trBtn: (l) => `🌐 ${l} translation`, trBusy: "Translating…", trErr: "Translation is not available right now. Please try again in a minute.", trSame: "This katha is already in that language.", },
   gu: { eyebrow: "કચ્છ સત્સંગ · કથા સંગ્રહ", sub: "— બોલાયેલા શબ્દો શોધો —", search: "શોધો", series: "કથા સિરીઝ", speaker: "વક્તા",
-    allseries: "બધી સિરીઝ", allspeakers: "બધા વક્તા", see: "સંગ્રહમાં શું છે તે જુઓ", fe: "ઉદાહરણ", hint: "શોધવા માટે Enter દબાવો",
+    allseries: "બધી સિરીઝ", allspeakers: "બધા વક્તા", see: "સંગ્રહમાં શું છે તે જુઓ", fe: "શોધી જુઓ:", hint: "શોધવા માટે Enter દબાવો",
     ph: "બોલાયેલો કોઈ પણ શબ્દ શોધો…", matches: (n) => `${n} પરિણામ`, none: "આ શબ્દ હજી કોઈ કથામાં મળ્યો નથી.", play: "અહીં સાંભળો", read: "આખું લખાણ વાંચો →",
     stats: (k, p) => `${k.toLocaleString()} કથા · ${p.toLocaleString()} ફકરા · સીધું એ ક્ષણ પર`, loading: "શોધી રહ્યા છીએ…", copied: "લિંક કોપી થઈ",
     settings: "સેટિંગ", s_look: "દેખાવ", s_theme: "થીમ", s_size: "અક્ષરનું કદ", s_font: "ફોન્ટ", s_night: "રાત્રે આપમેળે ઘેરી થીમ", s_night2: "સાંજે 7 થી સવારે 6 સુધી \u201cરાત્રિ ગ્રંથ\u201d",
@@ -805,7 +805,7 @@ const T = {
     favAdd: "મનપસંદમાં ઉમેર્યું", favDel: "મનપસંદમાંથી કાઢ્યું", favEmpty: "હજી કોઈ મનપસંદ નથી. કોઈ પણ ફકરા પર ♡ દબાવો, એ અહીં સચવાઈ જશે.",
     histEmpty: "હજી કંઈ સાંભળ્યું નથી.", clear: "ઇતિહાસ સાફ કરો", sure: "ખાતરી? ફરી દબાવો", cleared: "ઇતિહાસ સાફ થયો", remove: "કાઢો", s_tr: "અનુવાદ", s_tr2: "દરેક ફકરા નીચે \u201cઅનુવાદ\u201d બટન આવશે. AI અનુવાદ છે, એટલે ભૂલ હોઈ શકે.", off: "બંધ", trBtn: (l) => `🌐 ${l} અનુવાદ`, trBusy: "અનુવાદ થઈ રહ્યો છે…", trErr: "અત્યારે અનુવાદ નથી થઈ શકતો, એક મિનિટ પછી ફરી પ્રયત્ન કરો.", trSame: "આ કથા એ જ ભાષામાં છે.", },
   hi: { eyebrow: "कच्छ सत्संग · कथा संग्रह", sub: "— बोले गए शब्द खोजें —", search: "खोजें", series: "कथा सीरीज़", speaker: "वक्ता",
-    allseries: "सभी सीरीज़", allspeakers: "सभी वक्ता", see: "संग्रह में क्या है देखें", fe: "उदाहरण", hint: "खोजने के लिए Enter दबाएँ",
+    allseries: "सभी सीरीज़", allspeakers: "सभी वक्ता", see: "संग्रह में क्या है देखें", fe: "खोजकर देखें:", hint: "खोजने के लिए Enter दबाएँ",
     ph: "बोला गया कोई भी शब्द खोजें…", matches: (n) => `${n} परिणाम`, none: "यह शब्द अभी किसी कथा में नहीं मिला।", play: "यहाँ सुनें", read: "पूरा पाठ पढ़ें →",
     stats: (k, p) => `${k} कथा · ${p} अनुच्छेद · सीधे उसी पल पर`, loading: "खोज रहे हैं…", copied: "लिंक कॉपी हुआ",
     settings: "सेटिंग", s_look: "रूप", s_theme: "थीम", s_size: "अक्षर का आकार", s_font: "गुजराती फ़ॉन्ट", s_night: "रात में अपने आप गहरी थीम", s_night2: "शाम 7 से सुबह 6 तक \u201cरात्रि ग्रंथ\u201d",
@@ -818,7 +818,7 @@ const T = {
     favAdd: "पसंदीदा में जोड़ा", favDel: "पसंदीदा से हटाया", favEmpty: "अभी कोई पसंदीदा नहीं। किसी भी अनुच्छेद पर ♡ दबाएँ।",
     histEmpty: "अभी कुछ नहीं सुना।", clear: "इतिहास साफ़ करें", sure: "पक्का? फिर दबाएँ", cleared: "इतिहास साफ़ हुआ", remove: "हटाएँ", s_tr: "अनुवाद", s_tr2: "हर अनुच्छेद के नीचे \u201cअनुवाद\u201d बटन आएगा। यह AI अनुवाद है, इसमें भूल हो सकती है।", off: "बंद", trBtn: (l) => `🌐 ${l} अनुवाद`, trBusy: "अनुवाद हो रहा है…", trErr: "अभी अनुवाद नहीं हो पा रहा, एक मिनट बाद फिर कोशिश करें।", trSame: "यह कथा पहले से उसी भाषा में है।" },
   sa: { eyebrow: "कच्छसत्सङ्गः · कथासङ्ग्रहः", sub: "— उक्तानि वचनानि अन्विष्यन्तु —", search: "अन्विष्यताम्", series: "कथामाला", speaker: "वक्ता",
-    allseries: "सर्वाः कथामालाः", allspeakers: "सर्वे वक्तारः", see: "सङ्ग्रहे किम् अस्ति इति पश्यन्तु", fe: "उदाहरणम्", hint: "अन्वेषणाय Enter नुदन्तु",
+    allseries: "सर्वाः कथामालाः", allspeakers: "सर्वे वक्तारः", see: "सङ्ग्रहे किम् अस्ति इति पश्यन्तु", fe: "अन्विष्य पश्यत:", hint: "अन्वेषणाय Enter नुदन्तु",
     ph: "किमपि उक्तं पदम् अन्विष्यन्तु…", matches: (n) => `${n} फलानि`, none: "इदं पदम् अद्यापि कस्याम् अपि कथायां न लब्धम्।", play: "अत्र शृण्वन्तु", read: "सम्पूर्णं पाठं पठन्तु →",
     stats: (k, p) => `${k} कथाः · ${p} अनुच्छेदाः · साक्षात् तस्मिन् क्षणे`, loading: "अन्विष्यते…", copied: "सम्पर्कसूत्रं प्रतिलिखितम्",
     settings: "विन्यासः", s_look: "रूपम्", s_theme: "वर्णविन्यासः", s_size: "अक्षराणां परिमाणम्", s_font: "गुर्जरलिपेः अक्षररूपम्", s_night: "रात्रौ स्वयमेव गाढवर्णः", s_night2: "सायं 7 तः प्रातः 6 पर्यन्तं \u201cरात्रिग्रन्थः\u201d",
@@ -1671,7 +1671,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.11.24.4";
+const APP_VER = "2026.11.24.5";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
