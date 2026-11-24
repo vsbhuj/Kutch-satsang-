@@ -82,6 +82,21 @@ h1{font-family:var(--gu);font-weight:700;color:var(--maroon);font-size:clamp(40p
 .today .td-tb{display:flex;gap:6px}.today .td-tb button{flex:1;min-width:0;border:1px solid var(--maroon);background:var(--paper);color:var(--ink);border-radius:8px;padding:8px 2px;font-family:var(--gu);font-size:calc(13px * var(--fs));cursor:pointer}
 .today .td-tb button.fav{flex:0 0 42px;color:#c0392b;border-color:#c0392b;font-size:calc(16px * var(--fs))}.mine .item.now{outline:3px solid #2e8b57;outline-offset:-2px;background:#eef8f1}.today .td-tb button.prev{flex:0 0 42px}.today .td-tb button:disabled{opacity:.35}
 .today .td-tb button.on{background:var(--maroon);color:var(--on-accent)}
+.bh-open{display:block;width:100%;margin:10px 0 4px;padding:11px 8px;border:1px solid var(--maroon);background:var(--card);color:var(--ink);border-radius:12px;font-family:var(--gu);font-size:calc(15px * var(--fs));cursor:pointer}
+#bhandar{max-width:760px;margin:0 auto;padding:14px 16px 60px}
+.bh-back{font-size:calc(13px * var(--fs));color:var(--ink-2);display:inline-block;margin-bottom:4px;text-decoration:none}
+.bh-title{margin:2px 0 10px;color:var(--maroon);font-family:var(--gu)}
+.bh-tabs{display:flex;gap:5px;margin-bottom:10px}.bh-tabs button,.bh-sw button,.bh-az button{border:1px solid var(--maroon);background:var(--card);color:var(--ink);border-radius:8px;padding:7px 4px;font-family:var(--gu);font-size:calc(13px * var(--fs));cursor:pointer}
+.bh-tabs button{flex:1;min-width:0}.bh-tabs button.on,.bh-sw button.on,.bh-az button.on{background:var(--maroon);color:var(--on-accent)}.bh-tabs button:disabled{opacity:.45}
+.bh-q{width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--rule);border-radius:10px;background:var(--card);color:var(--ink);font-family:var(--gu);font-size:calc(16px * var(--fs));margin-bottom:8px}
+.bh-az{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}.bh-az button{padding:3px 8px;border-color:var(--rule)}
+.bh-sw{display:flex;gap:6px;margin-bottom:10px}.bh-sw button{flex:1}
+.bh-w{display:flex;justify-content:space-between;align-items:center;width:100%;border:1px solid var(--rule);background:var(--card);color:var(--ink);border-radius:10px;padding:10px 12px;margin-bottom:6px;font-family:var(--gu);font-size:calc(16px * var(--fs));cursor:pointer;text-align:left}.bh-w b{font-weight:400;color:var(--ink-2);font-size:calc(13px * var(--fs))}
+.bh-wt{margin:4px 0 8px;color:var(--maroon);font-family:var(--gu)}.bh-wt small{font-weight:400;color:var(--ink-2);font-size:.65em}
+.bh-c{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:10px 12px;margin-bottom:8px}.bh-c.f{border:2px solid #2e8b57}
+.bh-c .bh-tg{display:inline-block;font-size:calc(11px * var(--fs));background:#2e8b57;color:#fff;border-radius:9px;padding:1px 8px}.bh-c .bh-tg.l{background:#b08d57}
+.bh-c p{margin:6px 0;line-height:1.7;font-size:calc(16px * var(--fs))}.bh-c .m{font-size:calc(12px * var(--fs));color:var(--ink-2);margin-bottom:8px}
+.bh-c .bt{display:flex;gap:6px}.bh-c .bt button{border:1px solid var(--maroon);background:var(--paper);color:var(--ink);border-radius:8px;padding:6px 10px;font-family:var(--gu);cursor:pointer}.bh-c .bt .on{background:var(--maroon);color:var(--on-accent)}
 .fpop button.on{background:var(--maroon);border-color:var(--maroon);color:var(--on-accent)}
 .explore{text-align:center;margin:30px 0 8px}
 .explore h3{font-family:var(--latin);letter-spacing:.22em;font-size:12px;color:var(--maroon-2);margin:0 0 12px;font-weight:600;text-transform:uppercase}
@@ -646,6 +661,7 @@ header h1{font-size:30px;margin:0;line-height:1.3}
     </div>
 
     <section id="today" class="today" hidden></section>
+    <button type="button" class="bh-open" id="openBh"></button>
     <div id="stStrip" class="st-strip" hidden></div>
 
     <section class="explore" id="explore">
@@ -658,6 +674,24 @@ header h1{font-size:30px;margin:0;line-height:1.3}
 
     <div id="out"></div>
     <p class="stats" id="stats">&nbsp;</p>
+  </main>
+
+  <main id="bhandar" hidden>
+    <a href="#" class="link bh-back" id="bhBack"></a>
+    <h2 class="bh-title" id="bhTitle"></h2>
+    <div class="bh-tabs"><button type="button" class="on" id="bhTabW"></button><button type="button" id="bhTabF"></button><button type="button" id="bhTabH"></button><button type="button" id="bhTabT" disabled></button></div>
+    <div id="bhList">
+      <input id="bhQ" class="bh-q" autocomplete="off">
+      <div class="bh-az" id="bhAz"></div>
+      <div class="bh-sw"><button type="button" class="on" id="bhSortN"></button><button type="button" id="bhSortA"></button></div>
+      <div id="bhWords"></div>
+    </div>
+    <div id="bhWord" hidden>
+      <button type="button" class="link bh-back" id="bhWBack"></button>
+      <h3 class="bh-wt" id="bhWT"></h3>
+      <div class="bh-sw"><button type="button" class="on" id="bhFocus"></button><button type="button" id="bhAll"></button></div>
+      <div id="bhRes"></div>
+    </div>
   </main>
 
   <main id="adminView" hidden>
@@ -812,6 +846,7 @@ function applyUI() {
   if (typeof applyPrefs === "function") applyPrefs();
   if (typeof fillSpk === "function" && stats.speakers) fillSpk();
   if (typeof drawToday === "function") drawToday();
+  if (typeof bhLabels === "function") { bhLabels(); }
   if (typeof syncF === "function") syncF();
   if (ui === "hi" || ui === "sa" || sc === "dev") loadFont("dev");
   try { if (live.segs.length) { drawList(); live.idx = -1; liveTick(live.t); } } catch {}
@@ -1636,7 +1671,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.11.24.3";
+const APP_VER = "2026.11.24.4";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
@@ -1852,10 +1887,75 @@ $("#liveTgl").checked = pref.live; $("#ccTgl").checked = pref.cc;
 $("#liveTgl").onchange = (e) => { pref.live = e.target.checked; store.set("k_live", pref.live ? "1" : "0"); if (cur) { if (pref.live) startLive(cur.info, live.t || cur.t); else { stopLive(); startLive(cur.info, live.t || cur.t); } } };
 $("#ccTgl").onchange = (e) => { pref.cc = e.target.checked; store.set("k_cc", pref.cc ? "1" : "0"); };
 
+/* 📖 Bhandar page: word treasury (words spoken in the kathas; tap a word to reach the passages) */
+const BH = {
+  gu: { open: "📖 શબ્દ ભંડોળ અને વધુ ➜", back: "← શોધ પર પાછા", title: "📖 ભંડાર", w: "શબ્દ ભંડોળ", f: "❤ મનપસંદ", h: "🕘 ઇતિહાસ", t: "વિષય · જલ્દી", q: "🔍 શબ્દ શોધો…", n: "વધુ બોલાયેલા", a: "અકારાદિ", all: "બધા", wb: "← શબ્દ ભંડોળ", foc: "🎯 ફોકસવાળા પહેલાં", ord: "બધા ક્રમમાં", pas: "ફકરા", ft: (n) => `🎯 ફોકસ · ${n} વાર`, mt: "ફક્ત ઉલ્લેખ", none: "કંઈ મળ્યું નહીં." },
+  en: { open: "📖 Word treasury and more ➜", back: "← Back to search", title: "📖 Treasury", w: "Words", f: "❤ Favourites", h: "🕘 History", t: "Topics · soon", q: "🔍 Find a word…", n: "Most spoken", a: "A–Z", all: "All", wb: "← Words", foc: "🎯 Focused first", ord: "All in order", pas: "passages", ft: (n) => `🎯 Focus · ${n}×`, mt: "Only mentioned", none: "Nothing found." },
+  hi: { open: "📖 शब्द भंडार और अधिक ➜", back: "← खोज पर वापस", title: "📖 भंडार", w: "शब्द भंडार", f: "❤ पसंदीदा", h: "🕘 इतिहास", t: "विषय · जल्द", q: "🔍 शब्द खोजें…", n: "अधिक बोले गए", a: "अकारादि", all: "सब", wb: "← शब्द भंडार", foc: "🎯 फोकस वाले पहले", ord: "सब क्रम से", pas: "अनुच्छेद", ft: (n) => `🎯 फोकस · ${n} बार`, mt: "केवल उल्लेख", none: "कुछ नहीं मिला।" },
+  sa: { open: "📖 शब्दकोशः अधिकं च ➜", back: "← अन्वेषणं प्रति", title: "📖 कोशः", w: "शब्दकोशः", f: "❤ प्रियाणि", h: "🕘 इतिहासः", t: "विषयाः · शीघ्रम्", q: "🔍 शब्दम् अन्विष्यतु…", n: "बहुवारम् उक्ताः", a: "अकारादि", all: "सर्वे", wb: "← शब्दकोशः", foc: "🎯 केन्द्रितानि प्रथमम्", ord: "सर्वं क्रमेण", pas: "अनुच्छेदाः", ft: (n) => `🎯 केन्द्रः · ${n} वारम्`, mt: "उल्लेखमात्रम्", none: "किमपि न लब्धम्।" }
+};
+let bhWords = null, bhLetter = "", bhSort = "n", bhOrder = "f", bhCur = "", bhRows = [];
+const bhT = () => BH[ui] || BH.en;
+function bhLabels() {
+  const L = bhT(); $("#openBh").textContent = L.open; $("#bhBack").textContent = L.back; $("#bhTitle").textContent = L.title;
+  $("#bhTabW").textContent = L.w; $("#bhTabF").textContent = L.f; $("#bhTabH").textContent = L.h; $("#bhTabT").textContent = L.t;
+  $("#bhQ").placeholder = L.q; $("#bhSortN").textContent = L.n; $("#bhSortA").textContent = L.a; $("#bhWBack").textContent = L.wb; $("#bhFocus").textContent = L.foc; $("#bhAll").textContent = L.ord;
+}
+async function bhLoad() {
+  if (bhWords) return;
+  try {
+    const r = await fetch(`${SB}/rest/v1/katha_wordcount?select=word,n&order=n.desc&limit=4000`, { headers: { apikey: KEY, Authorization: "Bearer " + KEY } });
+    const j = await r.json(); bhWords = Array.isArray(j) ? j : [];
+  } catch { bhWords = []; }
+}
+const bhFirst = (w) => (w.match(/^\p{L}\p{M}*/u) || [""])[0];
+function bhDraw() {
+  const L = bhT(), q = $("#bhQ").value.trim();
+  const letters = [...new Set((bhWords || []).map((x) => bhFirst(x.word)))].filter(Boolean).sort((a, b) => a.localeCompare(b, "gu"));
+  $("#bhAz").innerHTML = [`<button type="button" class="${bhLetter ? "" : "on"}" data-l="">${L.all}</button>`, ...letters.map((l) => `<button type="button" class="${bhLetter === l ? "on" : ""}" data-l="${esc(l)}">${esc(l)}</button>`)].join("");
+  $("#bhAz").querySelectorAll("[data-l]").forEach((b) => b.onclick = () => { bhLetter = b.dataset.l; bhDraw(); });
+  let list = (bhWords || []).filter((x) => (!bhLetter || bhFirst(x.word) === bhLetter) && (!q || x.word.includes(q)));
+  if (bhSort === "a") list = [...list].sort((a, b) => a.word.localeCompare(b.word, "gu"));
+  $("#bhWords").innerHTML = list.slice(0, 300).map((x) => `<button type="button" class="bh-w" data-w="${esc(x.word)}"><span>${esc(x.word)}</span><b>${num(x.n)}</b></button>`).join("") || `<p class="empty">${L.none}</p>`;
+  $("#bhWords").querySelectorAll("[data-w]").forEach((b) => b.onclick = () => bhOpen(b.dataset.w));
+  $("#bhSortN").classList.toggle("on", bhSort === "n"); $("#bhSortA").classList.toggle("on", bhSort === "a");
+}
+async function bhOpen(w) {
+  bhCur = w; $("#bhList").hidden = true; $("#bhWord").hidden = false; $("#bhRes").innerHTML = "…";
+  const n = (bhWords || []).find((x) => x.word === w);
+  $("#bhWT").innerHTML = `${esc(w)} <small>· ${n ? num(n.n) : ""} ${bhT().pas}</small>`;
+  try { bhRows = await rpc("katha_word_passages", { p_word: w, p_limit: 60 }); } catch { bhRows = []; }
+  bhDrawRes(); scrollTo(0, 0);
+}
+function bhDrawRes() {
+  const L = bhT(); let rows = [...bhRows];
+  if (bhOrder === "a") rows.sort((a, b) => a.video_id - b.video_id || a.start_sec - b.start_sec);
+  $("#bhFocus").classList.toggle("on", bhOrder === "f"); $("#bhAll").classList.toggle("on", bhOrder === "a");
+  $("#bhRes").innerHTML = rows.map((r, i) => {
+    const foc = r.hits >= 2, body = esc(String(scText(r.text, r.roman))).replace(new RegExp(esc(scText(bhCur, "")).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"), (m) => `<mark>${m}</mark>`);
+    return `<div class="bh-c${foc ? " f" : ""}"><span class="bh-tg${foc ? "" : " l"}">${foc ? L.ft(num(r.hits)) : L.mt}</span><p>${body}</p>
+      <div class="m">🎙 ${esc(spn(r.speaker))}${r.series ? " · 📚 " + esc(r.series) : ""} · ${fmt(r.start_sec)}</div>
+      <div class="bt"><button type="button" class="on" data-bp="${i}">▶ ${T[ui].play}</button><button type="button" data-bs="${i}">📤</button>${heart(r.youtube_id, r.start_sec, `data-bf="${i}"`)}</div></div>`;
+  }).join("") || `<p class="empty">${L.none}</p>`;
+  $("#bhRes").querySelectorAll("[data-bp]").forEach((b) => b.onclick = () => { const r = rows[b.dataset.bp]; play(r.youtube_id, r.start_sec, r); });
+  $("#bhRes").querySelectorAll("[data-bs]").forEach((b) => b.onclick = () => showShare({ ...rows[b.dataset.bs], speaker: spn(rows[b.dataset.bs].speaker) }));
+  $("#bhRes").querySelectorAll("[data-bf]").forEach((b) => b.onclick = () => toggleFav(rows[b.dataset.bf], b));
+}
+async function showBhandar() {
+  bhLabels(); $("#bhList").hidden = false; $("#bhWord").hidden = true; $("#bhWords").innerHTML = "…";
+  await bhLoad(); bhDraw();
+}
+$("#openBh").onclick = () => { location.hash = "#bhandar"; };
+$("#bhTabF").onclick = () => showMine("fav"); $("#bhTabH").onclick = () => showMine("hist");
+$("#bhQ").oninput = bhDraw;
+$("#bhSortN").onclick = () => { bhSort = "n"; bhDraw(); }; $("#bhSortA").onclick = () => { bhSort = "a"; bhDraw(); };
+$("#bhWBack").onclick = () => { $("#bhWord").hidden = true; $("#bhList").hidden = false; };
+$("#bhFocus").onclick = () => { bhOrder = "f"; bhDrawRes(); }; $("#bhAll").onclick = () => { bhOrder = "a"; bhDrawRes(); };
 function route() {
-  const isAdmin = location.hash === "#admin";
-  $("#home").hidden = isAdmin; $("#adminView").hidden = !isAdmin;
-  if (isAdmin) { $("#apass").value = pass; if (pass) login(); }
+  const isAdmin = location.hash === "#admin", isBh = location.hash === "#bhandar";
+  $("#home").hidden = isAdmin || isBh; $("#adminView").hidden = !isAdmin; $("#bhandar").hidden = !isBh;
+  if (isBh) { loadStats(); showBhandar(); }
+  else if (isAdmin) { $("#apass").value = pass; if (pass) login(); }
   else { loadStats(); loadToday(); }
 }
 window.addEventListener("hashchange", route);
