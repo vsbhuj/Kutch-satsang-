@@ -80,7 +80,7 @@ h1{font-family:var(--gu);font-weight:700;color:var(--maroon);font-size:clamp(40p
 .today .td-tq{font-size:calc(17px * var(--fs));line-height:1.6;margin:6px 0;color:var(--ink)}
 .today .td-tm{font-size:calc(12px * var(--fs));color:var(--ink-2);margin-bottom:10px}
 .today .td-tb{display:flex;gap:6px}.today .td-tb button{flex:1;min-width:0;border:1px solid var(--maroon);background:var(--paper);color:var(--ink);border-radius:8px;padding:8px 2px;font-family:var(--gu);font-size:calc(13px * var(--fs));cursor:pointer}
-.today .td-tb button.prev{flex:0 0 42px}.today .td-tb button:disabled{opacity:.35}
+.today .td-tb button.fav{flex:0 0 42px;color:#c0392b;border-color:#c0392b;font-size:calc(16px * var(--fs))}.mine .item.now{outline:3px solid #2e8b57;outline-offset:-2px;background:#eef8f1}.today .td-tb button.prev{flex:0 0 42px}.today .td-tb button:disabled{opacity:.35}
 .today .td-tb button.on{background:var(--maroon);color:var(--on-accent)}
 .fpop button.on{background:var(--maroon);border-color:var(--maroon);color:var(--on-accent)}
 .explore{text-align:center;margin:30px 0 8px}
@@ -882,10 +882,10 @@ function drawToday() {
   el.hidden = false;
   el.innerHTML = `<div class="td-tg">${L[0]} · ${esc(num(d))}</div><div class="td-tq">“${esc(String(scText(r.text, r.roman)).trim())}”</div>
     <div class="td-tm">🎙 ${esc(spn(r.speaker))}${r.series ? " · 📚 " + esc(r.series) : ""} · ${fmt(r.start_sec)}</div>
-    <div class="td-tb"><button type="button" id="tdPrev" class="prev" aria-label="prev"${todayI ? "" : " disabled"}>◀</button><button type="button" class="on" id="tdPlay">${L[1]}</button><button type="button" id="tdShare">${L[2]}</button><button type="button" id="tdMore">${L[3]}</button></div>`;
+    <div class="td-tb">${heart(r.youtube_id, r.start_sec, 'id="tdFav"')}<button type="button" id="tdPrev" class="prev" aria-label="prev"${todayI ? "" : " disabled"}>◀</button><button type="button" class="on" id="tdPlay">${L[1]}</button><button type="button" id="tdShare">${L[2]}</button><button type="button" id="tdMore">${L[3]}</button></div>`;
   $("#tdPlay").onclick = () => play(r.youtube_id, r.start_sec, { youtube_id: r.youtube_id, video_id: r.video_id, start_sec: r.start_sec, title: r.title, speaker: r.speaker, series: r.series, text: r.text, roman: r.roman });
   $("#tdShare").onclick = () => showShare({ ...r, speaker: spn(r.speaker) });
-  $("#tdMore").onclick = todayMore; $("#tdPrev").onclick = todayPrev;
+  $("#tdFav").onclick = () => toggleFav(r, $("#tdFav")); $("#tdMore").onclick = todayMore; $("#tdPrev").onclick = todayPrev;
 }
 /* speaker names follow the site language (names table katha_speakers; unknown names stay as written) */
 const spn = (k) => { const n = stats.speaker_names && stats.speaker_names[k]; return n ? (n[ui] || n.en || k) : (k || ""); };
@@ -977,6 +977,7 @@ function skipCheck(t) {
 }
 
 function play(yid, t, info) {
+  if (!paCalling) pa = null;
   cur = { yid, t, info };
   if (skips.yid !== yid) loadSkips(yid);
   addHistory(info, yid, t);
@@ -1289,6 +1290,13 @@ function showMine(kind) {
         <button type="button" class="link" data-mx="${i}" style="margin-left:auto">${kind === "fav" ? T[ui].remove : ""}</button></div></div>`).join("")
     + (kind === "hist" ? `<div class="bar2"><span></span><button type="button" class="link" id="clearHist">${T[ui].clear}</button></div>` : "")
     : `<p class="empty">${T[ui][kind === "fav" ? "favEmpty" : "histEmpty"]}</p>`) + `</div>`;
+  if (kind === "fav" && list.length) {
+    const L = FA[ui] || FA.en, link = (m) => `https://www.youtube.com/watch?v=${m.yid}&t=${m.t}s`;
+    const wa = list.map((m, i) => `${num(i + 1)}. “${String(scText(m.text, m.roman)).trim().slice(0, 220)}”\n${[spn(m.speaker), m.title].filter(Boolean).join(" · ")}\n${link(m)}`).join("\n\n") + "\n\n" + T[ui].brand + "  " + location.origin + location.pathname;
+    $("#ovBody").querySelector(".mine").insertAdjacentHTML("afterbegin", `<button type="button" class="btn" id="favAll">${L[0]}</button>`);
+    $("#ovBody").querySelector(".mine").insertAdjacentHTML("beforeend", `<a class="btn" id="favWa" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(wa)}" style="display:block;text-align:center;text-decoration:none">${L[1]}</a>`);
+    $("#favAll").onclick = () => { pa = { list: [...list], i: 0, t0: 0, at: 0 }; paPlay(0); };
+  }
   $("#ov").hidden = false;
   $("#ovBody").querySelectorAll("[data-mp]").forEach((b) => b.onclick = () => { const m = list[b.dataset.mp];
     play(m.yid, m.t, { youtube_id: m.yid, video_id: m.vid, start_sec: m.t, title: m.title, speaker: m.speaker, series: m.series, text: m.text, roman: m.roman }); });
@@ -1296,6 +1304,15 @@ function showMine(kind) {
   const c = $("#clearHist");
   if (c) c.onclick = () => { if (!c.dataset.sure) { c.dataset.sure = 1; c.textContent = T[ui].sure; return; } hist = []; setList("k_hist", hist); counts(); toast(T[ui].cleared); showMine("hist"); };
 }
+/* ❤ favourites: play them one after another, or send them all on WhatsApp */
+const PA_LEN = 75; let pa = null, paCalling = false;
+const FA = { gu: ["▶ બધા ક્રમમાં સાંભળો", "🟢 WhatsApp પર બધા મોકલો", "છેલ્લો પ્રસંગ પૂરો થયો 🙏"], en: ["▶ Play all in order", "🟢 Send all on WhatsApp", "That was the last one 🙏"], hi: ["▶ सब क्रम से सुनें", "🟢 सब WhatsApp पर भेजें", "आख़िरी प्रसंग पूरा हुआ 🙏"], sa: ["▶ सर्वं क्रमेण शृणुत", "🟢 सर्वं WhatsApp द्वारा प्रेषयतु", "अन्तिमः प्रसङ्गः समाप्तः 🙏"] };
+function paPlay(i) {
+  const m = pa.list[i]; pa.i = i; pa.t0 = m.t; pa.at = Date.now();
+  paCalling = true; try { play(m.yid, m.t, { youtube_id: m.yid, video_id: m.vid, start_sec: m.t, title: m.title, speaker: m.speaker, series: m.series, text: m.text, roman: m.roman }); } finally { paCalling = false; }
+  document.querySelectorAll("#ov .mine .item").forEach((e, k) => e.classList.toggle("now", k === i));
+}
+function paNext() { if (!pa) return; if (pa.i + 1 < pa.list.length) paPlay(pa.i + 1); else { pa = null; toast((FA[ui] || FA.en)[2]); } }
 $("#openFav").onclick = () => showMine("fav");
 $("#openHist").onclick = () => showMine("hist");
 
@@ -1619,7 +1636,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.11.24.2";
+const APP_VER = "2026.11.24.3";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
@@ -1826,6 +1843,7 @@ function ytListen() { const f = $("#yt"); if (f && f.contentWindow) f.contentWin
 window.addEventListener("message", (e) => {
   if (!/(^|\.)youtube(-nocookie)?\.com$/.test((() => { try { return new URL(e.origin).hostname; } catch { return ""; } })())) return;
   let d; try { d = typeof e.data === "string" ? JSON.parse(e.data) : e.data; } catch { return; }
+  if (pa && d && d.event === "infoDelivery" && d.info && Date.now() - pa.at > 6000 && (d.info.playerState === 0 || (typeof d.info.currentTime === "number" && d.info.currentTime >= pa.t0 + PA_LEN))) paNext();
   if (d && d.event === "infoDelivery" && d.info && typeof d.info.currentTime === "number" && !skipCheck(d.info.currentTime)) liveTick(d.info.currentTime);
 });
 // keep the page below the player whatever its height
