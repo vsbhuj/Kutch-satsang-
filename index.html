@@ -693,6 +693,12 @@ header h1{font-size:30px;margin:0;line-height:1.3}
 .vz-g{display:grid;grid-template-columns:1fr 1fr;gap:9px}.vz-c{border:1px solid var(--rule);border-left:4px solid var(--gold);background:var(--card);color:var(--ink);border-radius:14px;padding:10px 12px;text-align:left;font-family:var(--gu);cursor:pointer}.vz-c b{display:block;font-size:calc(16px * var(--fs));color:var(--maroon)}.vz-c small{color:var(--ink-2);font-size:calc(12px * var(--fs))}
 .vz-c em{display:block;font-style:normal;margin-top:5px;font-size:calc(13px * var(--fs));color:var(--ink);line-height:1.35}
 .vz-n{color:var(--ink-2);font-size:calc(14px * var(--fs));padding:8px 2px}
+.vz-rv{width:100%;border:1px dashed var(--gold);background:var(--card);color:var(--maroon);border-radius:14px;padding:11px;font-family:var(--gu);font-size:calc(15px * var(--fs));font-weight:700;margin:0 0 10px;cursor:pointer}
+.vz-bd{font-style:normal;background:#b3322a;color:#fff;border-radius:12px;padding:0 9px;font-size:.8em}.vz-lg{display:flex;gap:8px}.vz-lg input{flex:1;border:1px solid var(--rule);border-radius:12px;padding:10px;font-size:16px;background:var(--card);color:var(--ink)}
+.vz-tb{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 12px}.vz-tb button{border:1px solid var(--rule);background:var(--card);color:var(--ink);border-radius:16px;padding:5px 12px;font-family:var(--gu);font-size:calc(14px * var(--fs));cursor:pointer}.vz-tb button.on{background:var(--maroon);color:var(--on-accent);border-color:var(--maroon)}
+.vz-rc{border:1px solid var(--rule);border-left:4px solid var(--gold);background:var(--card);border-radius:14px;padding:11px 13px;margin:0 0 10px}.vz-rt{display:flex;justify-content:space-between;align-items:baseline}.vz-rt b{font-size:calc(22px * var(--fs));color:var(--maroon)}.vz-rt small,.vz-rs{color:var(--ink-2);font-size:calc(13px * var(--fs))}
+.vz-rc p{margin:6px 0 9px;font-size:calc(15px * var(--fs));line-height:1.5;color:var(--ink)}.vz-ra{display:flex;gap:7px}.vz-ra button,.vz-mv button{flex:1;border:1px solid var(--rule);background:var(--paper);color:var(--ink);border-radius:12px;padding:9px 4px;font-family:var(--gu);font-size:calc(14px * var(--fs));cursor:pointer}.vz-ra .ok,.vz-mv .ok{background:var(--maroon);color:var(--on-accent);border-color:var(--maroon)}
+.vz-mv{display:flex;gap:6px;margin-top:8px}.vz-mv select{flex:2;min-width:0;border:1px solid var(--rule);border-radius:10px;padding:8px;background:var(--paper);color:var(--ink);font-family:var(--gu)}
 </style>
 </head>
 <body>
@@ -1740,7 +1746,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.11.24.13";
+const APP_VER = "2026.11.24.14";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
@@ -2528,18 +2534,19 @@ async function vzLoad() {
     const j = await r.json(); vzData = Array.isArray(j) ? j : [];
   } catch { vzData = []; }
 }
-function vzGo(sec) { bhSec = sec; history.pushState({ sub: 1, bhl: "", bhs: bhSec }, "", location.href); bhKey = "|"; bhDraw(); scrollTo(0, 0); }
+function vzGo(sec, rep) { bhSec = sec; history[rep ? "replaceState" : "pushState"]({ sub: 1, bhl: "", bhs: bhSec }, "", location.href); bhKey = "|"; bhDraw(); scrollTo(0, 0); }
 function visDraw() {
   let box = $("#bhVis"); if (!box) { $("#bhHome").insertAdjacentHTML("beforeend", `<div id="bhVis" hidden></div>`); box = $("#bhVis"); }
   const on = bhSec.startsWith("vis"); box.hidden = !on; if (!on) return;
   if (!vzData) { box.innerHTML = `<p class="vz-n">${VZ.wait}</p>`; vzLoad().then(() => { if (bhSec.startsWith("vis")) visDraw(); }); return; }
+  if (bhSec === "vis:rev") { vzRev(box); return; }
   const [, c0, s0] = bhSec.split(":"), c = +c0 || 0, s = +s0 || 0, cnt = new Map((bhWords || []).map((x) => [x.word, x.n]));
   const by = {}; vzData.forEach((r) => { if (cnt.has(r.word)) (by[r.cat + "." + r.sub] = by[r.cat + "." + r.sub] || []).push({ word: r.word, n: cnt.get(r.word) }); });
   if (c && s) {
     const ws = (by[c + "." + s] || []).sort((a, b) => b.n - a.n);
     box.innerHTML = `<div class="vz-h"><i>${num(c)}</i><span>${esc(VC[c - 1][1][s - 1] || "")}</span><u></u></div><div class="bh-find">${ws.map(bhWordBtn).join("") || `<p class="vz-n">${VZ.none}</p>`}</div>`; bhBind(box); return;
   }
-  let h = `<div class="vz-p"><button type="button" data-vc="0" class="${c ? "" : "on"}">${VZ.all || "બધાં"}</button>${VC.map((x, i) => `<button type="button" data-vc="${i + 1}" class="${c === i + 1 ? "on" : ""}">${num(i + 1)}. ${esc(x[0])}</button>`).join("")}</div>`;
+  let h = `<button type="button" class="vz-rv" id="vzRv">🔔 ${VZ.rv}</button><div class="vz-p"><button type="button" data-vc="0" class="${c ? "" : "on"}">${VZ.all || "બધાં"}</button>${VC.map((x, i) => `<button type="button" data-vc="${i + 1}" class="${c === i + 1 ? "on" : ""}">${num(i + 1)}. ${esc(x[0])}</button>`).join("")}</div>`;
   VC.forEach((x, i) => {
     if (c && c !== i + 1) return;
     const subs = x[1].map((nm, j) => { const w = by[(i + 1) + "." + (j + 1)] || []; const top = w.slice().sort((a, b) => b.n - a.n); return { j: j + 1, nm, k: w.length, t: w.reduce((a, b) => a + b.n, 0), ex: top.slice(0, 4).map((x) => x.word).join(" · ") + (w.length > 4 ? ` +${num(w.length - 4)}` : "") }; }).filter((q) => q.k);
@@ -2547,10 +2554,42 @@ function visDraw() {
     h += `<div class="vz-h"><i>${num(i + 1)}</i><span>${esc(x[0])} · ${num(subs.length)} વિભાગ</span><u></u></div>` + (subs.length ? `<div class="vz-g">${subs.map((q) => `<button type="button" class="vz-c" data-vs="${i + 1}:${q.j}"><b>${num(q.j)}. ${esc(q.nm)}</b><small>${num(q.k)} ${VZ.w} · ${num(q.t)} ${VZ.x}</small><em>${esc(q.ex)}</em></button>`).join("")}</div>` : `<p class="vz-n">${VZ.none}</p>`);
   });
   box.innerHTML = h;
-  box.querySelectorAll("[data-vc]").forEach((b) => b.onclick = () => vzGo(+b.dataset.vc ? "vis:" + b.dataset.vc : "vis"));
+  $("#vzRv").onclick = () => vzGo("vis:rev");
+  box.querySelectorAll("[data-vc]").forEach((b) => b.onclick = () => vzGo(+b.dataset.vc ? "vis:" + b.dataset.vc : "vis", true));
   box.querySelectorAll("[data-vs]").forEach((b) => b.onclick = () => vzGo("vis:" + b.dataset.vs));
 }
 VZ.all = "બધાં";
+
+/* 🔔 તપાસવાના શબ્દો: એક કરતાં વધુ અર્થવાળા કે અટક બનતા શબ્દો. સેવક નક્કી કરે: બરાબર / કાઢો / બીજે */
+VZ.rv = "તપાસવાના શબ્દો"; VZ.pw = "સેવકનો પાસવર્ડ"; VZ.open = "ખોલો"; VZ.tabs = [["pending", "બાકી"], ["ok", "બરાબર"], ["removed", "કાઢેલા"], ["moved", "ખસેડેલા"]]; VZ.hold = "આ યાદીમાં કંઈ નથી.";
+let vzTab = "pending";
+async function vzRev(box) {
+  if (!pass) {
+    box.innerHTML = `<div class="vz-h"><span>🔔 ${VZ.rv}</span><u></u></div><div class="vz-lg"><input id="vzPw" type="password" placeholder="${VZ.pw}" autocomplete="current-password"><button type="button" class="vz-c" id="vzGo">${VZ.open}</button></div>`;
+    $("#vzGo").onclick = async () => { const v = $("#vzPw").value.trim(); if (!v) return; try { await rpc("katha_wr_list", { p_pass: v, p_status: "pending" }); pass = v; store.set("k_pass", v); visDraw(); } catch { toast("✗ ખોટો પાસવર્ડ"); } };
+    return;
+  }
+  box.innerHTML = `<p class="vz-n">${VZ.wait}</p>`;
+  let d; try { d = await rpc("katha_wr_list", { p_pass: pass, p_status: vzTab }); } catch { pass = ""; store.set("k_pass", ""); vzRev(box); return; }
+  if (bhSec !== "vis:rev") return;
+  const cn = d.counts || {}, cnt = (k) => cn[k] || 0, cname = (c, s) => c ? `${num(c)}.${num(s)} ${esc(VC[c - 1][0])}${s ? " · " + esc(VC[c - 1][1][s - 1] || "") : ""}` : "—";
+  box.innerHTML = `<div class="vz-h"><span>🔔 ${VZ.rv} <em class="vz-bd">${num(cnt("pending"))}</em></span><u></u></div>
+    <div class="vz-tb">${VZ.tabs.map(([k, n]) => `<button type="button" data-vt="${k}" class="${k === vzTab ? "on" : ""}">${n} ${num(cnt(k))}</button>`).join("")}</div>
+    ${(d.rows || []).map((r, i) => `<div class="vz-rc" data-i="${i}"><div class="vz-rt"><b>${esc(r.word)}</b><small>${num(r.n)} ${VZ.x}</small></div><div class="vz-rs">હાલ: ${cname(r.cat, r.sub)}</div>
+      ${r.snip ? `<p>…${hl(r.snip, r.word)}…</p>` : ""}<div class="vz-ra">${vzTab === "pending" ? `<button type="button" class="ok" data-a="ok">✅ બરાબર</button><button type="button" data-a="remove">❌ કાઢો</button><button type="button" data-a="mv">↪ બીજે</button>` : `<button type="button" data-a="undo">↩ પાછું બાકીમાં</button>`}</div><div class="vz-mv" hidden></div></div>`).join("") || `<p class="vz-n">${VZ.hold}</p>`}`;
+  box.querySelectorAll("[data-vt]").forEach((b) => b.onclick = () => { vzTab = b.dataset.vt; vzRev(box); });
+  const act = async (r, a, c, s2) => { try { await rpc("katha_wr_set", { p_pass: pass, p_word: r.word, p_act: a, p_cat: c ?? null, p_sub: s2 ?? null }); toast("✓ " + r.word); vzRev(box); } catch { toast("✗ ન થયું"); } };
+  box.querySelectorAll(".vz-rc").forEach((el) => {
+    const r = d.rows[+el.dataset.i];
+    el.querySelectorAll("[data-a]").forEach((b) => b.onclick = () => {
+      const a = b.dataset.a; if (a !== "mv") return act(r, a);
+      const m = el.querySelector(".vz-mv"); m.hidden = false;
+      m.innerHTML = `<select class="c">${VC.map((x, i) => `<option value="${i + 1}">${num(i + 1)}. ${esc(x[0])}</option>`).join("")}</select><select class="s"></select><button type="button" class="ok">✓</button>`;
+      const cs = m.querySelector(".c"), ss = m.querySelector(".s"), fill = () => { ss.innerHTML = VC[+cs.value - 1][1].map((n, j) => `<option value="${j + 1}">${num(j + 1)}. ${esc(n)}</option>`).join(""); };
+      cs.onchange = fill; fill(); m.querySelector("button").onclick = () => act(r, "move", +cs.value, +ss.value);
+    });
+  });
+}
 </script>
 </body>
 </html>
