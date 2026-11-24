@@ -87,6 +87,11 @@ h1{font-family:var(--gu);font-weight:700;color:var(--maroon);font-size:clamp(40p
 .bh-title{margin:2px 0 10px;color:var(--maroon);font-family:var(--gu)}
 .bh-tabs{display:flex;gap:5px;margin-bottom:10px}.bh-tabs button,.bh-sw button,.bh-az button{border:1px solid var(--maroon);background:var(--card);color:var(--ink);border-radius:8px;padding:7px 4px;font-family:var(--gu);font-size:calc(13px * var(--fs));cursor:pointer}
 .bh-tabs button{flex:1;min-width:0}.bh-tabs button.on,.bh-sw button.on,.bh-az button.on{background:var(--maroon);color:var(--on-accent)}.bh-tabs button:disabled{opacity:.45}
+.bh-sec{font-size:calc(12px * var(--fs));color:var(--ink-2);font-weight:700;margin:12px 0 6px}
+.bh-top{display:flex;flex-wrap:wrap;gap:6px}.bh-top button{border:1px solid var(--rule);background:var(--card);color:var(--ink);border-radius:16px;padding:5px 12px;font-family:var(--gu);font-size:calc(15px * var(--fs));cursor:pointer}.bh-top button b{font-weight:400;color:var(--ink-2);font-size:.78em;margin-left:4px}
+.bh-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}.bh-grid button{aspect-ratio:1;border:1px solid var(--rule);background:var(--card);color:var(--maroon);border-radius:10px;font-family:var(--gu);font-size:calc(21px * var(--fs));cursor:pointer;padding:0}
+.bh-big{display:flex;align-items:center;gap:12px;margin:4px 0 10px}.bh-big i{font-style:normal;width:56px;height:56px;border-radius:14px;background:var(--maroon);color:var(--on-accent);font-size:32px;display:flex;align-items:center;justify-content:center;font-family:var(--gu)}.bh-big small{color:var(--ink-2)}
+.bh-pn{display:flex;gap:6px;justify-content:center;margin-top:10px;flex-wrap:wrap}.bh-pn button{border:1px solid var(--maroon);background:var(--card);color:var(--ink);border-radius:8px;padding:5px 12px;cursor:pointer}.bh-pn button.on{background:var(--maroon);color:var(--on-accent)}
 .bh-q{width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--rule);border-radius:10px;background:var(--card);color:var(--ink);font-family:var(--gu);font-size:calc(16px * var(--fs));margin-bottom:8px}
 .bh-az{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}.bh-az button{padding:3px 8px;border-color:var(--rule)}
 .bh-sw{display:flex;gap:6px;margin-bottom:10px}.bh-sw button{flex:1}
@@ -690,9 +695,14 @@ header h1{font-size:30px;margin:0;line-height:1.3}
     <div class="bh-tabs"><button type="button" class="on" id="bhTabW"></button><button type="button" id="bhTabH"></button><button type="button" id="bhTabT" disabled></button></div>
     <div id="bhList">
       <input id="bhQ" class="bh-q" autocomplete="off">
-      <div class="bh-az" id="bhAz"></div>
-      <div class="bh-sw"><button type="button" class="on" id="bhSortN"></button><button type="button" id="bhSortA"></button></div>
-      <div id="bhWords"></div>
+      <div id="bhHome"><div class="bh-sec" id="bhTopT"></div><div class="bh-top" id="bhTop"></div><div class="bh-sec" id="bhGridT"></div><div class="bh-grid" id="bhGrid"></div></div>
+      <div id="bhLet" hidden>
+        <button type="button" class="link bh-back" id="bhLBack"></button>
+        <div class="bh-big"><i id="bhBigL"></i><div><b id="bhBigT"></b><br><small id="bhBigN"></small></div></div>
+        <div class="bh-sw"><button type="button" class="on" id="bhSortN"></button><button type="button" id="bhSortA"></button></div>
+        <div id="bhWords"></div><div class="bh-pn" id="bhPn"></div>
+      </div>
+      <div id="bhFind" hidden></div>
     </div>
     <div id="bhWord" hidden>
       <button type="button" class="link bh-back" id="bhWBack"></button>
@@ -1682,7 +1692,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.11.24.6";
+const APP_VER = "2026.11.24.7";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
@@ -1900,17 +1910,17 @@ $("#ccTgl").onchange = (e) => { pref.cc = e.target.checked; store.set("k_cc", pr
 
 /* 📖 Bhandar page: word treasury (words spoken in the kathas; tap a word to reach the passages) */
 const BH = {
-  gu: { open: "📖 શબ્દ ભંડોળ અને વધુ ➜", back: "← શોધ પર પાછા", title: "📖 ભંડાર", w: "શબ્દ ભંડોળ", f: "❤ મનપસંદ", h: "🕘 ઇતિહાસ", t: "વિષય · જલ્દી", q: "🔍 શબ્દ શોધો…", n: "વધુ બોલાયેલા", a: "અકારાદિ", all: "બધા", wb: "← શબ્દ ભંડોળ", foc: "🎯 ફોકસવાળા પહેલાં", ord: "બધા ક્રમમાં", pas: "ફકરા", ft: (n) => `🎯 ફોકસ · ${n} વાર`, mt: "ફક્ત ઉલ્લેખ", none: "કંઈ મળ્યું નહીં." },
-  en: { open: "📖 Word treasury and more ➜", back: "← Back to search", title: "📖 Treasury", w: "Words", f: "❤ Favourites", h: "🕘 History", t: "Topics · soon", q: "🔍 Find a word…", n: "Most spoken", a: "A–Z", all: "All", wb: "← Words", foc: "🎯 Focused first", ord: "All in order", pas: "passages", ft: (n) => `🎯 Focus · ${n}×`, mt: "Only mentioned", none: "Nothing found." },
-  hi: { open: "📖 शब्द भंडार और अधिक ➜", back: "← खोज पर वापस", title: "📖 भंडार", w: "शब्द भंडार", f: "❤ पसंदीदा", h: "🕘 इतिहास", t: "विषय · जल्द", q: "🔍 शब्द खोजें…", n: "अधिक बोले गए", a: "अकारादि", all: "सब", wb: "← शब्द भंडार", foc: "🎯 फोकस वाले पहले", ord: "सब क्रम से", pas: "अनुच्छेद", ft: (n) => `🎯 फोकस · ${n} बार`, mt: "केवल उल्लेख", none: "कुछ नहीं मिला।" },
-  sa: { open: "📖 शब्दकोशः अधिकं च ➜", back: "← अन्वेषणं प्रति", title: "📖 कोशः", w: "शब्दकोशः", f: "❤ प्रियाणि", h: "🕘 इतिहासः", t: "विषयाः · शीघ्रम्", q: "🔍 शब्दम् अन्विष्यतु…", n: "बहुवारम् उक्ताः", a: "अकारादि", all: "सर्वे", wb: "← शब्दकोशः", foc: "🎯 केन्द्रितानि प्रथमम्", ord: "सर्वं क्रमेण", pas: "अनुच्छेदाः", ft: (n) => `🎯 केन्द्रः · ${n} वारम्`, mt: "उल्लेखमात्रम्", none: "किमपि न लब्धम्।" }
+  gu: { open: "📖 શબ્દ ભંડોળ અને વધુ ➜", back: "← શોધ પર પાછા", title: "📖 ભંડાર", w: "શબ્દ ભંડોળ", f: "❤ મનપસંદ", h: "🕘 ઇતિહાસ", t: "વિષય · જલ્દી", q: "🔍 શબ્દ શોધો…", topT: "🔥 વધુ બોલાયેલા", gridT: "🔤 અક્ષર પ્રમાણે જુઓ", lb: "← અક્ષરો", from: (l) => `${l} થી શરૂ થતા શબ્દો`, wd: "શબ્દો", n: "વધુ બોલાયેલા", a: "અકારાદિ", all: "બધા", wb: "← શબ્દ ભંડોળ", foc: "🎯 ફોકસવાળા પહેલાં", ord: "બધા ક્રમમાં", pas: "ફકરા", ft: (n) => `🎯 ફોકસ · ${n} વાર`, mt: "ફક્ત ઉલ્લેખ", none: "કંઈ મળ્યું નહીં." },
+  en: { open: "📖 Word treasury and more ➜", back: "← Back to search", title: "📖 Treasury", w: "Words", f: "❤ Favourites", h: "🕘 History", t: "Topics · soon", q: "🔍 Find a word…", topT: "🔥 Most spoken", gridT: "🔤 Browse by letter", lb: "← Letters", from: (l) => `Words starting with ${l}`, wd: "words", n: "Most spoken", a: "A–Z", all: "All", wb: "← Words", foc: "🎯 Focused first", ord: "All in order", pas: "passages", ft: (n) => `🎯 Focus · ${n}×`, mt: "Only mentioned", none: "Nothing found." },
+  hi: { open: "📖 शब्द भंडार और अधिक ➜", back: "← खोज पर वापस", title: "📖 भंडार", w: "शब्द भंडार", f: "❤ पसंदीदा", h: "🕘 इतिहास", t: "विषय · जल्द", q: "🔍 शब्द खोजें…", topT: "🔥 अधिक बोले गए", gridT: "🔤 अक्षर से देखें", lb: "← अक्षर", from: (l) => `${l} से शुरू होने वाले शब्द`, wd: "शब्द", n: "अधिक बोले गए", a: "अकारादि", all: "सब", wb: "← शब्द भंडार", foc: "🎯 फोकस वाले पहले", ord: "सब क्रम से", pas: "अनुच्छेद", ft: (n) => `🎯 फोकस · ${n} बार`, mt: "केवल उल्लेख", none: "कुछ नहीं मिला।" },
+  sa: { open: "📖 शब्दकोशः अधिकं च ➜", back: "← अन्वेषणं प्रति", title: "📖 कोशः", w: "शब्दकोशः", f: "❤ प्रियाणि", h: "🕘 इतिहासः", t: "विषयाः · शीघ्रम्", q: "🔍 शब्दम् अन्विष्यतु…", topT: "🔥 बहुवारम् उक्ताः", gridT: "🔤 अक्षरक्रमेण पश्यत", lb: "← अक्षराणि", from: (l) => `${l} इत्यस्मात् आरभमाणाः शब्दाः`, wd: "शब्दाः", n: "बहुवारम् उक्ताः", a: "अकारादि", all: "सर्वे", wb: "← शब्दकोशः", foc: "🎯 केन्द्रितानि प्रथमम्", ord: "सर्वं क्रमेण", pas: "अनुच्छेदाः", ft: (n) => `🎯 केन्द्रः · ${n} वारम्`, mt: "उल्लेखमात्रम्", none: "किमपि न लब्धम्।" }
 };
 let bhWords = null, bhLetter = "", bhSort = "n", bhOrder = "f", bhCur = "", bhRows = [];
 const bhT = () => BH[ui] || BH.en;
 function bhLabels() {
   const L = bhT(); $("#bhBack").textContent = L.back; $("#bhTitle").textContent = L.title;
   $("#bhTabW").textContent = L.w; $("#bhTabH").textContent = L.h; $("#bhTabT").textContent = L.t;
-  $("#bhQ").placeholder = L.q; $("#bhSortN").textContent = L.n; $("#bhSortA").textContent = L.a; $("#bhWBack").textContent = L.wb; $("#bhFocus").textContent = L.foc; $("#bhAll").textContent = L.ord;
+  $("#bhQ").placeholder = L.q; $("#bhSortN").textContent = L.n; $("#bhSortA").textContent = L.a; $("#bhWBack").textContent = L.wb; $("#bhLBack").textContent = L.lb; $("#bhFocus").textContent = L.foc; $("#bhAll").textContent = L.ord;
 }
 async function bhLoad() {
   if (bhWords) return;
@@ -1919,17 +1929,36 @@ async function bhLoad() {
     const j = await r.json(); bhWords = Array.isArray(j) ? j : [];
   } catch { bhWords = []; }
 }
-const bhFirst = (w) => (w.match(/^\p{L}\p{M}*/u) || [""])[0];
+const bhFirst = (w) => { const m = w.match(/^(ક્ષ|જ્ઞ)/); return m ? m[1] : (w.match(/^\p{L}/u) || [""])[0]; };
+const BH_PAGE = 40;
+const bhWordBtn = (x) => `<button type="button" class="bh-w" data-w="${esc(x.word)}"><span>${esc(x.word)}</span><b>${num(x.n)}</b></button>`;
+function bhBind(root) { root.querySelectorAll("[data-w]").forEach((b) => b.onclick = () => bhOpen(b.dataset.w)); }
 function bhDraw() {
-  const L = bhT(), q = $("#bhQ").value.trim();
-  const letters = [...new Set((bhWords || []).map((x) => bhFirst(x.word)))].filter(Boolean).sort((a, b) => a.localeCompare(b, "gu"));
-  $("#bhAz").innerHTML = [`<button type="button" class="${bhLetter ? "" : "on"}" data-l="">${L.all}</button>`, ...letters.map((l) => `<button type="button" class="${bhLetter === l ? "on" : ""}" data-l="${esc(l)}">${esc(l)}</button>`)].join("");
-  $("#bhAz").querySelectorAll("[data-l]").forEach((b) => b.onclick = () => { bhLetter = b.dataset.l; bhDraw(); });
-  let list = (bhWords || []).filter((x) => (!bhLetter || bhFirst(x.word) === bhLetter) && (!q || x.word.includes(q)));
+  const L = bhT(), q = $("#bhQ").value.trim(), words = bhWords || [];
+  $("#bhTopT").textContent = L.topT; $("#bhGridT").textContent = L.gridT;
+  if (q) {
+    $("#bhHome").hidden = true; $("#bhLet").hidden = true; $("#bhFind").hidden = false;
+    const f = words.filter((x) => x.word.includes(q)).slice(0, 100);
+    $("#bhFind").innerHTML = f.map(bhWordBtn).join("") || `<p class="empty">${L.none}</p>`; bhBind($("#bhFind")); return;
+  }
+  $("#bhFind").hidden = true;
+  if (bhLetter) { $("#bhHome").hidden = true; $("#bhLet").hidden = false; bhDrawLetter(); return; }
+  $("#bhLet").hidden = true; $("#bhHome").hidden = false;
+  $("#bhTop").innerHTML = words.slice(0, 16).map((x) => `<button type="button" data-w="${esc(x.word)}">${esc(x.word)}<b>${num(x.n)}</b></button>`).join(""); bhBind($("#bhTop"));
+  const letters = [...new Set(words.map((x) => bhFirst(x.word)))].filter(Boolean).sort((a, c) => a.localeCompare(c, "gu"));
+  $("#bhGrid").innerHTML = letters.map((l) => `<button type="button" data-l="${esc(l)}">${esc(l)}</button>`).join("");
+  $("#bhGrid").querySelectorAll("[data-l]").forEach((b) => b.onclick = () => { bhLetter = b.dataset.l; bhPage = 0; bhDraw(); scrollTo(0, 0); });
+}
+let bhPage = 0;
+function bhDrawLetter() {
+  const L = bhT(); let list = (bhWords || []).filter((x) => bhFirst(x.word) === bhLetter);
   if (bhSort === "a") list = [...list].sort((a, b) => a.word.localeCompare(b.word, "gu"));
-  $("#bhWords").innerHTML = list.slice(0, 300).map((x) => `<button type="button" class="bh-w" data-w="${esc(x.word)}"><span>${esc(x.word)}</span><b>${num(x.n)}</b></button>`).join("") || `<p class="empty">${L.none}</p>`;
-  $("#bhWords").querySelectorAll("[data-w]").forEach((b) => b.onclick = () => bhOpen(b.dataset.w));
+  const pages = Math.max(1, Math.ceil(list.length / BH_PAGE)); bhPage = Math.min(bhPage, pages - 1);
+  $("#bhBigL").textContent = bhLetter; $("#bhBigT").textContent = L.from(bhLetter); $("#bhBigN").textContent = `${num(list.length)} ${L.wd}`;
   $("#bhSortN").classList.toggle("on", bhSort === "n"); $("#bhSortA").classList.toggle("on", bhSort === "a");
+  $("#bhWords").innerHTML = list.slice(bhPage * BH_PAGE, (bhPage + 1) * BH_PAGE).map(bhWordBtn).join(""); bhBind($("#bhWords"));
+  $("#bhPn").innerHTML = pages > 1 ? Array.from({ length: pages }, (_, i) => `<button type="button" class="${i === bhPage ? "on" : ""}" data-p="${i}">${num(i + 1)}</button>`).join("") : "";
+  $("#bhPn").querySelectorAll("[data-p]").forEach((b) => b.onclick = () => { bhPage = +b.dataset.p; bhDrawLetter(); scrollTo(0, 0); });
 }
 async function bhOpen(w) {
   bhCur = w; $("#bhList").hidden = true; $("#bhWord").hidden = false; $("#bhRes").innerHTML = "…";
@@ -1958,7 +1987,8 @@ async function showBhandar() {
 }
 $("#bhTabH").onclick = () => showMine("hist");
 $("#bhQ").oninput = bhDraw;
-$("#bhSortN").onclick = () => { bhSort = "n"; bhDraw(); }; $("#bhSortA").onclick = () => { bhSort = "a"; bhDraw(); };
+$("#bhSortN").onclick = () => { bhSort = "n"; bhPage = 0; bhDraw(); }; $("#bhSortA").onclick = () => { bhSort = "a"; bhPage = 0; bhDraw(); };
+$("#bhLBack").onclick = () => { bhLetter = ""; bhDraw(); scrollTo(0, 0); };
 $("#bhWBack").onclick = () => { $("#bhWord").hidden = true; $("#bhList").hidden = false; };
 $("#bhFocus").onclick = () => { bhOrder = "f"; bhDrawRes(); }; $("#bhAll").onclick = () => { bhOrder = "a"; bhDrawRes(); };
 const BN = { gu: ["શોધ", "ભંડાર", "મનપસંદ", "સેટિંગ"], en: ["Search", "Treasury", "Favourites", "Settings"], hi: ["खोज", "भंडार", "पसंदीदा", "सेटिंग"], sa: ["अन्वेषणम्", "कोशः", "प्रियाणि", "विन्यासः"] };
