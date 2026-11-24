@@ -688,6 +688,10 @@ header h1{font-size:30px;margin:0;line-height:1.3}
 .bh-sec{font-size:calc(18px * var(--fs));color:var(--maroon);margin:8px 0 10px}
 .explore{display:none!important}
 #ovBody .today{margin-top:0}
+.vz-p{display:flex;flex-wrap:wrap;gap:7px;margin:4px 0 12px}.vz-p button{border:1px solid var(--rule);background:var(--card);color:var(--ink);border-radius:18px;padding:6px 13px;font-family:var(--gu);font-size:calc(15px * var(--fs));cursor:pointer}.vz-p button.on{background:var(--maroon);border-color:var(--maroon);color:var(--on-accent)}
+.vz-h{display:flex;align-items:center;gap:9px;margin:14px 0 8px;font-size:calc(18px * var(--fs));font-weight:700;color:var(--maroon)}.vz-h i{font-style:normal;background:var(--maroon);color:var(--on-accent);border-radius:50%;width:28px;height:28px;display:grid;place-items:center;font-size:.8em}.vz-h u{flex:1;border-top:1px solid var(--rule);text-decoration:none}
+.vz-g{display:grid;grid-template-columns:1fr 1fr;gap:9px}.vz-c{border:1px solid var(--rule);border-left:4px solid var(--gold);background:var(--card);color:var(--ink);border-radius:14px;padding:10px 12px;text-align:left;font-family:var(--gu);cursor:pointer}.vz-c b{display:block;font-size:calc(16px * var(--fs));color:var(--maroon)}.vz-c small{color:var(--ink-2);font-size:calc(12px * var(--fs))}
+.vz-n{color:var(--ink-2);font-size:calc(14px * var(--fs));padding:8px 2px}
 </style>
 </head>
 <body>
@@ -1730,7 +1734,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.11.24.11";
+const APP_VER = "2026.11.24.12";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
@@ -2465,13 +2469,13 @@ function mxLabels() {
 /* 🔲 ટાઇલ: ભંડારનાં ચાર બટન અને હોમ પરનાં છ બટન. લાંબું લખાણ બટન દબાવ્યા પછી જ દેખાય */
 function bhTiles() {
   const L = bhT(), strip = (x) => String(x || "").replace(/^\S+\s+/, ""), t = $("#bhTiles"); if (!t) return;
-  $("#bhTopT").hidden = $("#bhTop").hidden = bhSec !== "top"; $("#bhGridT").hidden = $("#bhGrid").hidden = bhSec !== "az";
+  $("#bhTopT").hidden = $("#bhTop").hidden = true; visDraw(); $("#bhGridT").hidden = $("#bhGrid").hidden = bhSec !== "az";
   t.hidden = !!bhSec; $("#bhSecBack").hidden = !bhSec; $("#bhSecBack").textContent = "← " + strip(L.title);
   const g = ui === "en" ? "A" : ui === "gu" ? "અ" : "अ", bn = BN[ui] || BN.en, sk = skGet(); let sub = "";
   if (sk) { const d = dayDiff(sk.start, istDay()); if (d >= 0 && d <= 6) sub = X("skDay", d + 1); }
-  t.innerHTML = [["top", "🔥", strip(L.topT)], ["az", `<span style="color:var(--maroon);font-weight:700">${g}</span>`, strip(L.gridT)], ["hist", "🕘", strip(L.h)],
+  t.innerHTML = [["vis", "🏷\ufe0f", VZ.t[ui] || VZ.t.gu], ["az", `<span style="color:var(--maroon);font-weight:700">${g}</span>`, strip(L.gridT)], ["hist", "🕘", strip(L.h)],
     ["today", "🪔", strip((TD[ui] || TD.en)[0])], ["mood", "😌", X("mood")], ["vaat", "🧠", strip(X("vaat"))],
-    ["sk", "🌱", X("skTile"), "", sub], ["fav", "❤️", bn[2]], ["soon", "🏷\ufe0f", L.t, "dim"]]
+    ["sk", "🌱", X("skTile"), "", sub], ["fav", "❤️", bn[2]]]
     .map(([id, ic, lb, cls, sb]) => `<button type="button" class="hm-t ${cls || ""}" data-bt="${id}"><span class="ic">${ic}</span><b>${esc(lb)}</b>${sb ? `<small>${esc(sb)}</small>` : ""}</button>`).join("");
   t.querySelectorAll("[data-bt]").forEach((b) => b.onclick = () => {
     const id = b.dataset.bt; if (id === "soon") return;
@@ -2496,6 +2500,50 @@ function hmGo(id) {
   new MutationObserver(() => Object.values(HM).forEach((n) => { if (!n.isConnected) pool.append(n); })).observe($("#ovBody"), { childList: true });
   new MutationObserver(() => { if ($("#ov").hidden) Object.values(HM).forEach((n) => { if (n.parentNode !== pool) pool.append(n); }); }).observe($("#ov"), { attributes: true, attributeFilter: ["hidden"] });
 })();
+
+/* 🏷 વિષય પ્રમાણે શબ્દો: શબ્દ → વિભાગ (katha_word_cat), ગણતરી katha_wordcount માંથી */
+const VZ = { t: { gu: "વિષય", en: "Topics", hi: "विषय", sa: "विषयाः" }, none: "આ વિષયના શબ્દો હજી ગોઠવાઈ રહ્યા છે.", w: "શબ્દ", x: "વખત", wait: "થોભો…" };
+const VC = [["કુદરત", ["વૃક્ષ-વનસ્પતિ", "વાડી-ખેતી", "પર્વત-વન", "જળાશય", "પશુ-પક્ષી-જીવ", "જીવજંતુ"]],
+  ["લોકો", ["સંતો", "ધર્મકુળ-આચાર્ય", "ભક્તો", "સ્ત્રી ભક્તો", "સગાં-સંબંધી", "રાજા-અધિકારી", "જ્ઞાતિ-સમાજ", "પાખંડી-નાટકિયા"]],
+  ["દેવ અને પુરાણ", ["દેવ-અવતાર", "રામાયણનાં પાત્રો", "મહાભારત-ભાગવતનાં પાત્રો", "ઋષિ-મુનિ", "પુરાણના રાજા-ભક્તો", "અસુર-રાક્ષસ"]],
+  ["સ્થળ", ["ગામ-પ્રદેશ", "મકાન-સ્થાન", "મંદિર-તીર્થ", "લોક-ધામ"]],
+  ["વસ્તુઓ", ["વસ્તુ", "ઘરવખરી", "વાસણ", "ઓજાર-સાધન", "ઘરેણાં-ધાતુ", "વસ્ત્ર", "શસ્ત્ર", "વાજિંત્ર-સંગીત", "શાસ્ત્ર-ગ્રંથ", "વાહન-સવારી", "રમકડાં-રમત"]],
+  ["ભોજન", ["મીઠાઈ", "દૂધની વસ્તુ", "રોટલી-દાળ-ભાત", "શાક-ભાજી", "ફરસાણ", "ફળ-ફળાદિ", "સૂકો મેવો-મુખવાસ", "અનાજ-કઠોળ", "તેલ-મસાલા", "રસોઈ-થાળ-પ્રસાદ"]],
+  ["સમય-તિથિ", ["સંવત", "માસ", "તિથિ", "ખાસ તિથિ", "વાર", "પર્વ-તહેવાર", "ઋતુ-કાળ", "યુગ-ગ્રહ-નક્ષત્ર"]],
+  ["શરીર", ["માથું-મુખ", "ધડ-હાથ-પગ", "આખું શરીર"]],
+  ["સંખ્યા-માપ", ["સંખ્યા"]],
+  ["ગુણ અને પ્રસંગ", ["સ્વભાવ-ગુણ", "વ્યસન", "ધર્મ-મત", "સ્વાગત-ઉત્સવ", "રોગ-ઔષધ", "ભાવ-ભક્તિ", "સેવા-ક્રિયા"]]];
+let vzData = null;
+async function vzLoad() {
+  if (vzData) return;
+  try {
+    const r = await fetch(`${SB}/rest/v1/katha_word_cat?select=word,cat,sub&limit=10000`, { headers: { apikey: KEY, Authorization: "Bearer " + KEY } });
+    const j = await r.json(); vzData = Array.isArray(j) ? j : [];
+  } catch { vzData = []; }
+}
+function vzGo(sec) { bhSec = sec; history.pushState({ sub: 1, bhl: "", bhs: bhSec }, "", location.href); bhKey = "|"; bhDraw(); scrollTo(0, 0); }
+function visDraw() {
+  let box = $("#bhVis"); if (!box) { $("#bhHome").insertAdjacentHTML("beforeend", `<div id="bhVis" hidden></div>`); box = $("#bhVis"); }
+  const on = bhSec.startsWith("vis"); box.hidden = !on; if (!on) return;
+  if (!vzData) { box.innerHTML = `<p class="vz-n">${VZ.wait}</p>`; vzLoad().then(() => { if (bhSec.startsWith("vis")) visDraw(); }); return; }
+  const [, c0, s0] = bhSec.split(":"), c = +c0 || 0, s = +s0 || 0, cnt = new Map((bhWords || []).map((x) => [x.word, x.n]));
+  const by = {}; vzData.forEach((r) => { if (cnt.has(r.word)) (by[r.cat + "." + r.sub] = by[r.cat + "." + r.sub] || []).push({ word: r.word, n: cnt.get(r.word) }); });
+  if (c && s) {
+    const ws = (by[c + "." + s] || []).sort((a, b) => b.n - a.n);
+    box.innerHTML = `<div class="vz-h"><i>${num(c)}</i><span>${esc(VC[c - 1][1][s - 1] || "")}</span><u></u></div><div class="bh-find">${ws.map(bhWordBtn).join("") || `<p class="vz-n">${VZ.none}</p>`}</div>`; bhBind(box); return;
+  }
+  let h = `<div class="vz-p"><button type="button" data-vc="0" class="${c ? "" : "on"}">${VZ.all || "બધાં"}</button>${VC.map((x, i) => `<button type="button" data-vc="${i + 1}" class="${c === i + 1 ? "on" : ""}">${num(i + 1)}. ${esc(x[0])}</button>`).join("")}</div>`;
+  VC.forEach((x, i) => {
+    if (c && c !== i + 1) return;
+    const subs = x[1].map((nm, j) => { const w = by[(i + 1) + "." + (j + 1)] || []; return { j: j + 1, nm, k: w.length, t: w.reduce((a, b) => a + b.n, 0) }; }).filter((q) => q.k);
+    if (!subs.length && !c) return;
+    h += `<div class="vz-h"><i>${num(i + 1)}</i><span>${esc(x[0])} · ${num(subs.length)} વિભાગ</span><u></u></div>` + (subs.length ? `<div class="vz-g">${subs.map((q) => `<button type="button" class="vz-c" data-vs="${i + 1}:${q.j}"><b>${num(q.j)}. ${esc(q.nm)}</b><small>${num(q.k)} ${VZ.w} · ${num(q.t)} ${VZ.x}</small></button>`).join("")}</div>` : `<p class="vz-n">${VZ.none}</p>`);
+  });
+  box.innerHTML = h;
+  box.querySelectorAll("[data-vc]").forEach((b) => b.onclick = () => vzGo(+b.dataset.vc ? "vis:" + b.dataset.vc : "vis"));
+  box.querySelectorAll("[data-vs]").forEach((b) => b.onclick = () => vzGo("vis:" + b.dataset.vs));
+}
+VZ.all = "બધાં";
 </script>
 </body>
 </html>
