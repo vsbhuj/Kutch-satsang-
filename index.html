@@ -72,6 +72,9 @@ h1{font-family:var(--gu);font-weight:700;color:var(--maroon);font-size:clamp(40p
 .fsel[aria-expanded="true"]{border-bottom-color:var(--maroon)}.fsel[aria-expanded="true"] i{transform:rotate(180deg)}
 .fpop{position:absolute;left:0;right:0;top:100%;margin-top:4px;z-index:6;background:var(--paper);border:1px solid var(--rule);border-radius:12px;padding:5px;box-shadow:0 10px 26px rgba(40,15,5,.28);display:grid;gap:4px;max-height:260px;overflow:auto}
 .fpop button{display:flex;align-items:center;gap:8px;border:1px solid var(--rule);background:var(--card);color:var(--ink);border-radius:8px;padding:0 12px;min-height:38px;font-family:var(--gu);font-size:calc(15px * var(--fs));cursor:pointer;text-align:left}
+.spop{max-height:min(70vh,440px)}.spop .srow{min-height:48px;padding:6px 10px}.spop .cbx{width:22px;height:22px;border:2px solid var(--maroon);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-size:15px;flex:none;background:var(--card);color:var(--on-accent)}.spop .cbx.on{background:var(--maroon)}
+.spop .st{flex:1;min-width:0}.spop .st small{display:block;font-size:calc(12px * var(--fs));color:var(--ink-2)}.spop .sn{font-size:calc(12px * var(--fs));color:var(--ink-2)}
+.spop .sbar{display:flex;gap:6px;position:sticky;bottom:0;background:var(--paper);padding-top:4px}.spop .sbar button{flex:1;justify-content:center;font-size:calc(13px * var(--fs));padding:0 4px}
 .fpop button.on{background:var(--maroon);border-color:var(--maroon);color:var(--on-accent)}
 .explore{text-align:center;margin:30px 0 8px}
 .explore h3{font-family:var(--latin);letter-spacing:.22em;font-size:12px;color:var(--maroon-2);margin:0 0 12px;font-weight:600;text-transform:uppercase}
@@ -854,12 +857,35 @@ function fillSpk() {
   (stats.speakers || []).map((k) => [k, spn(k)]).sort((a, b) => a[1].localeCompare(b[1], ui === "en" ? "en" : ui === "gu" ? "gu" : "hi")).forEach(([k, n]) => { const o = document.createElement("option"); o.value = k; o.textContent = n; sel.appendChild(o); });
   sel.value = keep;
 }
+/* series: many can be ticked at once; the chosen names travel as "a|b" in the hidden select */
+let serSel = [];
+function setSeries(arr) {
+  const sel = $("#fseries"); serSel = (arr || []).filter((x) => (stats.series || []).includes(x));
+  [...sel.options].filter((o) => o.dataset.multi).forEach((o) => o.remove());
+  if (!serSel.length) sel.value = "";
+  else { const o = document.createElement("option"); o.dataset.multi = "1"; o.value = serSel.join("|"); o.textContent = serSel.length === 1 ? serSel[0] : `${serSel.length} ✓ · ${serSel[0]}…`; sel.appendChild(o); sel.value = o.value; }
+  syncF();
+}
+const serSpk = (name) => { const i = (stats.series_info || []).find((x) => x.series === name); return i ? (i.speakers || []).map(spn).join(", ") : ""; };
+const serN = (name) => { const i = (stats.series_info || []).find((x) => x.series === name); return i ? i.n : ""; };
+const SERL = { gu: ["બધી પસંદ", "બધી કાઢો", "લાગુ કરો"], en: ["Select all", "Clear", "Apply"], hi: ["सब चुनें", "हटाएँ", "लागू करें"], sa: ["सर्वं चिनुत", "निराकुरुत", "प्रयुज्यताम्"] };
+function openSeries(b) {
+  const pop = document.createElement("div"); pop.className = "fpop spop"; let tmp = [...serSel];
+  const L = SERL[ui] || SERL.en, list = [...(stats.series || [])].sort((a, c) => a.localeCompare(c, ui === "en" ? "en" : "gu"));
+  const rows = list.map((n) => { const r = document.createElement("button"); r.type = "button"; r.className = "srow";
+    const draw = () => { r.innerHTML = `<span class="cbx${tmp.includes(n) ? " on" : ""}">${tmp.includes(n) ? "✓" : ""}</span><span class="st">${esc(n)}<small>🎙 ${esc(serSpk(n) || "—")}</small></span><span class="sn">${num(serN(n))}</span>`; };
+    draw(); r.onclick = (e) => { e.stopPropagation(); tmp = tmp.includes(n) ? tmp.filter((x) => x !== n) : [...tmp, n]; draw(); }; pop.appendChild(r); return draw; });
+  const bar = document.createElement("div"); bar.className = "sbar";
+  [[L[0], () => { tmp = [...list]; }], [L[1], () => { tmp = []; }], [L[2], null]].forEach(([t, f], i) => { const x = document.createElement("button"); x.type = "button"; x.textContent = t; if (i === 2) x.className = "on";
+    x.onclick = (e) => { e.stopPropagation(); if (f) { f(); rows.forEach((d) => d()); return; } closeF(); setSeries(tmp); $("#fseries").dispatchEvent(new Event("change")); }; bar.appendChild(x); });
+  pop.appendChild(bar); b.after(pop); b.setAttribute("aria-expanded", "true");
+}
 async function loadStats() {
   try {
     const s = await rpc("katha_stats", {}); stats = s;
     const fill = (sel, arr) => { const keep = sel.value; while (sel.options.length > 1) sel.remove(1); arr.sort().forEach((v) => { const o = document.createElement("option"); o.value = o.textContent = v; sel.appendChild(o); }); sel.value = keep; };
     fill($("#fseries"), s.series || []); fillSpk();
-    if (pref.keepf) { const f = getList("k_filters"); if (f[0]) $("#fseries").value = f[0]; if (f[1]) $("#fspeaker").value = f[1]; }
+    if (pref.keepf) { const f = getList("k_filters"); if (f[0]) setSeries(f[0].split("|")); if (f[1]) $("#fspeaker").value = f[1]; }
   } catch (e) { console.warn(e); }
   applyUI();
 }
@@ -958,7 +984,7 @@ $("#fseries").onchange = $("#fspeaker").onchange = () => { if ($("#q").value.tri
   b.type = "button"; b.className = "fsel"; b.dataset.for = id; b.setAttribute("aria-expanded", "false"); b.innerHTML = "<span></span><i>▼</i>";
   sel.after(b); sel.tabIndex = -1;
   sel.parentElement.querySelector("label").onclick = (e) => { e.preventDefault(); b.click(); };
-  b.onclick = (e) => { e.stopPropagation(); const open = b.getAttribute("aria-expanded") === "true"; closeF(); if (!open) openF(b, sel); };
+  b.onclick = (e) => { e.stopPropagation(); const open = b.getAttribute("aria-expanded") === "true"; closeF(); if (!open) (id === "fseries" ? openSeries(b) : openF(b, sel)); };
 });
 function syncF() { document.querySelectorAll(".fsel").forEach((b) => { const sel = $("#" + b.dataset.for), o = sel.options[sel.selectedIndex]; b.firstChild.textContent = o ? o.textContent : ""; }); }
 function closeF() { document.querySelectorAll(".fpop").forEach((p) => p.remove()); document.querySelectorAll(".fsel, #lvPickB").forEach((b) => b.setAttribute("aria-expanded", "false")); }
@@ -1535,7 +1561,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.11.23.1";
+const APP_VER = "2026.11.24.1";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
