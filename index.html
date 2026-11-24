@@ -2043,7 +2043,7 @@ function route() {
 let lastHash = null;
 function routeIf() { if (location.hash !== lastHash) { lastHash = location.hash; route(); } }
 function goTab(name) {
-  if (name === "gb" || name === "yt") { const h = name === "yt" ? "#youtube" : "#shastra"; if (location.hash !== h) { history.pushState({ sub: 1 }, "", h); routeIf(); scrollTo(0, 0); } return; }
+  if (name === "gb" || name === "yt") { const h = name === "yt" ? "#youtube" : "#shastra"; if (location.hash !== h) { gbDepth = 0; history.pushState({ sub: 1 }, "", h); routeIf(); scrollTo(0, 0); } return; }
   if (name === "bh") { if (location.hash !== "#bhandar") { history.pushState({ sub: 1 }, "", "#bhandar"); bhLetter = ""; bhKey = "|"; bhSec = ""; routeIf(); scrollTo(0, 0); } }
   else if (["#bhandar", "#shastra", "#youtube"].includes(location.hash)) { if (history.state && history.state.sub) history.back(); else { history.replaceState(null, "", location.pathname + location.search); routeIf(); } }
 }
@@ -2054,6 +2054,8 @@ function layerClosed(name) { const i = layerStack.indexOf(name); if (i < 0) retu
 function layerHide(name) { if (name === "ov") $("#ov").hidden = true; else if (name === "sheet") openSettings(false); else if (name === "player") $("#closeP").click(); }
 LAYERS.forEach(([sel, name]) => { const el = $(sel); let vis = !el.hidden; new MutationObserver(() => { const v = !el.hidden; if (v === vis) return; vis = v; v ? layerOpen(name) : layerClosed(name); }).observe(el, { attributes: true, attributeFilter: ["hidden"] }); });
 window.addEventListener("popstate", (e) => {
+  if (gbIgn) { gbIgn = false; return; }
+  if (gbDepth > 0 && (location.hash === "#shastra" || location.hash === "#youtube")) { const d = (e.state && e.state.gbd) || 0; if (d < gbDepth) { const k = gbDepth - d; gbDepth = d; const f = location.hash === "#youtube" ? $("#gbf_yt") : $("#gbf_gb"); if (f) f.contentWindow.postMessage({ gq: "back", n: k }, location.origin); return; } }
   if (layerStack.length) { const name = layerStack[layerStack.length - 1]; if (!(e.state && e.state.L === name)) { layerStack.pop(); layerHide(name); } return; }
   routeIf();
   if (location.hash === "#bhandar") { const st = e.state || {}, key = (st.bhl || "") + "|" + (st.bhw || ""), sec = st.bhs || ""; if (key !== bhKey || sec !== bhSec) { bhKey = key; bhSec = sec; bhLetter = st.bhl || ""; bhPage = 0; if (st.bhw) bhOpen(st.bhw, true); else { $("#bhWord").hidden = true; $("#bhList").hidden = false; bhDraw(); } } }
@@ -2603,7 +2605,7 @@ async function vzRev(box) {
 }
 
 /* 📚 વર્ગીકરણ (શાસ્ત્ર એપની યાદી varg.json): 10 જૂથ → વિભાગ → નામ. કથામાં કેટલી વાર આવ્યા તે ગણતરી; નામ દબાવો તો કથાના ફકરા */
-let vgData = null, vgTab = "w", gbRdy = false, gbPend = null;
+let vgData = null, vgTab = "w", gbRdy = false, gbPend = null, gbDepth = 0, gbIgn = false;
 async function vgLoad() { if (vgData) return; try { vgData = await (await fetch("varg.json")).json(); } catch { vgData = []; } }
 let vgMc = null;
 function vgM() {
@@ -2692,7 +2694,10 @@ function bhLanding(t, g, azLbl, bn, sub) {
   t.querySelectorAll("[data-vg]").forEach((b) => b.onclick = () => vzGo("vg:" + b.dataset.vg));
 }
 function gbGo(m) { goTab("gb"); const f = $("#gbf_gb"); if (f && gbRdy) f.contentWindow.postMessage({ gq: m }, location.origin); else gbPend = m; }
-window.addEventListener("message", (e) => { if (e.origin === location.origin && e.data && e.data.kg === "ready") { gbRdy = true; if (gbPend) { const f = $("#gbf_gb"); if (f) f.contentWindow.postMessage({ gq: gbPend }, location.origin); gbPend = null; } } });
+window.addEventListener("message", (e) => {
+  if (e.origin !== location.origin || !e.data) return;
+  if (e.data.kg === "depth") { const n = e.data.n | 0; if (!(location.hash === "#shastra" || location.hash === "#youtube")) return; if (n > gbDepth) { while (gbDepth < n) { gbDepth++; history.pushState({ sub: 1, gbd: gbDepth }, "", location.href); } } else if (n < gbDepth) { const k = gbDepth - n; gbDepth = n; gbIgn = true; history.go(-k); } return; }
+  if (e.data.kg === "ready") { gbRdy = true; if (gbPend) { const f = $("#gbf_gb"); if (f) f.contentWindow.postMessage({ gq: gbPend }, location.origin); gbPend = null; } } });
 </script>
 </body>
 </html>
