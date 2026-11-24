@@ -965,6 +965,9 @@ function hl(text, q) {
   const re = new RegExp(esc(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\p{M}*", "giu");
   return t.replace(re, (m) => `<mark>${m}</mark>`);
 }
+/* શ્લોક / ચાલીસા / પદ જેવા પઠનના ફકરા: પ્રસંગ-સુવિધાઓ (ભાવ, વાત, સંકલ્પ) માં ન બતાવવા */
+const VERSE = /(ધરિ|કહિ|તુમ્હ|તુમ\s|કીન્હ|હરષિ|સિયહિં|ગાવૈં|ગાવૈ|સંવારે|લાયે|જિયાયે|સહસ|જાસુ|બહુત\s|\sકે\s|\sકો\s|નાસૈ|હરૈ|કરૈ|પાવૈ|દિખાવા|જલાવા|સંહારે|ભયો|ભયં|ઉર\s|મહા\s)/g;
+const isVerse = (t) => { t = String(t || ""); return /[॥।]/.test(t) || (t.match(VERSE) || []).length >= 2; };
 /* શબ્દ ફક્ત બીજા શબ્દની શરૂઆતમાં હોય ત્યારે જ મળે (દા.ત. "પાણી" ← "મેપાણી" અટક નહીં) */
 const wsRe = (w, fl = "giu") => new RegExp("(?<![\\p{L}\\p{M}])" + String(w).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), fl);
 const wsHas = (text, w) => wsRe(w, "iu").test(String(text || ""));
@@ -1746,7 +1749,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.11.24.14";
+const APP_VER = "2026.11.24.15";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
@@ -2278,7 +2281,7 @@ async function mxMerge(words, lim) {
   const lists = await Promise.all(words.map((w) => mxFetch(w, lim)));
   const wt = lists.map((l) => 1 / Math.log(2 + l.length)), tot = wt.reduce((a, b) => a + b, 0) || 1, map = new Map();
   lists.forEach((l, i) => l.forEach((r) => {
-    if (String(r.text || "").length < 40 || !wsHas(r.text, scQuery(words[i]))) return;
+    if (String(r.text || "").length < 40 || isVerse(r.text) || !wsHas(r.text, scQuery(words[i]))) return;
     let e = map.get(r.passage_id); if (!e) { e = { r, s: 0 }; map.set(r.passage_id, e); } e.s += wt[i];
   }));
   const arr = [...map.values()].map((e) => ({ ...e.r, _s: e.s / tot, _k: (e.s / tot) * (1 - Math.min(1, Math.abs(String(e.r.text).length - 170) / 320) * 0.35) }));
