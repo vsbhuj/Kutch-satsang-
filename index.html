@@ -80,6 +80,7 @@ h1{font-family:var(--gu);font-weight:700;color:var(--maroon);font-size:clamp(40p
 .today .td-tq{font-size:calc(17px * var(--fs));line-height:1.6;margin:6px 0;color:var(--ink)}
 .today .td-tm{font-size:calc(12px * var(--fs));color:var(--ink-2);margin-bottom:10px}
 .today .td-tb{display:flex;gap:6px}.today .td-tb button{flex:1;min-width:0;border:1px solid var(--maroon);background:var(--paper);color:var(--ink);border-radius:8px;padding:8px 2px;font-family:var(--gu);font-size:calc(13px * var(--fs));cursor:pointer}
+.today .td-tb button.prev{flex:0 0 42px}.today .td-tb button:disabled{opacity:.35}
 .today .td-tb button.on{background:var(--maroon);color:var(--on-accent)}
 .fpop button.on{background:var(--maroon);border-color:var(--maroon);color:var(--on-accent)}
 .explore{text-align:center;margin:30px 0 8px}
@@ -866,22 +867,25 @@ function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = fal
 /* 🪔 today's moment: a sevak's pick for the day, otherwise one good passage chosen by the server */
 const TD = { gu: ["🪔 આજનો પ્રસંગ", "▶ અહીં સાંભળો", "📤 શેર", "🔄 બીજો"], en: ["🪔 Today's moment", "▶ Listen here", "📤 Share", "🔄 Another"], hi: ["🪔 आज का प्रसंग", "▶ यहाँ सुनें", "📤 शेयर", "🔄 दूसरा"], sa: ["🪔 अद्यतनः प्रसङ्गः", "▶ अत्र शृणुत", "📤 प्रेषयतु", "🔄 अन्यत्"] };
 const istDay = (add = 0) => new Date(Date.now() + add * 864e5).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
-let todayN = 0, todayRow = null;
+let todayN = 0, todayRow = null, todayHist = [], todayI = 0;
 async function loadToday(n = 0) {
   todayN = n;
   try { const r = (await rpc("katha_today", { p_day: istDay(), p_n: n }))[0]; todayRow = r || null; } catch { todayRow = null; }
+  if (n === 0) { todayHist = todayRow ? [todayRow] : []; todayI = 0; } else if (todayRow) { todayHist.push(todayRow); todayI = todayHist.length - 1; }
   drawToday();
 }
+async function todayMore() { if (todayI < todayHist.length - 1) { todayI++; todayRow = todayHist[todayI]; drawToday(); } else loadToday(todayN + 1); }
+function todayPrev() { if (todayI > 0) { todayI--; todayRow = todayHist[todayI]; drawToday(); } }
 function drawToday() {
   const el = $("#today"), r = todayRow; if (!r) { el.hidden = true; return; }
   const L = TD[ui] || TD.en, d = new Date().toLocaleDateString(ui === "en" ? "en-IN" : ui + "-IN", { day: "numeric", month: "short", timeZone: "Asia/Kolkata" });
   el.hidden = false;
   el.innerHTML = `<div class="td-tg">${L[0]} · ${esc(num(d))}</div><div class="td-tq">“${esc(String(scText(r.text, r.roman)).trim())}”</div>
     <div class="td-tm">🎙 ${esc(spn(r.speaker))}${r.series ? " · 📚 " + esc(r.series) : ""} · ${fmt(r.start_sec)}</div>
-    <div class="td-tb"><button type="button" class="on" id="tdPlay">${L[1]}</button><button type="button" id="tdShare">${L[2]}</button><button type="button" id="tdMore">${L[3]}</button></div>`;
+    <div class="td-tb"><button type="button" id="tdPrev" class="prev" aria-label="prev"${todayI ? "" : " disabled"}>◀</button><button type="button" class="on" id="tdPlay">${L[1]}</button><button type="button" id="tdShare">${L[2]}</button><button type="button" id="tdMore">${L[3]}</button></div>`;
   $("#tdPlay").onclick = () => play(r.youtube_id, r.start_sec, { youtube_id: r.youtube_id, video_id: r.video_id, start_sec: r.start_sec, title: r.title, speaker: r.speaker, series: r.series, text: r.text, roman: r.roman });
   $("#tdShare").onclick = () => showShare({ ...r, speaker: spn(r.speaker) });
-  $("#tdMore").onclick = () => loadToday(todayN + 1);
+  $("#tdMore").onclick = todayMore; $("#tdPrev").onclick = todayPrev;
 }
 /* speaker names follow the site language (names table katha_speakers; unknown names stay as written) */
 const spn = (k) => { const n = stats.speaker_names && stats.speaker_names[k]; return n ? (n[ui] || n.en || k) : (k || ""); };
