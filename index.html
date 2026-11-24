@@ -651,6 +651,30 @@ header h1{font-size:30px;margin:0;line-height:1.3}
 .chips{gap:6px}.chip{padding:3px 12px;font-size:14px}
 #home:has(#out .card) .explore{display:none}
 .count{margin:14px 0 10px}
+/* ભાવ · વાત શોધો · સંકલ્પ · પોસ્ટર */
+.mx-moods{margin:12px 0 4px;text-align:center}
+.mx-h{font-size:calc(16px * var(--fs));color:var(--maroon);font-weight:700}
+.mx-sub{font-size:calc(12.5px * var(--fs));color:var(--ink-2);margin:2px 0 10px}
+.mx-modes{display:flex;gap:8px;align-items:center;justify-content:center;margin:10px 0 0;flex-wrap:wrap}
+.mx-hint{font-size:calc(12px * var(--fs));color:var(--ink-2)}
+.chip.on{background:var(--maroon);color:var(--on-accent);border-color:var(--maroon)}
+#mxBar{margin:16px 0 0;padding:10px 12px;background:var(--card);border:1px solid var(--rule);border-left:5px solid var(--maroon);border-radius:12px}
+.mx-top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:calc(16px * var(--fs));color:var(--maroon)}
+.mx-spk{justify-content:flex-start;margin:8px 0 2px}
+.mx-all{display:block;width:100%;padding:11px 12px;margin-top:8px;border-radius:10px;letter-spacing:0;text-transform:none;font-family:var(--gu);font-size:calc(15px * var(--fs))}
+.mx-badge{float:right;font-size:calc(11px * var(--fs));border:1px solid var(--saffron);color:var(--maroon);border-radius:99px;padding:1px 9px;margin:0 0 4px 8px}
+.mx-badge.lo{border-color:var(--rule);color:var(--ink-2)}
+.mx-skp{justify-content:flex-start}
+.sk-dots{display:flex;gap:6px;justify-content:center;margin:10px 0}
+.sk-dot{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--saffron);display:grid;place-items:center;font-size:calc(13px * var(--fs));background:var(--card);color:var(--ink-2)}
+.sk-dot.f{background:var(--maroon);color:var(--on-accent);border-color:var(--maroon)}
+.sk-dot.m{background:var(--paper-2);border-style:dashed}
+.sk-dot.t{box-shadow:0 0 0 3px var(--mark)}
+.share .acts3 button.pri{background:var(--maroon);color:var(--on-accent);border-color:var(--maroon)}
+.share .acts3 button:disabled{opacity:.5}
+.share .sh-poster .empty{margin:24px 0;text-align:center}
+.share details{margin-top:12px}.share summary{cursor:pointer;color:var(--ink-2);font-size:calc(14px * var(--fs))}
+.share details a{display:inline-block;margin-top:4px;color:var(--maroon)}
 </style>
 </head>
 <body>
@@ -985,6 +1009,7 @@ async function loadStats() {
 
 async function search(q) {
   q = q.trim(); if (!q) return;
+  mxOff();
   $("#q").value = q;
   $("#out").innerHTML = `<p class="empty">${T[ui].loading}</p>`;
   try {
@@ -1692,7 +1717,7 @@ document.addEventListener("click", (e) => { const pop = $("#ddPop"); if (pop && 
 
 
 /* ---------- page ②: sleep timer, skip, share, private, update, help ---------- */
-const APP_VER = "2026.11.24.8";
+const APP_VER = "2026.11.24.9";
 Object.assign(T.gu, { t_more2: "વધુ", l_sleep: "⏲ ઊંઘ ટાઇમર", l_skip: "⏪⏩ સેકન્ડ", min: (n) => `${n} મિનિટ`, t_shtxt: "લખાણ સાથે શેર", t_shname: "નામ ઉમેરો", t_priv: "ખાનગી મોડ",
   t_upd: "નવું વર્ઝન", t_help: "મદદ", sleepDone: "⏲ ટાઇમર પૂરો થયો, કથા થોભાવી. જય સ્વામિનારાયણ 🙏", ver: "વર્ઝન", shTitle: "📤 શેર કરો", shWa: "WhatsApp", shCopy: "કોપી",
   shCard: "સુવિચાર કાર્ડ", shSave: "શેર / સાચવો", brand: "— કચ્છ સત્સંગ", listen: "અહીં સાંભળો:", updOk: "નવું વર્ઝન લાવી રહ્યા છીએ…",
@@ -1740,50 +1765,12 @@ function shareText(r) {
   if (pref.shname) parts.push(T[ui].brand + "  " + location.origin + location.pathname);
   return parts.filter(Boolean).join("\n\n");
 }
-function showShare(r) {
-  const txt = shareText(r);
-  showInfo(T[ui].shTitle, `<div class="share"><div class="q">${esc(txt)}</div>
-    <div class="acts3"><a id="shWa" href="https://wa.me/?text=${encodeURIComponent(txt)}" target="_blank" rel="noopener"><span>🟢</span>${T[ui].shWa}</a>
-    <button type="button" id="shCopy"><span>📋</span>${T[ui].shCopy}</button><button type="button" id="shCard"><span>🖼</span>${T[ui].shCard}</button></div>
-    <div id="shCardOut"></div></div>`);
-  $("#shCopy").onclick = async () => { try { await navigator.clipboard.writeText(txt); toast(T[ui].copied); } catch { const q = $(".share .q"); const rg = document.createRange(); rg.selectNodeContents(q); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(rg); } };
-  $("#shCard").onclick = () => makeCard(r);
-}
 // a square picture of the passage in the current theme
 function wrapLines(ctx, text, maxW) {
   const words = text.split(/\s+/), lines = []; let line = "";
   for (const w of words) { const t = line ? line + " " + w : w; if (ctx.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t; }
   if (line) lines.push(line); return lines;
 }
-async function makeCard(r) {
-  try { await document.fonts.ready; } catch {}
-  const cs = getComputedStyle(document.documentElement), v = (n) => cs.getPropertyValue(n).trim();
-  const S = 1080, c = document.createElement("canvas"); c.width = c.height = S; const x = c.getContext("2d");
-  x.fillStyle = v("--paper") || "#f3e9d8"; x.fillRect(0, 0, S, S);
-  x.strokeStyle = v("--gold") || "#b8892f"; x.lineWidth = 6; x.strokeRect(40, 40, S - 80, S - 80); x.lineWidth = 2; x.strokeRect(56, 56, S - 112, S - 112);
-  const gu = v("--gu") || "serif";
-  x.fillStyle = v("--maroon") || "#6e1f14"; x.font = `700 150px ${gu}`; x.fillText("“", 100, 250);
-  let body = String(scText(r.text || "", r.roman)).trim();
-  let size = 54; x.font = `${size}px ${gu}`;
-  let lines = wrapLines(x, body, S - 240);
-  while (lines.length > 10 && size > 34) { size -= 4; x.font = `${size}px ${gu}`; lines = wrapLines(x, body, S - 240); }
-  if (lines.length > 11) { lines = lines.slice(0, 11); lines[10] = lines[10].replace(/\s*\S*$/, "") + " …"; }
-  x.fillStyle = v("--ink") || "#2b1a12";
-  const lh = size * 1.6, top = Math.max(270, (S - lines.length * lh) / 2);
-  lines.forEach((l, i) => x.fillText(l, 120, top + i * lh));
-  x.fillStyle = v("--maroon") || "#6e1f14"; x.font = `600 34px ${gu}`;
-  x.fillText([r.speaker, r.title].filter(Boolean).join(" · ").slice(0, 60), 120, S - 170);
-  x.fillStyle = v("--ink-2") || "#6d5646"; x.font = `30px ${gu}`;
-  x.fillText((pref.shname ? T[ui].brand.replace(/^—\s*/, "") + "  ·  " : "") + fmt(r.start_sec || 0), 120, S - 118);
-  const url = c.toDataURL("image/png");
-  $("#shCardOut").innerHTML = `<img src="${url}" alt="${esc(T[ui].shCard)}"><button type="button" class="btn save" id="shSave" style="padding:12px 18px">${T[ui].shSave}</button>`;
-  $("#shSave").onclick = () => c.toBlob(async (blob) => {
-    const file = new File([blob], "kutch-satsang.png", { type: "image/png" });
-    try { if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], text: shareText(r) }); return; } } catch { return; }
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "kutch-satsang.png"; document.body.appendChild(a); a.click(); a.remove();
-  }, "image/png");
-}
-
 // toggles on page ②
 const bind2 = (id, key) => { $(id).onchange = (e) => { pref[key] = e.target.checked; store.set("k_" + key, pref[key] ? "1" : "0"); }; };
 bind2("#shTxtTgl", "shtxt"); bind2("#shNameTgl", "shname"); bind2("#privTgl", "priv");
@@ -2204,6 +2191,261 @@ function stMarksAdmin() {
 $("#stOpen").onclick = () => stAdmOpen([]);
 $("#stClose").onclick = () => { $("#stSheet").hidden = true; clearTimeout(stAdm.timer); };
 stLoadPublic();
+
+/* ---------- 🌿 ભાવ · વાત શોધો · સંકલ્પ · પોસ્ટર શેર (Nov 2026) ---------- */
+const MXT = {
+  gu: { mood: "આજે મન કેવું છે?", moodSub: "ભાવ દબાવો, એને લગતા ફકરા મળશે", clear: "✕ બંધ", all: "બધા", playAll: "▶ બધા ક્રમમાં સાંભળો",
+    vaat: "🧠 વાત શોધો", vaatPh: "જેટલું યાદ છે એટલું લખો…", vaatHint: "શબ્દોના મેળ પરથી શોધે છે", b3: "ખૂબ મળતું", b2: "મળતું", b1: "થોડું મળતું", none: "કંઈ મળ્યું નહીં", loading: "શોધું છું…",
+    moodTitle: (l) => `ભાવ: ${l}`, vaatTitle: "🧠 વાત શોધો",
+    sk: "🌱 આ અઠવાડિયાનો સંકલ્પ", skPick: "એક સંકલ્પ પસંદ કરો, રોજ એક ફકરો મળશે", skDay: (n) => `દિવસ ${num(n)} / ${num(7)}`, skDid: "✓ પળાયો", skMissed: "થોડો ચૂક્યો", skAsk: "રાત્રે: આજે કેવું રહ્યું?", skSaved: "આજે નોંધ્યું 🙏",
+    skSum: (n) => `${num(7)} માંથી ${num(n)} દિવસ પળાયા 🙏`, skNew: "નવો સંકલ્પ", skChange: "સંકલ્પ બદલો", skSure: "⚠️ ખાતરી? ફરી દબાવો", listen: "▶ સાંભળો",
+    making: "પોસ્ટર બની રહ્યું છે…", savePic: "ફોનમાં સાચવો", textOnly: "ફક્ત લખાણ મોકલો", sendText: "WhatsApp પર લખાણ", savedAttach: "પોસ્ટર સાચવ્યું. WhatsApp માં જોડો 🙏" },
+  en: { mood: "How does the mind feel today?", moodSub: "Tap a feeling to see related passages", clear: "✕ Close", all: "All", playAll: "▶ Play all in order",
+    vaat: "🧠 Find by story", vaatPh: "Type whatever you remember…", vaatHint: "Matches your words, not the meaning", b3: "Very close", b2: "Close", b1: "Partly", none: "Nothing found", loading: "Searching…",
+    moodTitle: (l) => `Feeling: ${l}`, vaatTitle: "🧠 Find by story",
+    sk: "🌱 This week's resolve", skPick: "Pick one resolve, get one passage a day", skDay: (n) => `Day ${n} / 7`, skDid: "✓ Kept", skMissed: "Missed a bit", skAsk: "Tonight: how did today go?", skSaved: "Noted for today 🙏",
+    skSum: (n) => `${n} of 7 days kept 🙏`, skNew: "New resolve", skChange: "Change resolve", skSure: "⚠️ Sure? Tap again", listen: "▶ Listen",
+    making: "Making the poster…", savePic: "Save to phone", textOnly: "Send text only", sendText: "Text on WhatsApp", savedAttach: "Poster saved. Attach it in WhatsApp 🙏" },
+  hi: { mood: "आज मन कैसा है?", moodSub: "भाव दबाइए, उससे जुड़े अंश मिलेंगे", clear: "✕ बंद", all: "सभी", playAll: "▶ सब क्रम से सुनें",
+    vaat: "🧠 बात खोजें", vaatPh: "जितना याद है उतना लिखें…", vaatHint: "शब्दों के मेल से खोजता है", b3: "बहुत मिलता", b2: "मिलता", b1: "थोड़ा मिलता", none: "कुछ नहीं मिला", loading: "खोज रहा हूँ…",
+    moodTitle: (l) => `भाव: ${l}`, vaatTitle: "🧠 बात खोजें",
+    sk: "🌱 इस सप्ताह का संकल्प", skPick: "एक संकल्प चुनें, रोज़ एक अंश मिलेगा", skDay: (n) => `दिन ${num(n)} / ${num(7)}`, skDid: "✓ निभाया", skMissed: "थोड़ा चूका", skAsk: "रात को: आज कैसा रहा?", skSaved: "आज दर्ज हुआ 🙏",
+    skSum: (n) => `${num(7)} में से ${num(n)} दिन निभे 🙏`, skNew: "नया संकल्प", skChange: "संकल्प बदलें", skSure: "⚠️ पक्का? फिर दबाइए", listen: "▶ सुनें",
+    making: "पोस्टर बन रहा है…", savePic: "फ़ोन में सहेजें", textOnly: "सिर्फ़ लिखा भेजें", sendText: "WhatsApp पर लिखा", savedAttach: "पोस्टर सहेजा। WhatsApp में जोड़ें 🙏" },
+};
+const X = (k, ...a) => { const d = MXT[ui] || MXT.hi; const v = d[k] !== undefined ? d[k] : MXT.gu[k]; return typeof v === "function" ? v(...a) : v; };
+const lab = (o) => o[ui] || (ui === "sa" ? o.hi : null) || o.gu;
+const MOODS = [
+  { id: "shanti", gu: "શાંતિ", en: "Peace", hi: "शांति", w: ["શાંતિ", "નિરાંત"] },
+  { id: "dukh", gu: "દુઃખ", en: "Sorrow", hi: "दुःख", w: ["દુઃખ", "પીડા"] },
+  { id: "bharoso", gu: "ભરોસો", en: "Trust", hi: "भरोसा", w: ["ભરોસ", "વિશ્વાસ", "શ્રદ્ધા"] },
+  { id: "krodh", gu: "ક્રોધ", en: "Anger", hi: "क्रोध", w: ["ક્રોધ", "ગુસ્સ"] },
+  { id: "dar", gu: "ડર", en: "Fear", hi: "डर", w: ["ડર", "ભય"] },
+  { id: "kshama", gu: "ક્ષમા", en: "Forgiveness", hi: "क्षमा", w: ["ક્ષમા"] },
+  { id: "dhiraj", gu: "ધીરજ", en: "Patience", hi: "धैर्य", w: ["ધીરજ"] },
+  { id: "santosh", gu: "સંતોષ", en: "Contentment", hi: "संतोष", w: ["સંતોષ"] },
+  { id: "seva", gu: "સેવા", en: "Service", hi: "सेवा", w: ["સેવા"] },
+  { id: "prem", gu: "પ્રેમ", en: "Love", hi: "प्रेम", w: ["પ્રેમ"] },
+  { id: "abhar", gu: "આભાર", en: "Gratitude", hi: "आभार", w: ["આભાર", "કૃપા"] },
+];
+const SKS = [
+  { id: "krodh", gu: "ક્રોધ ન કરવો", en: "Do not get angry", hi: "क्रोध न करना", w: ["ક્રોધ", "ગુસ્સ"] },
+  { id: "kshama", gu: "ક્ષમા રાખવી", en: "Keep forgiveness", hi: "क्षमा रखना", w: ["ક્ષમા"] },
+  { id: "seva", gu: "સેવા કરવી", en: "Do seva", hi: "सेवा करना", w: ["સેવા"] },
+  { id: "bharoso", gu: "ભરોસો રાખવો", en: "Keep trust", hi: "भरोसा रखना", w: ["ભરોસ", "વિશ્વાસ", "શ્રદ્ધા"] },
+  { id: "shanti", gu: "શાંતિ રાખવી", en: "Keep peace", hi: "शांति रखना", w: ["શાંતિ", "નિરાંત"] },
+  { id: "dhiraj", gu: "ધીરજ રાખવી", en: "Be patient", hi: "धैर्य रखना", w: ["ધીરજ"] },
+];
+
+/* several words -> one list: a passage that holds more of the words ranks higher, rare words count more */
+const mxCache = {};
+function mxFetch(w, lim) {
+  const k = w + "|" + lim;
+  if (!mxCache[k]) mxCache[k] = rpc("katha_search", { q: w, p_series: null, p_speaker: null, p_limit: lim }).catch((e) => { delete mxCache[k]; throw e; });
+  return mxCache[k];
+}
+async function mxMerge(words, lim) {
+  const lists = await Promise.all(words.map((w) => mxFetch(w, lim)));
+  const wt = lists.map((l) => 1 / Math.log(2 + l.length)), tot = wt.reduce((a, b) => a + b, 0) || 1, map = new Map();
+  lists.forEach((l, i) => l.forEach((r) => {
+    if (String(r.text || "").length < 40) return;
+    let e = map.get(r.passage_id); if (!e) { e = { r, s: 0 }; map.set(r.passage_id, e); } e.s += wt[i];
+  }));
+  const arr = [...map.values()].map((e) => ({ ...e.r, _s: e.s / tot, _k: (e.s / tot) * (1 - Math.min(1, Math.abs(String(e.r.text).length - 170) / 320) * 0.35) }));
+  arr.sort((a, b) => b._k - a._k);
+  const per = {}, out = [];
+  for (const r of arr) { per[r.video_id] = (per[r.video_id] || 0) + 1; if (per[r.video_id] <= 3) out.push(r); if (out.length >= 40) break; }
+  return out;
+}
+function hlMulti(text, words) {
+  const t = esc(text); if (!words || !words.length) return t;
+  const alt = words.map((w) => esc(scQuery(w)).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+  return t.replace(new RegExp("(" + alt + ")\\p{M}*", "giu"), (m) => `<mark>${m}</mark>`);
+}
+
+/* the strip above the results: title, speaker filter, play all */
+let mxState = null;
+function mxOff() { mxState = null; const b = $("#mxBar"); if (b) b.hidden = true; }
+function mxShow(rows, meta) { mxState = { rows, meta, spk: "" }; mxDraw(); $("#out").scrollIntoView({ behavior: "smooth", block: "start" }); }
+function mxDraw() {
+  const { rows, meta } = mxState, bar = $("#mxBar");
+  const shown = mxState.spk ? rows.filter((r) => r.speaker === mxState.spk) : rows;
+  const spks = [...new Set(rows.map((r) => r.speaker).filter(Boolean))];
+  bar.hidden = false;
+  bar.innerHTML = `<div class="mx-top"><b>${esc(meta.title)}</b><button type="button" class="link" id="mxX">${X("clear")}</button></div>`
+    + (meta.hint ? `<div class="mx-hint">${esc(meta.hint)}</div>` : "")
+    + (spks.length > 1 ? `<div class="chips mx-spk"><button type="button" class="chip${mxState.spk ? "" : " on"}" data-s="">${X("all")}</button>${spks.map((s) => `<button type="button" class="chip${mxState.spk === s ? " on" : ""}" data-s="${esc(s)}">${esc(spn(s))}</button>`).join("")}</div>` : "")
+    + (shown.length ? `<button type="button" class="btn mx-all" id="mxAll">${X("playAll")}</button>` : "");
+  const keep = { o: pref.ord, w: pref.whole }; pref.ord = "x"; pref.whole = "0";
+  try { last = { rows: shown, q: "" }; render(shown, ""); } finally { pref.ord = keep.o; pref.whole = keep.w; }
+  [...$("#out").querySelectorAll(".card")].forEach((c, i) => {
+    const r = shown[i]; if (!r) return;
+    const p = c.querySelector(".txt"); if (p) p.innerHTML = hlMulti(scText(r.text, r.roman), meta.words);
+    if (meta.badge) c.insertAdjacentHTML("afterbegin", `<span class="mx-badge${r._s < 0.4 ? " lo" : ""}">${X(r._s >= 0.7 ? "b3" : r._s >= 0.4 ? "b2" : "b1")}</span>`);
+  });
+  bar.querySelectorAll("[data-s]").forEach((b) => b.onclick = () => { mxState.spk = b.dataset.s; mxDraw(); });
+  $("#mxX").onclick = () => { mxOff(); $("#out").innerHTML = ""; last = null; scrollTo({ top: 0, behavior: "smooth" }); };
+  const all = $("#mxAll");
+  if (all) all.onclick = () => { pa = { list: shown.map((r) => ({ yid: r.youtube_id, t: r.start_sec, vid: r.video_id, title: r.title, speaker: r.speaker, series: r.series, text: r.text, roman: r.roman })), i: 0, t0: 0, at: 0 }; paPlay(0); };
+}
+async function moodGo(m) {
+  $("#out").innerHTML = `<p class="empty">${X("loading")}</p>`;
+  document.querySelectorAll("#mxMoods [data-m]").forEach((b) => b.classList.toggle("on", b.dataset.m === m.id));
+  try { const rows = await mxMerge(m.w, 100); if (!rows.length) { mxOff(); $("#out").innerHTML = `<p class="empty">${X("none")}</p>`; return; } mxShow(rows, { title: X("moodTitle", lab(m)), words: m.w }); }
+  catch (e) { $("#out").innerHTML = `<p class="empty">Error: ${esc(e.message)}</p>`; }
+}
+
+/* 🧠 find a story from what the person remembers */
+let vaatOn = false;
+const VSTOP = new Set("અને કે છે હતું હતા હતો હતી એમ તો પણ આ એ તે જે કોઈ કોઈએ કહ્યું કહેલું વાત ખબર ઉપર માટે સાથે એક આવે આવ્યા સ્વામી સ્વામીએ રાખવો રાખવી રાખવું કરવું કરવો કરવી થાય થયું મને મારે આપણે એવું એવી એવો જેમ કેમ શું કયા ક્યાં ત્યારે જ્યારે વખતે બીજી બીજા કથા પ્રસંગ હતી ત્યાં અહીં કહ્યું તેમ".split(" "));
+function vaatWords(s) {
+  const seen = new Set(), out = [];
+  for (const raw of String(s).split(new RegExp("[" + PUNCT + "]+")).filter(Boolean)) {
+    if (VSTOP.has(raw)) continue;
+    const w = /[઀-૿]/.test(raw) ? raw.replace(/[ાિીુૂૃેૈોૌંઃ્]+$/u, "") : raw.toLowerCase();
+    if ([...w].length < 2 || VSTOP.has(w) || seen.has(w)) continue; seen.add(w); out.push(w);
+  }
+  return out.sort((a, b) => b.length - a.length).slice(0, 6);
+}
+async function vaatGo(q) {
+  q = q.trim(); if (!q) return;
+  const words = vaatWords(q); if (!words.length) { vaatOn = false; mxLabels(); search(q); return; }
+  addRecent(q);
+  $("#out").innerHTML = `<p class="empty">${X("loading")}</p>`;
+  try { const rows = await mxMerge(words, 150); if (!rows.length) { mxOff(); $("#out").innerHTML = `<p class="empty">${X("none")}</p>`; return; } mxShow(rows, { title: X("vaatTitle"), hint: X("vaatHint"), words, badge: true }); }
+  catch (e) { $("#out").innerHTML = `<p class="empty">Error: ${esc(e.message)}</p>`; }
+}
+
+/* 🌱 the week's resolve: one passage a day and a quiet tick at night, kept on this phone only */
+const skGet = () => { try { return JSON.parse(store.get("k_sk", "null")); } catch { return null; } };
+const skSet = (o) => store.set("k_sk", JSON.stringify(o));
+const SKW = { gu: ["ર", "સો", "મં", "બુ", "ગુ", "શુ", "શ"], hi: ["र", "सो", "मं", "बु", "गु", "शु", "श"], en: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"] };
+const dayDiff = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 864e5);
+let skRow = null, skRowKey = "";
+async function skPassage(sk, d) {
+  const key = sk.id + sk.start + d; if (skRowKey === key) return skRow;
+  const def = SKS.find((s) => s.id === sk.id); if (!def) return null;
+  try {
+    const rows = (await mxMerge(def.w, 100)).filter((r) => { const n = String(r.text).length; return n >= 60 && n <= 260; });
+    skRow = rows.length ? rows[(parseInt(sk.start.replace(/-/g, ""), 10) + d * 7919) % rows.length] : null; skRowKey = key;
+  } catch { skRow = null; }
+  return skRow;
+}
+async function drawSk() {
+  const el = $("#mxSk"); if (!el) return;
+  const sk = skGet(), L = SKW[ui] || (ui === "sa" ? SKW.hi : SKW.gu);
+  el.hidden = false;
+  if (!sk) {
+    el.innerHTML = `<div class="td-tg">${X("sk")}</div><div class="mx-sub">${X("skPick")}</div><div class="chips mx-skp">${SKS.map((s) => `<button type="button" class="chip" data-sk="${s.id}">${esc(lab(s))}</button>`).join("")}</div>`;
+    el.querySelectorAll("[data-sk]").forEach((b) => b.onclick = () => { skSet({ id: b.dataset.sk, start: istDay(), done: {} }); skRowKey = ""; drawSk(); });
+    return;
+  }
+  const def = SKS.find((s) => s.id === sk.id) || SKS[0], d = dayDiff(sk.start, istDay()), got = Object.values(sk.done || {}).filter((v) => v === 1).length;
+  if (d > 6) {
+    el.innerHTML = `<div class="td-tg">${X("sk")} · ${esc(lab(def))}</div><div class="td-tq" style="text-align:center">${X("skSum", got)}</div><div class="td-tb"><button type="button" class="td-play" id="skNew">${X("skNew")}</button></div>`;
+    $("#skNew").onclick = () => { skSet(null); skRowKey = ""; drawSk(); };
+    return;
+  }
+  const today = istDay(), mine = (sk.done || {})[today];
+  const dots = [...Array(7)].map((_, i) => { const day = new Date(Date.parse(sk.start) + i * 864e5), key = day.toISOString().slice(0, 10), v = (sk.done || {})[key];
+    return `<span class="sk-dot${v === 1 ? " f" : v === 0 ? " m" : ""}${i === d ? " t" : ""}">${v === 1 ? "✓" : esc(L[day.getUTCDay()])}</span>`; }).join("");
+  const paint = (r) => {
+    el.innerHTML = `<div class="td-tg">${X("sk")} · ${esc(lab(def))} · ${X("skDay", d + 1)}</div><div class="sk-dots">${dots}</div>`
+      + (r ? `<div class="td-tq">“${esc(String(scText(r.text, r.roman)).trim())}”</div><div class="td-tm">🎙 ${esc(spn(r.speaker))} · ${fmt(r.start_sec)}</div><div class="td-tb"><button type="button" class="td-play" id="skPlay">${X("listen")}</button><button type="button" class="ic" id="skShare" aria-label="share">📤</button></div>` : "")
+      + `<div class="mx-sub" style="margin-top:12px">${mine === undefined ? X("skAsk") : X("skSaved")}</div><div class="td-tb"><button type="button" id="skYes"${mine === 1 ? ' class="on"' : ""}>${X("skDid")}</button><button type="button" id="skNo"${mine === 0 ? ' class="on"' : ""}>${X("skMissed")}</button></div>`
+      + `<div style="text-align:right;margin-top:8px"><button type="button" class="link" id="skChg">${X("skChange")}</button></div>`;
+    if (r) { $("#skPlay").onclick = () => play(r.youtube_id, r.start_sec, r); $("#skShare").onclick = () => showShare({ ...r, speaker: spn(r.speaker) }); }
+    const mark = (v) => { sk.done = sk.done || {}; sk.done[today] = v; skSet(sk); drawSk(); };
+    $("#skYes").onclick = () => mark(1); $("#skNo").onclick = () => mark(0);
+    $("#skChg").onclick = (e) => { const b = e.currentTarget; if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = X("skSure"); setTimeout(() => { if (b.isConnected) { delete b.dataset.sure; b.textContent = X("skChange"); } }, 4000); return; } skSet(null); skRowKey = ""; drawSk(); };
+  };
+  paint(skRowKey === sk.id + sk.start + d ? skRow : null);
+  const r = await skPassage(sk, d); if (r) paint(r);
+}
+
+/* 🖼 the share poster: a framed picture in the site's own colours, sent as a picture */
+function posterCaption(r) {
+  const link = `https://www.youtube.com/watch?v=${r.youtube_id}&t=${r.start_sec || 0}s`;
+  const p = [[r.title, spn(r.speaker)].filter(Boolean).join(" · "), `${T[ui].listen} ${link}`];
+  if (pref.shname) p.push(T[ui].brand + "  " + location.origin + location.pathname);
+  return p.filter(Boolean).join("\n\n");
+}
+async function drawPoster(r) {
+  try { await document.fonts.ready; await Promise.all(["400", "600", "700"].map((w) => document.fonts.load(`${w} 40px "Noto Serif Gujarati"`, "કચ્છ"))); } catch {}
+  const cs = getComputedStyle(document.documentElement), v = (n, d) => cs.getPropertyValue(n).trim() || d;
+  const W = 1080, H = 1350, c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
+  const paper = v("--paper", "#f3e9d8"), cardc = v("--card", "#fbf5ea"), maroon = v("--maroon", "#6e1f14"), gold = v("--gold", "#b8862f"), ink = v("--ink", "#2b1a12"), ink2 = v("--ink-2", "#6d5646"), gu = v("--gu", "serif");
+  const g = x.createRadialGradient(W / 2, H * 0.42, 90, W / 2, H / 2, H * 0.82); g.addColorStop(0, cardc); g.addColorStop(0.7, paper); g.addColorStop(1, v("--paper-2", "#e6d3ad"));
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  x.strokeStyle = maroon; x.lineWidth = 7; x.strokeRect(36, 36, W - 72, H - 72); x.lineWidth = 2; x.strokeRect(54, 54, W - 108, H - 108);
+  const corner = (ox, oy, sx, sy) => { x.save(); x.translate(ox, oy); x.scale(sx, sy); x.strokeStyle = maroon; x.lineWidth = 3;
+    x.beginPath(); x.moveTo(0, 120); x.lineTo(0, 38); x.quadraticCurveTo(0, 0, 38, 0); x.lineTo(120, 0); x.stroke();
+    x.beginPath(); x.moveTo(26, 26); x.bezierCurveTo(74, 24, 90, 58, 64, 74); x.bezierCurveTo(46, 84, 30, 68, 44, 56); x.stroke();
+    x.fillStyle = gold; x.beginPath(); x.arc(26, 26, 8, 0, 7); x.fill(); x.restore(); };
+  corner(54, 54, 1, 1); corner(W - 54, 54, -1, 1); corner(54, H - 54, 1, -1); corner(W - 54, H - 54, -1, -1);
+  const diamond = (cx, cy, s, col) => { x.fillStyle = col; x.beginPath(); x.moveTo(cx, cy - s); x.lineTo(cx + s, cy); x.lineTo(cx, cy + s); x.lineTo(cx - s, cy); x.closePath(); x.fill(); };
+  const divider = (y) => { x.strokeStyle = maroon; x.lineWidth = 2; x.beginPath(); x.moveTo(W / 2 - 250, y); x.lineTo(W / 2 - 30, y); x.moveTo(W / 2 + 30, y); x.lineTo(W / 2 + 250, y); x.stroke(); diamond(W / 2, y, 11, maroon); diamond(W / 2 - 30, y, 5, gold); diamond(W / 2 + 30, y, 5, gold); };
+  x.textAlign = "center"; x.textBaseline = "alphabetic";
+  x.fillStyle = maroon; x.font = `700 42px ${gu}`; x.fillText(T[ui].brand.replace(/^—\s*/, ""), W / 2, 190);
+  divider(232);
+  const body = "“" + String(scText(r.text || "", r.roman)).trim() + "”", maxW = W - 280, top = 300, avail = 700;
+  let size = 64, lines; do { x.font = `${size}px ${gu}`; lines = wrapLines(x, body, maxW); size -= 4; } while (lines.length * (size + 4) * 1.55 > avail && size > 32);
+  size += 4; x.font = `${size}px ${gu}`;
+  const lh = size * 1.6, maxLines = Math.floor(avail / lh);
+  if (lines.length > maxLines) { lines = lines.slice(0, maxLines); lines[maxLines - 1] = lines[maxLines - 1].replace(/\s*\S*$/, "") + " …”"; }
+  x.fillStyle = maroon; const y0 = top + (avail - lines.length * lh) / 2 + size;
+  lines.forEach((l, i) => x.fillText(l, W / 2, y0 + i * lh));
+  divider(1040);
+  x.fillStyle = maroon; x.font = `700 40px ${gu}`; x.fillText(spn(r.speaker) || "", W / 2, 1110);
+  x.fillStyle = ink2; x.font = `28px ${gu}`;
+  let sub = [r.title, fmt(r.start_sec || 0)].filter(Boolean).join("  ·  ");
+  while (x.measureText(sub).width > W - 240 && sub.length > 8) sub = sub.slice(0, -2);
+  if (sub !== [r.title, fmt(r.start_sec || 0)].filter(Boolean).join("  ·  ")) sub += "…";
+  x.fillText(sub, W / 2, 1160);
+  if (pref.shname) { x.fillStyle = ink2; x.font = `26px ${gu}`; x.fillText(location.host + location.pathname, W / 2, 1262); }
+  return c;
+}
+let spFile = null;
+async function showShare(r) {
+  const txt = shareText(r); spFile = null;
+  showInfo(T[ui].shTitle, `<div class="share"><div id="shCardOut" class="sh-poster"><p class="empty">${X("making")}</p></div>
+    <div class="acts3"><button type="button" id="shWa" class="pri" disabled><span>🟢</span>${T[ui].shWa}</button><button type="button" id="shSave" disabled><span>💾</span>${X("savePic")}</button><button type="button" id="shCopy"><span>📋</span>${T[ui].shCopy}</button></div>
+    <details class="sh-txt"><summary>${X("textOnly")}</summary><div class="q">${esc(txt)}</div><a id="shWaT" href="https://wa.me/?text=${encodeURIComponent(txt)}" target="_blank" rel="noopener">🟢 ${X("sendText")}</a></details></div>`);
+  $("#shCopy").onclick = async () => { try { await navigator.clipboard.writeText(txt); toast(T[ui].copied); } catch { const q = $(".share .q"); const d = q.closest("details"); if (d) d.open = true; const rg = document.createRange(); rg.selectNodeContents(q); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(rg); } };
+  let c; try { c = await drawPoster(r); } catch { $("#shCardOut").innerHTML = ""; return; }
+  const blob = await new Promise((res) => c.toBlob(res, "image/png"));
+  if (!$("#shCardOut")) return;
+  spFile = new File([blob], "kutch-satsang.png", { type: "image/png" });
+  $("#shCardOut").innerHTML = `<img src="${c.toDataURL("image/png")}" alt="${esc(T[ui].shCard)}">`;
+  const save = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "kutch-satsang.png"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); };
+  $("#shSave").disabled = false; $("#shWa").disabled = false;
+  $("#shSave").onclick = save;
+  $("#shWa").onclick = async () => {
+    if (navigator.canShare && navigator.canShare({ files: [spFile] })) { try { await navigator.share({ files: [spFile], text: posterCaption(r) }); } catch {} return; }
+    save(); toast(X("savedAttach")); setTimeout(() => window.open("https://wa.me/?text=" + encodeURIComponent(posterCaption(r)), "_blank"), 900);
+  };
+}
+
+/* wiring: build the little pieces of page, then keep their words in step with the site language */
+function mxLabels() {
+  const v = $("#mxVaat"); if (!v) return;
+  v.textContent = X("vaat"); v.classList.toggle("on", vaatOn);
+  $("#mxVaatHint").textContent = vaatOn ? X("vaatHint") : ""; $("#mxVaatHint").hidden = !vaatOn;
+  $("#q").placeholder = vaatOn ? X("vaatPh") : T[ui].ph;
+  $("#mxMoods").innerHTML = `<div class="mx-h">${X("mood")}</div><div class="mx-sub">${X("moodSub")}</div><div class="chips">${MOODS.map((m) => `<button type="button" class="chip" data-m="${m.id}">${esc(lab(m))}</button>`).join("")}</div>`;
+  $("#mxMoods").querySelectorAll("[data-m]").forEach((b) => b.onclick = () => moodGo(MOODS.find((m) => m.id === b.dataset.m)));
+  drawSk();
+}
+(function mxInit() {
+  $(".filters").insertAdjacentHTML("afterend", `<div class="mx-modes"><button type="button" class="chip" id="mxVaat"></button><span class="mx-hint" id="mxVaatHint" hidden></span></div><section class="mx-moods" id="mxMoods"></section>`);
+  $("#out").insertAdjacentHTML("beforebegin", `<div id="mxBar" hidden></div>`);
+  $("#today").insertAdjacentHTML("afterend", `<section class="today mx-sk" id="mxSk" hidden></section>`);
+  $("#mxVaat").onclick = () => { vaatOn = !vaatOn; mxLabels(); if (vaatOn) $("#q").focus(); };
+  const os = $("#sform").onsubmit;
+  $("#sform").onsubmit = function (e) { if (vaatOn) { e.preventDefault(); vaatGo($("#q").value); return false; } return os.call(this, e); };
+  const ap = applyUI; applyUI = function () { ap(); mxLabels(); };
+  mxLabels();
+})();
 </script>
 </body>
 </html>
