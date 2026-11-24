@@ -2492,12 +2492,12 @@ function bhTiles() {
   t.hidden = !!bhSec; $("#bhSecBack").hidden = !bhSec; $("#bhSecBack").textContent = "← " + strip(L.title);
   const g = ui === "en" ? "A" : ui === "gu" ? "અ" : "अ", bn = BN[ui] || BN.en, sk = skGet(); let sub = "";
   if (sk) { const d = dayDiff(sk.start, istDay()); if (d >= 0 && d <= 6) sub = X("skDay", d + 1); }
-  t.innerHTML = [["vis", "🏷\ufe0f", VZ.t[ui] || VZ.t.gu], ["vg", "📚", "વર્ગીકરણ (શાસ્ત્ર + કથા)"], ["az", `<span style="color:var(--maroon);font-weight:700">${g}</span>`, strip(L.gridT)], ["hist", "🕘", strip(L.h)],
+  t.innerHTML = [["vis", "🏷\ufe0f", VZ.t[ui] || VZ.t.gu], ["vg", "📚", "વર્ગીકરણ (શાસ્ત્ર + કથા)"], ["gb", "📖", "શાસ્ત્રો · ગ્રંથ ભંડાર"], ["az", `<span style="color:var(--maroon);font-weight:700">${g}</span>`, strip(L.gridT)], ["hist", "🕘", strip(L.h)],
     ["today", "🪔", strip((TD[ui] || TD.en)[0])], ["mood", "😌", X("mood")], ["vaat", "🧠", strip(X("vaat"))],
     ["sk", "🌱", X("skTile"), "", sub], ["fav", "❤️", bn[2]]]
     .map(([id, ic, lb, cls, sb]) => `<button type="button" class="hm-t ${cls || ""}" data-bt="${id}"><span class="ic">${ic}</span><b>${esc(lb)}</b>${sb ? `<small>${esc(sb)}</small>` : ""}</button>`).join("");
   t.querySelectorAll("[data-bt]").forEach((b) => b.onclick = () => {
-    const id = b.dataset.bt; if (id === "soon") return;
+    const id = b.dataset.bt; if (id === "soon") return; if (id === "gb") { location.href = "granth.html"; return; }
     if (id === "hist" || id === "fav") { showMine(id); return; }
     if (id === "today" || id === "mood" || id === "sk" || id === "vaat") { hmGo(id); return; }
     bhSec = id; bhLetter = ""; history.pushState({ sub: 1, bhl: "", bhs: bhSec }, "", location.href); bhKey = "|"; bhDraw(); scrollTo(0, 0);
