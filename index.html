@@ -2605,21 +2605,31 @@ async function vzRev(box) {
 /* 📚 વર્ગીકરણ (શાસ્ત્ર એપની યાદી varg.json): 10 જૂથ → વિભાગ → નામ. કથામાં કેટલી વાર આવ્યા તે ગણતરી; નામ દબાવો તો કથાના ફકરા */
 let vgData = null, vgTab = "w", gbRdy = false, gbPend = null;
 async function vgLoad() { if (vgData) return; try { vgData = await (await fetch("varg.json")).json(); } catch { vgData = []; } }
+let vgMc = null;
+function vgM() {
+  if (vgMc) return vgMc; if (!vgData || !vzData) return null;
+  const forms = new Set(); vgData.forEach((d) => d.items.forEach((it) => { forms.add(it[0]); it[1].forEach((f) => forms.add(f)); }));
+  const out = vgData.map((d) => ({ ...d, items: d.items.slice() }));
+  vzData.forEach((r) => { if (forms.has(r.word)) return; const c = VC[r.cat - 1]; if (!c) return; const g = c[0], dn = c[1][r.sub - 1]; if (!dn) return; let d = out.find((x) => x.group === g && x.dept === dn); if (!d) { d = { dept: dn, group: g, items: [] }; out.push(d); } d.items.push([r.word, [r.word]]); });
+  return (vgMc = out);
+}
+const vgBoth = () => Promise.all([vgLoad(), vzLoad()]);
+
 function vgDraw() {
   let box = $("#bhVg"); if (!box) { $("#bhHome").insertAdjacentHTML("beforeend", `<div id="bhVg" hidden></div>`); box = $("#bhVg"); }
   const on = bhSec.startsWith("vg"); box.hidden = !on; if (!on) return;
-  if (!vgData) { box.innerHTML = `<p class="vz-n">${VZ.wait}</p>`; vgLoad().then(() => { if (bhSec.startsWith("vg")) vgDraw(); }); return; }
+  if (!vgM()) { box.innerHTML = `<p class="vz-n">${VZ.wait}</p>`; vgBoth().then(() => { if (bhSec.startsWith("vg")) vgDraw(); }); return; }
   const cnt = new Map((bhWords || []).map((x) => [x.word, x.n])), [, g0, d0] = bhSec.split(":");
   const tot = (it) => it[1].concat([it[0]]).reduce((a, f, i, arr) => arr.indexOf(f) === i ? a + (cnt.get(f) || 0) : a, 0);
-  const ORD = ["કુદરત", "લોકો", "દેવ અને પુરાણ", "સ્થળ", "વસ્તુઓ", "ભોજન", "સમય-તિથિ", "શરીર", "સંખ્યા-માપ", "ગુણ અને પ્રસંગ"], groups = [...new Set(vgData.map((d) => d.group))].sort((x, y) => ORD.indexOf(x) - ORD.indexOf(y));
+  const ORD = ["કુદરત", "લોકો", "દેવ અને પુરાણ", "સ્થળ", "વસ્તુઓ", "ભોજન", "સમય-તિથિ", "શરીર", "સંખ્યા-માપ", "ગુણ અને પ્રસંગ"], groups = [...new Set(vgM().map((d) => d.group))].sort((x, y) => ORD.indexOf(x) - ORD.indexOf(y));
   if (g0 && d0) {
-    const d = vgData.find((x) => x.group === g0 && x.dept === d0); if (!d) { box.innerHTML = ""; return; }
+    const d = vgM().find((x) => x.group === g0 && x.dept === d0); if (!d) { box.innerHTML = ""; return; }
     const its = d.items.map((it) => ({ it, n: tot(it) })).sort((a, b) => b.n - a.n);
     box.innerHTML = `<div class="vz-h"><span>${esc(d0)} · ${num(its.length)} નામ</span><u></u></div><div class="bh-find">${its.map((x) => { const w = x.it[1].concat([x.it[0]]).filter((f, i, a) => a.indexOf(f) === i).sort((a, b) => (cnt.get(b) || 0) - (cnt.get(a) || 0))[0]; return `<button type="button" class="bh-w" data-w="${esc(w)}" ${x.n ? "" : "style=\"opacity:.5\""}><span>${esc(x.it[0])}</span><b>${x.n ? num(x.n) : "—"}</b></button>`; }).join("")}</div><p class="vz-n">— = કથામાં હજી આવ્યું નથી. શાસ્ત્રની ગણતરી જોડવી બાકી.</p>`;
     bhBind(box); return;
   }
   if (g0) {
-    const ds = vgData.filter((d) => d.group === g0);
+    const ds = vgM().filter((d) => d.group === g0);
     box.innerHTML = `<div class="vz-h"><span>${esc(g0)} · ${num(ds.length)} વિભાગ</span><u></u></div><div class="vz-g">${ds.map((d) => { const n = d.items.reduce((a, it) => a + tot(it), 0); return `<button type="button" class="vz-c" data-vd="${esc(d.dept)}"><b>${esc(d.dept)}</b><small>${num(d.items.length)} નામ${n ? " · કથામાં " + num(n) : ""}</small></button>`; }).join("")}</div>`;
     box.querySelectorAll("[data-vd]").forEach((b) => b.onclick = () => vzGo("vg:" + g0 + ":" + b.dataset.vd)); return;
   }
@@ -2627,7 +2637,7 @@ function vgDraw() {
   const tab = vgTab;
   const seg = `<div class="vg-seg">${[["w", "શબ્દ"], ["c", "બાળવાર્તા"], ["b", "ભાવ ચરિત્ર"]].map(([k, n]) => `<button type="button" data-vgt="${k}" class="${tab === k ? "on" : ""}">${n}</button>`).join("")}</div>`;
   if (tab !== "w") { box.innerHTML = `<div class="vz-h"><span>🏺 શબ્દ ભંડાર</span><u></u></div>${seg}<p class="vz-n">${tab === "c" ? "🧒 બાળવાર્તા" : "💗 ભાવ ચરિત્ર"}: કથાના સાચા ફકરા પરથી વાર્તાઓ બને છે. હજી તૈયાર થઈ રહી છે.</p>`; box.querySelectorAll("[data-vgt]").forEach((b) => b.onclick = () => { vgTab = b.dataset.vgt; vgDraw(); }); return; }
-  box.innerHTML = `<div class="vz-h"><span>🏺 શબ્દ ભંડાર</span><u></u></div><p class="vz-n" style="margin-top:0">કથા અને શાસ્ત્ર બંનેનું એક વર્ગીકરણ</p>${seg}<button type="button" class="vz-rv" id="vzRv2">🔔 ${VZ.rv}</button><div class="vg-grid">${groups.map((g) => { const ds = vgData.filter((d) => d.group === g); const n = ds.reduce((a, d) => a + d.items.reduce((b, it) => b + tot(it), 0), 0), nm = ds.reduce((a, d) => a + d.items.length, 0); return `<button type="button" class="vg-c" data-vg="${esc(g)}"><i>${IC[g] || "•"}</i><b>${esc(g)}</b><small>${num(ds.length)} વિભાગ · ${num(nm)} નામ${n ? " · કથામાં " + num(n) : ""}</small></button>`; }).join("")}</div><button type="button" class="vz-c" id="vzOld" style="display:block;margin-top:14px;width:100%"><b>🏷 કથા-વિષય (જૂના વિભાગ)</b><small>કથાના શબ્દોની પહેલાંની ગોઠવણ, એમ જ સચવાયેલી</small></button>`;
+  box.innerHTML = `<div class="vz-h"><span>🏺 શબ્દ ભંડાર</span><u></u></div><p class="vz-n" style="margin-top:0">કથા અને શાસ્ત્ર બંનેનું એક વર્ગીકરણ</p>${seg}<button type="button" class="vz-rv" id="vzRv2">🔔 ${VZ.rv}</button><div class="vg-grid">${groups.map((g) => { const ds = vgM().filter((d) => d.group === g); const n = ds.reduce((a, d) => a + d.items.reduce((b, it) => b + tot(it), 0), 0), nm = ds.reduce((a, d) => a + d.items.length, 0); return `<button type="button" class="vg-c" data-vg="${esc(g)}"><i>${IC[g] || "•"}</i><b>${esc(g)}</b><small>${num(ds.length)} વિભાગ · ${num(nm)} નામ${n ? " · કથામાં " + num(n) : ""}</small></button>`; }).join("")}</div><button type="button" class="vz-c" id="vzOld" style="display:block;margin-top:14px;width:100%"><b>🏷 કથા-વિષય (જૂના વિભાગ)</b><small>કથાના શબ્દોની પહેલાંની ગોઠવણ, એમ જ સચવાયેલી</small></button>`;
   box.querySelectorAll("[data-vgt]").forEach((b) => b.onclick = () => { vgTab = b.dataset.vgt; vgDraw(); });
   $("#vzRv2").onclick = () => vzGo("vis:rev"); $("#vzOld").onclick = () => vzGo("vis");
   box.querySelectorAll("[data-vg]").forEach((b) => b.onclick = () => vzGo("vg:" + b.dataset.vg));
@@ -2665,7 +2675,7 @@ window.addEventListener("message", (e) => { if (e.origin === location.origin && 
 const VG_IC = { "કુદરત": "🌿", "લોકો": "👥", "દેવ અને પુરાણ": "🔱", "સ્થળ": "📍", "વસ્તુઓ": "🏺", "ભોજન": "🍽", "સમય-તિથિ": "🗓", "શરીર": "🧍", "સંખ્યા-માપ": "🔢", "ગુણ અને પ્રસંગ": "🪔" };
 const VG_ORD = Object.keys(VG_IC);
 function bhLanding(t, g, azLbl, bn, sub) {
-  if (!vgData) { t.className = "bh-land"; t.innerHTML = `<p class="vz-n">${VZ.wait}</p>`; vgLoad().then(() => { if (!bhSec) bhTiles(); }); return; }
+  if (!vgM()) { t.className = "bh-land"; t.innerHTML = `<p class="vz-n">${VZ.wait}</p>`; vgBoth().then(() => { if (!bhSec) bhTiles(); }); return; }
   const cnt = new Map((bhWords || []).map((x) => [x.word, x.n])), tot = (it) => it[1].concat([it[0]]).reduce((a, f, i, arr) => arr.indexOf(f) === i ? a + (cnt.get(f) || 0) : a, 0);
   const seg = `<div class="vg-seg">${[["w", "શબ્દ"], ["c", "બાળવાર્તા"], ["b", "ભાવ ચરિત્ર"]].map(([k, n]) => `<button type="button" data-vgt="${k}" class="${vgTab === k ? "on" : ""}">${n}</button>`).join("")}</div>`;
   const tile = (id, ic, lb, sb) => `<button type="button" class="hm-t" data-bt="${id}"><span class="ic">${ic}</span><b>${esc(lb)}</b>${sb ? `<small>${esc(sb)}</small>` : ""}</button>`;
@@ -2674,9 +2684,8 @@ function bhLanding(t, g, azLbl, bn, sub) {
   else {
     h += `<div class="vg-qr"><button type="button" data-bt="rev">🔔 તપાસવાના શબ્દો</button><button type="button" data-bt="gq:inbox">💬 પ્રશ્નો-સૂચનો</button></div>`;
     h += `<div class="vg-q">${[["gq:dept:ભક્તો", "🙏 ભક્તો"], ["gq:dept:સંતો", "🪷 સંતો"], ["gq:dept:ગામ-પ્રદેશ", "🏘 ગામ-સ્થળ"], ["gq:timeline", "📜 સમયરેખા"], ["gq:gloss", "📖 શબ્દ-અર્થ"], ["az", "અ અક્ષર"]].map(([id, lb]) => `<button type="button" data-bt="${id}">${lb}</button>`).join("")}</div>`;
-    h += `<div class="vg-grid">${VG_ORD.map((gn) => { const ds = vgData.filter((d) => d.group === gn); if (!ds.length) return ""; const n = ds.reduce((a, d) => a + d.items.reduce((b, it) => b + tot(it), 0), 0), nm = ds.reduce((a, d) => a + d.items.length, 0); return `<button type="button" class="vg-c" data-vg="${esc(gn)}"><i>${VG_IC[gn]}</i><b>${esc(gn)}</b><small>${num(ds.length)} વિભાગ · ${num(nm)} નામ${n ? " · કથામાં " + num(n) : ""}</small></button>`; }).join("")}</div>`;
+    h += `<div class="vg-grid">${VG_ORD.map((gn) => { const ds = vgM().filter((d) => d.group === gn); if (!ds.length) return ""; const n = ds.reduce((a, d) => a + d.items.reduce((b, it) => b + tot(it), 0), 0), nm = ds.reduce((a, d) => a + d.items.length, 0); return `<button type="button" class="vg-c" data-vg="${esc(gn)}"><i>${VG_IC[gn]}</i><b>${esc(gn)}</b><small>${num(ds.length)} વિભાગ · ${num(nm)} નામ${n ? " · કથામાં " + num(n) : ""}</small></button>`; }).join("")}</div>`;
     h += `<div class="vz-h"><span>મારું અને આજે</span><u></u></div><div class="bh-tiles2">${tile("today", "🪔", String(((TD[ui] || TD.en)[0]) || "").replace(/^\S+\s+/, "")) + tile("mood", "😌", X("mood")) + tile("vaat", "🧠", String(X("vaat")).replace(/^\S+\s+/, "")) + tile("sk", "🌱", X("skTile"), sub) + tile("hist", "🕘", String(bhT().h).replace(/^\S+\s+/, "")) + tile("fav", "❤️", bn[2]) + tile("gq:tab:katha", "📚", "મારી કથાઓ")}</div>`;
-    h += `<button type="button" class="vz-c" data-bt="vis" style="display:block;margin-top:14px;width:100%"><b>🏷 કથા-વિષય (જૂના વિભાગ)</b><small>કથાના શબ્દોની પહેલાંની ગોઠવણ, એમ જ સચવાયેલી</small></button>`;
   }
   t.className = "bh-land"; t.innerHTML = h;
   t.querySelectorAll("[data-vgt]").forEach((b) => b.onclick = () => { vgTab = b.dataset.vgt; bhTiles(); });
