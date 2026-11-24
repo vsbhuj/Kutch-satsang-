@@ -153,7 +153,7 @@ async function gemini(key: string, model: string, url: string, from: number, to:
 
 async function transcribe(c: Record<string, string>, yid: string, from: number, to: number, lang: string): Promise<Seg[]> {
   const url = `https://www.youtube.com/watch?v=${yid}`;
-  const models = [c.model || "gemini-3.5-flash", "gemini-3.5-flash", "gemini-3.8-flash", "gemini-3.7-flash", "gemini-flash-latest"];
+  const models = [c.model || "gemini-3.5-flash", "gemini-3.5-flash", "gemini-3.8-flash", "gemini-3.6-flash", "gemini-3.7-flash", "gemini-flash-latest"];
   const errs: string[] = [];
   let allDaily = true, wait = 0;
   for (const m of [...new Set(models)]) {
@@ -198,7 +198,7 @@ Translate it into ${TARGET[to]}. Keep the meaning and the speaker's tone. Keep n
 Return only the translation, with no notes.
 
 ${text}`;
-  const models = [c.model || "gemini-3.5-flash", "gemini-3.5-flash", "gemini-3.8-flash", "gemini-flash-latest"];
+  const models = [c.model || "gemini-3.5-flash", "gemini-3.5-flash", "gemini-3.8-flash", "gemini-3.6-flash", "gemini-flash-latest"];
   const errs: string[] = [];
   for (const m of [...new Set(models)]) {
     for (let attempt = 0; attempt < 2; attempt++) {
@@ -433,7 +433,7 @@ const SCHEMA: Record<string, any> = {
 };
 
 async function studioGemini(c: Record<string, string>, prompt: string, schema: any) {
-  const models = [c.model || "gemini-3.5-flash", "gemini-3.5-flash", "gemini-3.8-flash", "gemini-3.7-flash", "gemini-flash-latest"];
+  const models = [c.model || "gemini-3.5-flash", "gemini-3.5-flash", "gemini-3.8-flash", "gemini-3.6-flash", "gemini-3.7-flash", "gemini-flash-latest"];
   const errs: string[] = [];
   // the edge worker is stopped after ~150 s, so keep every call short: little thinking, a hard time limit
   const started = Date.now();
