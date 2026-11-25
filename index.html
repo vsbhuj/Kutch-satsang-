@@ -103,7 +103,7 @@ h1{font-family:var(--gu);font-weight:700;color:var(--maroon);font-size:clamp(40p
 .bh-c .bt{display:flex;gap:6px}.bh-c .bt button{border:1px solid var(--maroon);background:var(--paper);color:var(--ink);border-radius:8px;padding:6px 10px;font-family:var(--gu);cursor:pointer}.bh-c .bt .on{background:var(--maroon);color:var(--on-accent)}
 #bnav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;background:var(--card);border-top:2px solid var(--maroon);padding:6px 6px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 14px rgba(60,30,10,.12)}
 #bnav button{flex:1;min-width:0;border:0;background:none;color:var(--ink-2);font-family:var(--gu);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;padding:2px 0}
-#bnav button span{font-size:21px;line-height:1.1}#bnav button b{font-weight:400;font-size:calc(11px * var(--fs))}#bnav button.on{color:var(--maroon)}#bnav button.on b{font-weight:700}
+#bnav button span{font-size:21px;line-height:1.1}#bnav button b{font-weight:400;font-size:calc(11px * var(--fs))}#bnav button span{display:flex;align-items:center;justify-content:center;width:52px;height:30px;border-radius:999px;transition:background .15s}#bnav button.on{color:var(--maroon)}#bnav button.on span{background:color-mix(in srgb,var(--maroon) 16%,transparent);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--maroon) 35%,transparent)}#bnav button.on b{font-weight:700}#bnav button:not(.on){opacity:.75}
 .gear{display:none!important}body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
 body.adm #bnav,body.lvfull #bnav,body.gbfull #bnav{display:none}body.gbfull #gbView{bottom:0!important}body.adm{padding-bottom:0}
 .today .td-tb button.td-play{flex:1;background:var(--maroon);color:var(--on-accent);border-color:var(--maroon);font-size:calc(15px * var(--fs));padding:10px 4px}
@@ -2048,7 +2048,7 @@ document.querySelectorAll("#bnav [data-n]").forEach((b) => b.onclick = () => {
 });
 function route() {
   const isAdmin = location.hash === "#admin", isBh = location.hash === "#bhandar", isGb = location.hash === "#shastra" || location.hash === "#youtube" || location.hash === "#shabd";
-  if (!isGb) document.body.classList.remove("gbfull");
+  if (!isGb) { document.body.classList.remove("gbfull"); try { gbDepth = 0; } catch (x) {} }
   $("#home").hidden = isAdmin || isBh || isGb; $("#adminView").hidden = !isAdmin; $("#bhandar").hidden = !isBh; $("#gbView").hidden = !isGb;
   if (isGb) { const w = location.hash === "#youtube" ? "yt" : location.hash === "#shabd" ? "sb" : "gb"; setTimeout(() => gbShow(w), 0); }
   bnState(); bnLabels();
@@ -2070,11 +2070,12 @@ window.kathaYtData = () => ytLive || (ytLive = (async () => {
 })().catch((e) => { ytLive = null; throw e; }));
 /* શાસ્ત્રો/શબ્દ ભંડારમાંથી વીડિયો: એપનો મુખ્ય YouTube પ્લેયર જ (અલગ પાનું નહીં) */
 window.kathaPlay = (v, t, text) => play(v.youtube_id, t, { video_id: v.id, youtube_id: v.youtube_id, title: v.title, speaker: v.speaker, start_sec: t, text: text || "" });
-let gbJump = null, wantHome = false;
+let gbJump = null, wantHome = false, gbFromLand = false;
 const isGbH = (h) => h === "#shastra" || h === "#youtube" || h === "#shabd";
 function gbReset() { const f = $("#gbf_gb"); if (f && gbRdy) f.contentWindow.postMessage({ gq: "tab:" + (gbWant === "yt" ? "yt" : gbWant === "sb" ? "topics" : "home") }, location.origin); }
 function subGo(h) { if (history.state && history.state.sub) history.replaceState({ sub: 1 }, "", h); else history.pushState({ sub: 1 }, "", h); routeIf(); scrollTo(0, 0); }
 function goTab(name) {
+  gbFromLand = false;
   // અંદરના પાનામાંથી બીજું ટૅબ દબાવો તો એક જ વારમાં ખૂલે: પહેલાં અંદરના પગથિયાં એક સાથે પાછાં
   if (gbDepth > 0 && isGbH(location.hash)) { gbJump = name; const k = gbDepth; gbDepth = 0; history.go(-k); setTimeout(() => { if (gbJump) { const n = gbJump; gbJump = null; gbReset(); goTab(n); } }, 350); return; }
   if (name === "gb" || name === "yt" || name === "sb") { const h = name === "yt" ? "#youtube" : name === "sb" ? "#shabd" : "#shastra"; if (location.hash !== h) subGo(h); return; }
@@ -2091,7 +2092,7 @@ window.addEventListener("popstate", (e) => {
   if (gbIgn) { gbIgn = false; return; }
   if (gbJump) { const n = gbJump; gbJump = null; gbReset(); goTab(n); return; }
   if (wantHome) { wantHome = false; if (location.hash && location.hash !== "#admin") history.replaceState(null, "", location.pathname + location.search); routeIf(); return; }
-  if (gbDepth > 0 && (location.hash === "#shastra" || location.hash === "#youtube" || location.hash === "#shabd")) { const d = (e.state && e.state.gbd) || 0; if (d < gbDepth) { const k = gbDepth - d; gbDepth = d; const f = $("#gbf_gb"); if (f) f.contentWindow.postMessage({ gq: "back", n: k }, location.origin); return; } }
+  if (gbDepth > 0 && (location.hash === "#shastra" || location.hash === "#youtube" || location.hash === "#shabd")) { const d = (e.state && e.state.gbd) || 0; if (d < gbDepth) { const k = gbDepth - d; gbDepth = d; const f = $("#gbf_gb"); if (d === 0 && gbFromLand) { gbFromLand = false; if (f) f.contentWindow.postMessage({ gq: "tab:topics" }, location.origin); history.back(); return; } if (f) f.contentWindow.postMessage({ gq: "back", n: k }, location.origin); return; } }
   if (layerStack.length) { const name = layerStack[layerStack.length - 1]; if (!(e.state && e.state.L === name)) { layerStack.pop(); layerHide(name); } return; }
   routeIf();
   if (location.hash === "#bhandar") { const st = e.state || {}, key = (st.bhl || "") + "|" + (st.bhw || ""), sec = st.bhs || ""; if (key !== bhKey || sec !== bhSec) { bhKey = key; bhSec = sec; bhLetter = st.bhl || ""; bhPage = 0; if (st.bhw) bhOpen(st.bhw, true); else { $("#bhWord").hidden = true; $("#bhList").hidden = false; bhDraw(); } } }
@@ -2741,7 +2742,7 @@ function bhLanding(t, g, azLbl, bn, sub) {
   }
   t.className = "bh-land"; t.innerHTML = h;
   t.querySelectorAll("[data-vgt]").forEach((b) => b.onclick = () => { vgTab = b.dataset.vgt; bhTiles(); });
-  const vo = t.querySelector("#vgOpen"); if (vo) vo.onclick = () => goTab("sb");
+  const vo = t.querySelector("#vgOpen"); if (vo) vo.onclick = () => { if (location.hash === "#bhandar") { history.pushState({ sub: 1 }, "", "#shabd"); routeIf(); } else goTab("sb"); };
 }
 let gbXs = -1;
 function gbExtras() {
@@ -2751,12 +2752,12 @@ function gbExtras() {
 function gbSendX() { const f = $("#gbf_gb"); if (!f || !gbRdy || !vgData || !vzData) return; const ex = gbExtras(); if (ex.length === gbXs) return; gbXs = ex.length; f.contentWindow.postMessage({ gx: ex }, location.origin); }
 let gbCn = -1;
 function gbSendC() { const f = $("#gbf_gb"); if (!f || !gbRdy || !bhWords || bhWords.length === gbCn) return; gbCn = bhWords.length; f.contentWindow.postMessage({ gc: bhWords.map((x) => [x.word, x.n]) }, location.origin); }
-function gbGo(m) { goTab("gb"); Promise.all([vgBoth(), bhLoad()]).then(() => { gbSendX(); gbSendC(); const f = $("#gbf_gb"); if (f && gbRdy) f.contentWindow.postMessage({ gq: m }, location.origin); else gbPend = m; }); }
+function gbGo(m) { if (gbRdy && $("#gbf_gb")) { gbWant = "sb"; } if (location.hash === "#bhandar") { gbFromLand = true; history.pushState({ sub: 1 }, "", "#shabd"); routeIf(); } else goTab("sb"); Promise.all([vgBoth(), bhLoad()]).then(() => { gbSendX(); gbSendC(); const f = $("#gbf_gb"); if (f && gbRdy) { f.contentWindow.postMessage({ gq: "tab:topics" }, location.origin); f.contentWindow.postMessage({ gq: m }, location.origin); } else gbPend = m; }); }
 window.addEventListener("message", (e) => {
   if (e.origin !== location.origin || !e.data) return;
   if (e.data.kg === "depth") { const n = e.data.n | 0; requestAnimationFrame(() => { clearTimeout(gbSwT); $("#gbView").classList.remove("gbswap"); }); document.body.classList.toggle("gbfull", (e.data.s === "reader" || e.data.s === "ytp") && isGbH(location.hash)); if (!(location.hash === "#shastra" || location.hash === "#youtube" || location.hash === "#shabd")) return; if (n > gbDepth) { while (gbDepth < n) { gbDepth++; history.pushState({ sub: 1, gbd: gbDepth }, "", location.href); } } else if (n < gbDepth) { const k = gbDepth - n; gbDepth = n; gbIgn = true; history.go(-k); } return; }
   if (e.data.kg === "ready" && e.data.v !== 2) { const f9 = $("#gbf_gb"); if (f9 && !f9.dataset.rl) { f9.dataset.rl = "1"; gbRdy = false; try { f9.contentWindow.location.replace("granth.html?emb=home&v=" + GBV + "&r=" + Date.now()); } catch (x) {} } return; }
-  if (e.data.kg === "ready") { gbRdy = true; gbSendX(); gbSendC(); Promise.all([vgBoth(), bhLoad()]).then(() => { gbSendX(); gbSendC(); }); { const f0 = $("#gbf_gb"); if (f0 && (gbWant === "yt" || gbWant === "sb") && !gbPend) f0.contentWindow.postMessage({ gq: gbWant === "yt" ? "tab:yt" : "tab:topics" }, location.origin); } if (gbPend) { const f = $("#gbf_gb"); if (f) f.contentWindow.postMessage({ gq: gbPend }, location.origin); gbPend = null; } } });
+  if (e.data.kg === "ready") { gbRdy = true; gbSendX(); gbSendC(); Promise.all([vgBoth(), bhLoad()]).then(() => { gbSendX(); gbSendC(); }); { const f0 = $("#gbf_gb"); if (f0 && (gbWant === "yt" || gbWant === "sb")) f0.contentWindow.postMessage({ gq: gbWant === "yt" ? "tab:yt" : "tab:topics" }, location.origin); } if (gbPend) { const f = $("#gbf_gb"); if (f) f.contentWindow.postMessage({ gq: gbPend }, location.origin); gbPend = null; } } });
 
 /* ઝડપ: શાસ્ત્રોની ફાઈલ ફક્ત ડાઉનલોડ (ખોલ્યા વગર) કરી રાખવી, જેથી ટૅબ ખોલતાં રાહ ઓછી */
 /* શાસ્ત્રો પાછળ તૈયાર થઈ જાય (છુપું), એટલે ટૅપ કરતાં તરત ખૂલે */
