@@ -2048,7 +2048,7 @@ document.querySelectorAll("#bnav [data-n]").forEach((b) => b.onclick = () => {
 function route() {
   const isAdmin = location.hash === "#admin", isBh = location.hash === "#bhandar", isGb = location.hash === "#shastra" || location.hash === "#youtube" || location.hash === "#shabd";
   $("#home").hidden = isAdmin || isBh || isGb; $("#adminView").hidden = !isAdmin; $("#bhandar").hidden = !isBh; $("#gbView").hidden = !isGb;
-  if (isGb) gbShow(location.hash === "#youtube" ? "yt" : location.hash === "#shabd" ? "sb" : "gb");
+  if (isGb) { const w = location.hash === "#youtube" ? "yt" : location.hash === "#shabd" ? "sb" : "gb"; setTimeout(() => gbShow(w), 0); }
   bnState(); bnLabels();
   if (isBh) { loadStats(); showBhandar(); }
   else if (isAdmin) { $("#apass").value = pass; if (pass) login(); }
@@ -2066,7 +2066,7 @@ window.kathaYtData = () => ytLive || (ytLive = (async () => {
   for (let from = 0; ; from += 1000) { const b = await get(`katha_passages?select=video_id,start_sec,text&hidden=not.is.true&order=video_id,start_sec&limit=1000&offset=${from}`); b.forEach((p) => { const v = by.get(p.video_id); if (v) v.passages.push({ start_sec: p.start_sec, text: p.text }); }); if (b.length < 1000) break; }
   return { videos: [...by.values()].filter((v) => v.passages.length) };
 })().catch((e) => { ytLive = null; throw e; }));
-let gbJump = null;
+let gbJump = null, wantHome = false;
 const isGbH = (h) => h === "#shastra" || h === "#youtube" || h === "#shabd";
 function gbReset() { const f = $("#gbf_gb"); if (f && gbRdy) f.contentWindow.postMessage({ gq: "tab:" + (gbWant === "yt" ? "yt" : gbWant === "sb" ? "topics" : "home") }, location.origin); }
 function subGo(h) { if (history.state && history.state.sub) history.replaceState({ sub: 1 }, "", h); else history.pushState({ sub: 1 }, "", h); routeIf(); scrollTo(0, 0); }
@@ -2075,7 +2075,7 @@ function goTab(name) {
   if (gbDepth > 0 && isGbH(location.hash)) { gbJump = name; const k = gbDepth; gbDepth = 0; history.go(-k); return; }
   if (name === "gb" || name === "yt" || name === "sb") { const h = name === "yt" ? "#youtube" : name === "sb" ? "#shabd" : "#shastra"; if (location.hash !== h) subGo(h); else gbReset(); return; }
   if (name === "bh") { if (location.hash !== "#bhandar") { bhLetter = ""; bhKey = "|"; bhSec = ""; subGo("#bhandar"); } }
-  else if (["#bhandar", "#shastra", "#youtube", "#shabd"].includes(location.hash)) { if (history.state && history.state.sub) history.back(); else { history.replaceState(null, "", location.pathname + location.search); routeIf(); } }
+  else if (location.hash && location.hash !== "#admin") { if (history.state && history.state.sub) { wantHome = true; history.back(); } else { history.replaceState(null, "", location.pathname + location.search); routeIf(); } }
 }
 const LAYERS = [["#ov", "ov"], ["#sheet", "sheet"], ["#player", "player"]];
 let layerStack = [];
@@ -2086,6 +2086,7 @@ LAYERS.forEach(([sel, name]) => { const el = $(sel); let vis = !el.hidden; new M
 window.addEventListener("popstate", (e) => {
   if (gbIgn) { gbIgn = false; return; }
   if (gbJump) { const n = gbJump; gbJump = null; gbReset(); goTab(n); return; }
+  if (wantHome) { if (location.hash && location.hash !== "#admin" && e.state && e.state.sub) { history.back(); return; } wantHome = false; if (location.hash && location.hash !== "#admin") history.replaceState(null, "", location.pathname + location.search); }
   if (gbDepth > 0 && (location.hash === "#shastra" || location.hash === "#youtube" || location.hash === "#shabd")) { const d = (e.state && e.state.gbd) || 0; if (d < gbDepth) { const k = gbDepth - d; gbDepth = d; const f = $("#gbf_gb"); if (f) f.contentWindow.postMessage({ gq: "back", n: k }, location.origin); return; } }
   if (layerStack.length) { const name = layerStack[layerStack.length - 1]; if (!(e.state && e.state.L === name)) { layerStack.pop(); layerHide(name); } return; }
   routeIf();
