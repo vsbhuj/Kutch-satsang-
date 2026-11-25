@@ -2023,18 +2023,18 @@ $("#bhWBack").onclick = () => history.back();
 $("#bhFocus").onclick = () => { bhOrder = "f"; bhDrawRes(); }; $("#bhAll").onclick = () => { bhOrder = "a"; bhDrawRes(); };
 const BN = { gu: ["શોધ", "શબ્દ ભંડાર", "મનપસંદ", "સેટિંગ"], en: ["Search", "Treasury", "Favourites", "Settings"], hi: ["खोज", "भंडार", "पसंदीदा", "सेटिंग"], sa: ["अन्वेषणम्", "कोशः", "प्रियाणि", "विन्यासः"] };
 function bnLabels() { const L = BN[ui] || BN.en; $("#bnB").textContent = L[1]; $("#bnS").textContent = L[3]; }
-function bnState() { const h = location.hash; document.body.classList.toggle("adm", h === "#admin"); document.querySelectorAll("#bnav [data-n]").forEach((b) => b.classList.toggle("on", (b.dataset.n === "bh" && h === "#bhandar") || (b.dataset.n === "gb" && h === "#shastra") || (b.dataset.n === "home" && h !== "#bhandar" && h !== "#shastra"))); }
+function bnState() { const h = location.hash; document.body.classList.toggle("adm", h === "#admin"); document.querySelectorAll("#bnav [data-n]").forEach((b) => b.classList.toggle("on", (b.dataset.n === "bh" && (h === "#bhandar" || h === "#shabd")) || (b.dataset.n === "gb" && h === "#shastra") || (b.dataset.n === "home" && h !== "#bhandar" && h !== "#shastra" && h !== "#shabd"))); }
 document.querySelectorAll("#bnav [data-n]").forEach((b) => b.onclick = () => {
   const n = b.dataset.n;
   if (n === "home") { if (location.hash) goTab("home"); else { scrollTo({ top: 0, behavior: "smooth" }); $("#q").focus(); } }
-  else if (n === "bh") goTab("bh");
+  else if (n === "bh") goTab("sb");
   else if (n === "gb" || n === "yt") goTab(n);
   else openSettings(true);
 });
 function route() {
-  const isAdmin = location.hash === "#admin", isBh = location.hash === "#bhandar", isGb = location.hash === "#shastra" || location.hash === "#youtube";
+  const isAdmin = location.hash === "#admin", isBh = location.hash === "#bhandar", isGb = location.hash === "#shastra" || location.hash === "#youtube" || location.hash === "#shabd";
   $("#home").hidden = isAdmin || isBh || isGb; $("#adminView").hidden = !isAdmin; $("#bhandar").hidden = !isBh; $("#gbView").hidden = !isGb;
-  if (isGb) gbShow(location.hash === "#youtube" ? "yt" : "gb");
+  if (isGb) gbShow(location.hash === "#youtube" ? "yt" : location.hash === "#shabd" ? "sb" : "gb");
   bnState(); bnLabels();
   if (isBh) { loadStats(); showBhandar(); }
   else if (isAdmin) { $("#apass").value = pass; if (pass) login(); }
@@ -2044,9 +2044,9 @@ function route() {
 let lastHash = null;
 function routeIf() { if (location.hash !== lastHash) { lastHash = location.hash; route(); } }
 function goTab(name) {
-  if (name === "gb" || name === "yt") { const h = name === "yt" ? "#youtube" : "#shastra"; if (location.hash !== h) { gbDepth = 0; history.pushState({ sub: 1 }, "", h); routeIf(); scrollTo(0, 0); } return; }
+  if (name === "gb" || name === "yt" || name === "sb") { const h = name === "yt" ? "#youtube" : name === "sb" ? "#shabd" : "#shastra"; if (location.hash !== h) { gbDepth = 0; history.pushState({ sub: 1 }, "", h); routeIf(); scrollTo(0, 0); } return; }
   if (name === "bh") { if (location.hash !== "#bhandar") { history.pushState({ sub: 1 }, "", "#bhandar"); bhLetter = ""; bhKey = "|"; bhSec = ""; routeIf(); scrollTo(0, 0); } }
-  else if (["#bhandar", "#shastra", "#youtube"].includes(location.hash)) { if (history.state && history.state.sub) history.back(); else { history.replaceState(null, "", location.pathname + location.search); routeIf(); } }
+  else if (["#bhandar", "#shastra", "#youtube", "#shabd"].includes(location.hash)) { if (history.state && history.state.sub) history.back(); else { history.replaceState(null, "", location.pathname + location.search); routeIf(); } }
 }
 const LAYERS = [["#ov", "ov"], ["#sheet", "sheet"], ["#player", "player"]];
 let layerStack = [];
@@ -2056,7 +2056,7 @@ function layerHide(name) { if (name === "ov") $("#ov").hidden = true; else if (n
 LAYERS.forEach(([sel, name]) => { const el = $(sel); let vis = !el.hidden; new MutationObserver(() => { const v = !el.hidden; if (v === vis) return; vis = v; v ? layerOpen(name) : layerClosed(name); }).observe(el, { attributes: true, attributeFilter: ["hidden"] }); });
 window.addEventListener("popstate", (e) => {
   if (gbIgn) { gbIgn = false; return; }
-  if (gbDepth > 0 && (location.hash === "#shastra" || location.hash === "#youtube")) { const d = (e.state && e.state.gbd) || 0; if (d < gbDepth) { const k = gbDepth - d; gbDepth = d; const f = $("#gbf_gb"); if (f) f.contentWindow.postMessage({ gq: "back", n: k }, location.origin); return; } }
+  if (gbDepth > 0 && (location.hash === "#shastra" || location.hash === "#youtube" || location.hash === "#shabd")) { const d = (e.state && e.state.gbd) || 0; if (d < gbDepth) { const k = gbDepth - d; gbDepth = d; const f = $("#gbf_gb"); if (f) f.contentWindow.postMessage({ gq: "back", n: k }, location.origin); return; } }
   if (layerStack.length) { const name = layerStack[layerStack.length - 1]; if (!(e.state && e.state.L === name)) { layerStack.pop(); layerHide(name); } return; }
   routeIf();
   if (location.hash === "#bhandar") { const st = e.state || {}, key = (st.bhl || "") + "|" + (st.bhw || ""), sec = st.bhs || ""; if (key !== bhKey || sec !== bhSec) { bhKey = key; bhSec = sec; bhLetter = st.bhl || ""; bhPage = 0; if (st.bhw) bhOpen(st.bhw, true); else { $("#bhWord").hidden = true; $("#bhList").hidden = false; bhDraw(); } } }
@@ -2636,7 +2636,7 @@ function vgDraw() {
   if (g0) {
     const ds = vgM().filter((d) => d.group === g0);
     box.innerHTML = `<div class="vz-h"><span>${esc(g0)} · ${num(ds.length)} વિભાગ</span><u></u></div><div class="vz-g">${ds.map((d) => { const n = d.items.reduce((a, it) => a + tot(it), 0); return `<button type="button" class="vz-c" data-vd="${esc(d.dept)}"><b>${esc(d.dept)}</b><small>${num(d.items.length)} નામ${n ? " · કથામાં " + num(n) : ""}</small></button>`; }).join("")}</div>`;
-    box.querySelectorAll("[data-vd]").forEach((b) => b.onclick = () => vzGo("vg:" + g0 + ":" + b.dataset.vd)); return;
+    box.querySelectorAll("[data-vd]").forEach((b) => b.onclick = () => gbGo("dept:" + b.dataset.vd)); return;
   }
   const IC = { "કુદરત": "🌿", "લોકો": "👥", "દેવ અને પુરાણ": "🔱", "સ્થળ": "📍", "વસ્તુઓ": "🏺", "ભોજન": "🍽", "સમય-તિથિ": "🗓", "શરીર": "🧍", "સંખ્યા-માપ": "🔢", "ગુણ અને પ્રસંગ": "🪔" };
   const tab = vgTab;
@@ -2680,9 +2680,9 @@ function gbShow(which) {
   const box = $("#gbView"); const had = !!$("#gbf_gb"); const f = gbMake();
   if (!f.dataset.ok && !$("#gbLoad")) box.insertAdjacentHTML("afterbegin", `<p class="vz-n" id="gbLoad" style="text-align:center;margin-top:40vh">⏳ ખુલે છે…</p>`);
   if (!had) gbWant = which;
-  else if (gbWant !== which) { gbWant = which; if (gbRdy) f.contentWindow.postMessage({ gq: "tab:" + (which === "yt" ? "yt" : "home") }, location.origin); }
+  else if (gbWant !== which) { gbWant = which; if (gbRdy) f.contentWindow.postMessage({ gq: "tab:" + (which === "yt" ? "yt" : which === "sb" ? "topics" : "home") }, location.origin); }
 }
-window.addEventListener("message", (e) => { if (e.origin === location.origin && e.data && e.data.kg === "bhandar") goTab("bh"); });
+window.addEventListener("message", (e) => { if (e.origin === location.origin && e.data && e.data.kg === "bhmore") goTab("bh"); });
 
 /* 🏺 શબ્દ ભંડાર: ભંડાર + વર્ગીકરણ + પ્લાન એક જગ્યાએ */
 const VG_IC = { "કુદરત": "🌿", "લોકો": "👥", "દેવ અને પુરાણ": "🔱", "સ્થળ": "📍", "વસ્તુઓ": "🏺", "ભોજન": "🍽", "સમય-તિથિ": "🗓", "શરીર": "🧍", "સંખ્યા-માપ": "🔢", "ગુણ અને પ્રસંગ": "🪔" };
@@ -2697,18 +2697,26 @@ function bhLanding(t, g, azLbl, bn, sub) {
   else {
     h += `<div class="vg-qr"><button type="button" data-bt="rev">🔔 તપાસવાના શબ્દો</button></div>`;
     h += `<div class="vg-q">${[["gq:dept:ભક્તો", "🙏 ભક્તો"], ["gq:dept:સંતો", "🪷 સંતો"], ["gq:dept:ગામ-પ્રદેશ", "🏘 ગામ-સ્થળ"], ["gq:timeline", "📜 સમયરેખા"], ["gq:gloss", "📖 શબ્દ-અર્થ"], ["az", "અ અક્ષર"]].map(([id, lb]) => `<button type="button" data-bt="${id}">${lb}</button>`).join("")}</div>`;
-    h += `<div class="vg-grid">${VG_ORD.map((gn) => { const ds = vgM().filter((d) => d.group === gn); if (!ds.length) return ""; const n = ds.reduce((a, d) => a + d.items.reduce((b, it) => b + tot(it), 0), 0), nm = ds.reduce((a, d) => a + d.items.length, 0); return `<button type="button" class="vg-c" data-vg="${esc(gn)}"><i>${VG_IC[gn]}</i><b>${esc(gn)}</b><small>${num(ds.length)} વિભાગ · ${num(nm)} નામ${n ? " · કથામાં " + num(n) : ""}</small></button>`; }).join("")}</div>`;
+    h += `<button type="button" class="vg-c" id="vgOpen" style="width:100%;margin-bottom:10px"><i>🗂</i><b>વર્ગીકરણ ખોલો</b><small>બધા શાસ્ત્ર + YouTube</small></button>`;
     h += `<div class="vz-h"><span>મારું અને આજે</span><u></u></div><div class="bh-tiles2">${tile("today", "🪔", String(((TD[ui] || TD.en)[0]) || "").replace(/^\S+\s+/, "")) + tile("mood", "😌", X("mood")) + tile("vaat", "🧠", String(X("vaat")).replace(/^\S+\s+/, "")) + tile("sk", "🌱", X("skTile"), sub) + tile("hist", "🕘", String(bhT().h).replace(/^\S+\s+/, "")) + tile("fav", "❤️", bn[2]) + tile("gq:tab:katha", "📚", "મારી કથાઓ")}</div>`;
   }
   t.className = "bh-land"; t.innerHTML = h;
   t.querySelectorAll("[data-vgt]").forEach((b) => b.onclick = () => { vgTab = b.dataset.vgt; bhTiles(); });
-  t.querySelectorAll("[data-vg]").forEach((b) => b.onclick = () => vzGo("vg:" + b.dataset.vg));
+  const vo = t.querySelector("#vgOpen"); if (vo) vo.onclick = () => goTab("sb");
 }
-function gbGo(m) { goTab("gb"); const f = $("#gbf_gb"); if (f && gbRdy) f.contentWindow.postMessage({ gq: m }, location.origin); else gbPend = m; }
+let gbXs = -1;
+function gbExtras() {
+  const forms = new Set(); vgData.forEach((d) => d.items.forEach((it) => { forms.add(it[0]); it[1].forEach((f) => forms.add(f)); }));
+  const out = [], seen = new Set(); vzData.forEach((r) => { if (forms.has(r.word) || seen.has(r.word)) return; const c = VC[r.cat - 1]; if (!c) return; const dn = c[1][r.sub - 1]; if (!dn) return; seen.add(r.word); out.push([dn, r.word]); }); return out;
+}
+function gbSendX() { const f = $("#gbf_gb"); if (!f || !gbRdy || !vgData || !vzData) return; const ex = gbExtras(); if (ex.length === gbXs) return; gbXs = ex.length; f.contentWindow.postMessage({ gx: ex }, location.origin); }
+let gbCn = -1;
+function gbSendC() { const f = $("#gbf_gb"); if (!f || !gbRdy || !bhWords || bhWords.length === gbCn) return; gbCn = bhWords.length; f.contentWindow.postMessage({ gc: bhWords.map((x) => [x.word, x.n]) }, location.origin); }
+function gbGo(m) { goTab("gb"); Promise.all([vgBoth(), bhLoad()]).then(() => { gbSendX(); gbSendC(); const f = $("#gbf_gb"); if (f && gbRdy) f.contentWindow.postMessage({ gq: m }, location.origin); else gbPend = m; }); }
 window.addEventListener("message", (e) => {
   if (e.origin !== location.origin || !e.data) return;
-  if (e.data.kg === "depth") { const n = e.data.n | 0; if (!(location.hash === "#shastra" || location.hash === "#youtube")) return; if (n > gbDepth) { while (gbDepth < n) { gbDepth++; history.pushState({ sub: 1, gbd: gbDepth }, "", location.href); } } else if (n < gbDepth) { const k = gbDepth - n; gbDepth = n; gbIgn = true; history.go(-k); } return; }
-  if (e.data.kg === "ready") { gbRdy = true; { const f0 = $("#gbf_gb"); if (f0 && gbWant === "yt" && !gbPend) f0.contentWindow.postMessage({ gq: "tab:yt" }, location.origin); } if (gbPend) { const f = $("#gbf_gb"); if (f) f.contentWindow.postMessage({ gq: gbPend }, location.origin); gbPend = null; } } });
+  if (e.data.kg === "depth") { const n = e.data.n | 0; if (!(location.hash === "#shastra" || location.hash === "#youtube" || location.hash === "#shabd")) return; if (n > gbDepth) { while (gbDepth < n) { gbDepth++; history.pushState({ sub: 1, gbd: gbDepth }, "", location.href); } } else if (n < gbDepth) { const k = gbDepth - n; gbDepth = n; gbIgn = true; history.go(-k); } return; }
+  if (e.data.kg === "ready") { gbRdy = true; gbSendX(); gbSendC(); Promise.all([vgBoth(), bhLoad()]).then(() => { gbSendX(); gbSendC(); }); { const f0 = $("#gbf_gb"); if (f0 && (gbWant === "yt" || gbWant === "sb") && !gbPend) f0.contentWindow.postMessage({ gq: gbWant === "yt" ? "tab:yt" : "tab:topics" }, location.origin); } if (gbPend) { const f = $("#gbf_gb"); if (f) f.contentWindow.postMessage({ gq: gbPend }, location.origin); gbPend = null; } } });
 
 /* ઝડપ: શાસ્ત્રોની ફાઈલ ફક્ત ડાઉનલોડ (ખોલ્યા વગર) કરી રાખવી, જેથી ટૅબ ખોલતાં રાહ ઓછી */
 /* શાસ્ત્રો પાછળ તૈયાર થઈ જાય (છુપું), એટલે ટૅપ કરતાં તરત ખૂલે */
