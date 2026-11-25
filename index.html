@@ -2670,9 +2670,16 @@ async function exportKatha(limitVideos) {
 $("#exTwo").onclick = () => exportKatha(2); $("#exAll").onclick = () => exportKatha(0);
 
 /* 📖 શાસ્ત્રો અને ▶ YouTube: ગ્રંથ ભંડાર આ જ એપની અંદર (બે ફ્રેમ, એક વાર લોડ થાય) */
+function gbMake() {
+  const box = $("#gbView"); let f = $("#gbf_gb"); if (f) return f;
+  f = document.createElement("iframe"); f.id = "gbf_gb"; f.src = "granth.html?emb=home"; f.title = "granth";
+  f.addEventListener("load", () => { f.dataset.ok = "1"; const l = $("#gbLoad"); if (l) l.remove(); });
+  box.appendChild(f); return f;
+}
 function gbShow(which) {
-  const box = $("#gbView"); let f = $("#gbf_gb");
-  if (!f) { box.insertAdjacentHTML("afterbegin", `<p class="vz-n" id="gbLoad" style="text-align:center;margin-top:40vh">⏳ ખુલે છે…</p>`); f = document.createElement("iframe"); f.id = "gbf_gb"; f.src = "granth.html?emb=home"; f.title = "granth"; f.addEventListener("load", () => { const l = $("#gbLoad"); if (l) l.remove(); }); box.appendChild(f); gbWant = which; }
+  const box = $("#gbView"); const had = !!$("#gbf_gb"); const f = gbMake();
+  if (!f.dataset.ok && !$("#gbLoad")) box.insertAdjacentHTML("afterbegin", `<p class="vz-n" id="gbLoad" style="text-align:center;margin-top:40vh">⏳ ખુલે છે…</p>`);
+  if (!had) gbWant = which;
   else if (gbWant !== which) { gbWant = which; if (gbRdy) f.contentWindow.postMessage({ gq: "tab:" + (which === "yt" ? "yt" : "home") }, location.origin); }
 }
 window.addEventListener("message", (e) => { if (e.origin === location.origin && e.data && e.data.kg === "bhandar") goTab("bh"); });
@@ -2688,7 +2695,7 @@ function bhLanding(t, g, azLbl, bn, sub) {
   let h = `<p class="vz-n" style="margin-top:0">કથા અને શાસ્ત્ર બંનેનું એક વર્ગીકરણ</p>${seg}`;
   if (vgTab !== "w") h += `<p class="vz-n">${vgTab === "c" ? "🧒 બાળવાર્તા" : "💗 ભાવ ચરિત્ર"}: કથાના સાચા ફકરા પરથી વાર્તાઓ બને છે. હજી તૈયાર થઈ રહી છે.</p>`;
   else {
-    h += `<div class="vg-qr"><button type="button" data-bt="rev">🔔 તપાસવાના શબ્દો</button><button type="button" data-bt="gq:inbox">💬 પ્રશ્નો-સૂચનો</button></div>`;
+    h += `<div class="vg-qr"><button type="button" data-bt="rev">🔔 તપાસવાના શબ્દો</button></div>`;
     h += `<div class="vg-q">${[["gq:dept:ભક્તો", "🙏 ભક્તો"], ["gq:dept:સંતો", "🪷 સંતો"], ["gq:dept:ગામ-પ્રદેશ", "🏘 ગામ-સ્થળ"], ["gq:timeline", "📜 સમયરેખા"], ["gq:gloss", "📖 શબ્દ-અર્થ"], ["az", "અ અક્ષર"]].map(([id, lb]) => `<button type="button" data-bt="${id}">${lb}</button>`).join("")}</div>`;
     h += `<div class="vg-grid">${VG_ORD.map((gn) => { const ds = vgM().filter((d) => d.group === gn); if (!ds.length) return ""; const n = ds.reduce((a, d) => a + d.items.reduce((b, it) => b + tot(it), 0), 0), nm = ds.reduce((a, d) => a + d.items.length, 0); return `<button type="button" class="vg-c" data-vg="${esc(gn)}"><i>${VG_IC[gn]}</i><b>${esc(gn)}</b><small>${num(ds.length)} વિભાગ · ${num(nm)} નામ${n ? " · કથામાં " + num(n) : ""}</small></button>`; }).join("")}</div>`;
     h += `<div class="vz-h"><span>મારું અને આજે</span><u></u></div><div class="bh-tiles2">${tile("today", "🪔", String(((TD[ui] || TD.en)[0]) || "").replace(/^\S+\s+/, "")) + tile("mood", "😌", X("mood")) + tile("vaat", "🧠", String(X("vaat")).replace(/^\S+\s+/, "")) + tile("sk", "🌱", X("skTile"), sub) + tile("hist", "🕘", String(bhT().h).replace(/^\S+\s+/, "")) + tile("fav", "❤️", bn[2]) + tile("gq:tab:katha", "📚", "મારી કથાઓ")}</div>`;
@@ -2704,7 +2711,8 @@ window.addEventListener("message", (e) => {
   if (e.data.kg === "ready") { gbRdy = true; { const f0 = $("#gbf_gb"); if (f0 && gbWant === "yt" && !gbPend) f0.contentWindow.postMessage({ gq: "tab:yt" }, location.origin); } if (gbPend) { const f = $("#gbf_gb"); if (f) f.contentWindow.postMessage({ gq: gbPend }, location.origin); gbPend = null; } } });
 
 /* ઝડપ: શાસ્ત્રોની ફાઈલ ફક્ત ડાઉનલોડ (ખોલ્યા વગર) કરી રાખવી, જેથી ટૅબ ખોલતાં રાહ ઓછી */
-setTimeout(() => { try { fetch("granth.html", { cache: "force-cache" }).catch(() => {}); } catch (e) {} }, 4000);
+/* શાસ્ત્રો પાછળ તૈયાર થઈ જાય (છુપું), એટલે ટૅપ કરતાં તરત ખૂલે */
+setTimeout(() => { try { if (!$("#gbf_gb")) gbMake(); } catch (e) {} }, 2500);
 </script>
 </body>
 </html>
