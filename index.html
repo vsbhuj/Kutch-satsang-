@@ -2076,10 +2076,10 @@ function gbReset() { const f = $("#gbf_gb"); if (f && gbRdy) f.contentWindow.pos
 function subGo(h) { if (history.state && history.state.sub) history.replaceState({ sub: 1 }, "", h); else history.pushState({ sub: 1 }, "", h); routeIf(); scrollTo(0, 0); }
 function goTab(name) {
   // અંદરના પાનામાંથી બીજું ટૅબ દબાવો તો એક જ વારમાં ખૂલે: પહેલાં અંદરના પગથિયાં એક સાથે પાછાં
-  if (gbDepth > 0 && isGbH(location.hash)) { gbJump = name; const k = gbDepth; gbDepth = 0; history.go(-k); return; }
+  if (gbDepth > 0 && isGbH(location.hash)) { gbJump = name; const k = gbDepth; gbDepth = 0; history.go(-k); setTimeout(() => { if (gbJump) { const n = gbJump; gbJump = null; gbReset(); goTab(n); } }, 350); return; }
   if (name === "gb" || name === "yt" || name === "sb") { const h = name === "yt" ? "#youtube" : name === "sb" ? "#shabd" : "#shastra"; if (location.hash !== h) subGo(h); return; }
   if (name === "bh") { if (location.hash !== "#bhandar") { bhLetter = ""; bhKey = "|"; bhSec = ""; subGo("#bhandar"); } }
-  else if (location.hash && location.hash !== "#admin") { if (history.state && history.state.sub) { wantHome = true; history.back(); } else { history.replaceState(null, "", location.pathname + location.search); routeIf(); } }
+  else if (location.hash && location.hash !== "#admin") { if (history.state && history.state.sub) { wantHome = true; history.back(); setTimeout(() => { if (wantHome) { wantHome = false; history.replaceState(null, "", location.pathname + location.search); routeIf(); } }, 350); } else { history.replaceState(null, "", location.pathname + location.search); routeIf(); } }
 }
 const LAYERS = [["#ov", "ov"], ["#sheet", "sheet"], ["#player", "player"]];
 let layerStack = [];
@@ -2090,7 +2090,7 @@ LAYERS.forEach(([sel, name]) => { const el = $(sel); let vis = !el.hidden; new M
 window.addEventListener("popstate", (e) => {
   if (gbIgn) { gbIgn = false; return; }
   if (gbJump) { const n = gbJump; gbJump = null; gbReset(); goTab(n); return; }
-  if (wantHome) { if (location.hash && location.hash !== "#admin" && e.state && e.state.sub) { history.back(); return; } wantHome = false; if (location.hash && location.hash !== "#admin") history.replaceState(null, "", location.pathname + location.search); }
+  if (wantHome) { wantHome = false; if (location.hash && location.hash !== "#admin") history.replaceState(null, "", location.pathname + location.search); routeIf(); return; }
   if (gbDepth > 0 && (location.hash === "#shastra" || location.hash === "#youtube" || location.hash === "#shabd")) { const d = (e.state && e.state.gbd) || 0; if (d < gbDepth) { const k = gbDepth - d; gbDepth = d; const f = $("#gbf_gb"); if (f) f.contentWindow.postMessage({ gq: "back", n: k }, location.origin); return; } }
   if (layerStack.length) { const name = layerStack[layerStack.length - 1]; if (!(e.state && e.state.L === name)) { layerStack.pop(); layerHide(name); } return; }
   routeIf();
@@ -2708,9 +2708,10 @@ $("#exTwo").onclick = () => exportKatha(2); $("#exAll").onclick = () => exportKa
 function bnH() { const n = $("#bnav"); if (n) document.documentElement.style.setProperty("--bnh", Math.max(0, innerHeight - n.getBoundingClientRect().top - 2) + "px"); }
 addEventListener("resize", bnH); setTimeout(bnH, 0);
 let gbSwT = 0;
+const GBV = "23"; // granth.html બદલાય ત્યારે આ નંબર બદલવો (ફોનની જૂની નકલ ન વપરાય)
 function gbMake() {
   const box = $("#gbView"); let f = $("#gbf_gb"); if (f) return f;
-  f = document.createElement("iframe"); f.id = "gbf_gb"; f.src = "granth.html?emb=home&v=15"; f.title = "granth";
+  f = document.createElement("iframe"); f.id = "gbf_gb"; f.src = "granth.html?emb=home&v=" + GBV; f.title = "granth";
   f.addEventListener("load", () => { f.dataset.ok = "1"; const l = $("#gbLoad"); if (l) l.remove(); });
   box.appendChild(f); bnH(); return f;
 }
@@ -2754,7 +2755,7 @@ function gbGo(m) { goTab("gb"); Promise.all([vgBoth(), bhLoad()]).then(() => { g
 window.addEventListener("message", (e) => {
   if (e.origin !== location.origin || !e.data) return;
   if (e.data.kg === "depth") { const n = e.data.n | 0; requestAnimationFrame(() => { clearTimeout(gbSwT); $("#gbView").classList.remove("gbswap"); }); document.body.classList.toggle("gbfull", (e.data.s === "reader" || e.data.s === "ytp") && isGbH(location.hash)); if (!(location.hash === "#shastra" || location.hash === "#youtube" || location.hash === "#shabd")) return; if (n > gbDepth) { while (gbDepth < n) { gbDepth++; history.pushState({ sub: 1, gbd: gbDepth }, "", location.href); } } else if (n < gbDepth) { const k = gbDepth - n; gbDepth = n; gbIgn = true; history.go(-k); } return; }
-  if (e.data.kg === "ready" && e.data.v !== 2) { const f9 = $("#gbf_gb"); if (f9 && !f9.dataset.rl) { f9.dataset.rl = "1"; gbRdy = false; f9.src = "granth.html?emb=home&v=15&r=" + Date.now(); } return; }
+  if (e.data.kg === "ready" && e.data.v !== 2) { const f9 = $("#gbf_gb"); if (f9 && !f9.dataset.rl) { f9.dataset.rl = "1"; gbRdy = false; try { f9.contentWindow.location.replace("granth.html?emb=home&v=" + GBV + "&r=" + Date.now()); } catch (x) {} } return; }
   if (e.data.kg === "ready") { gbRdy = true; gbSendX(); gbSendC(); Promise.all([vgBoth(), bhLoad()]).then(() => { gbSendX(); gbSendC(); }); { const f0 = $("#gbf_gb"); if (f0 && (gbWant === "yt" || gbWant === "sb") && !gbPend) f0.contentWindow.postMessage({ gq: gbWant === "yt" ? "tab:yt" : "tab:topics" }, location.origin); } if (gbPend) { const f = $("#gbf_gb"); if (f) f.contentWindow.postMessage({ gq: gbPend }, location.origin); gbPend = null; } } });
 
 /* ઝડપ: શાસ્ત્રોની ફાઈલ ફક્ત ડાઉનલોડ (ખોલ્યા વગર) કરી રાખવી, જેથી ટૅબ ખોલતાં રાહ ઓછી */
