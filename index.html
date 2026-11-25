@@ -2043,6 +2043,15 @@ function route() {
 /* Back button: one step at a time, like an app (tabs never pile up in history) */
 let lastHash = null;
 function routeIf() { if (location.hash !== lastHash) { lastHash = location.hash; route(); } }
+/* ▶ YouTube ડેટા સીધો Supabase માંથી (નવી કથા આપોઆપ). શાસ્ત્રોની ફ્રેમ આ વાપરે છે. */
+let ytLive = null;
+window.kathaYtData = () => ytLive || (ytLive = (async () => {
+  const H = { apikey: KEY, Authorization: "Bearer " + KEY }, get = async (u) => { const r = await fetch(`${SB}/rest/v1/${u}`, { headers: H }); if (!r.ok) throw new Error(r.status); return r.json(); };
+  const vids = await get("katha_videos?select=id,youtube_id,title,speaker&status=eq.done&hidden=not.is.true&order=id");
+  const by = new Map(vids.map((v) => [v.id, { ...v, passages: [] }]));
+  for (let from = 0; ; from += 1000) { const b = await get(`katha_passages?select=video_id,start_sec,text&hidden=not.is.true&order=video_id,start_sec&limit=1000&offset=${from}`); b.forEach((p) => { const v = by.get(p.video_id); if (v) v.passages.push({ start_sec: p.start_sec, text: p.text }); }); if (b.length < 1000) break; }
+  return { videos: [...by.values()].filter((v) => v.passages.length) };
+})().catch((e) => { ytLive = null; throw e; }));
 let gbJump = null;
 const isGbH = (h) => h === "#shastra" || h === "#youtube" || h === "#shabd";
 function gbReset() { const f = $("#gbf_gb"); if (f && gbRdy) f.contentWindow.postMessage({ gq: "tab:" + (gbWant === "yt" ? "yt" : gbWant === "sb" ? "topics" : "home") }, location.origin); }
