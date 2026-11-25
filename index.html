@@ -105,7 +105,7 @@ h1{font-family:var(--gu);font-weight:700;color:var(--maroon);font-size:clamp(40p
 #bnav button{flex:1;min-width:0;border:0;background:none;color:var(--ink-2);font-family:var(--gu);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;padding:2px 0}
 #bnav button span{font-size:21px;line-height:1.1}#bnav button b{font-weight:400;font-size:calc(11px * var(--fs))}#bnav button.on{color:var(--maroon)}#bnav button.on b{font-weight:700}
 .gear{display:none!important}body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
-body.adm #bnav,body.lvfull #bnav{display:none}body.adm{padding-bottom:0}
+body.adm #bnav,body.lvfull #bnav,body.gbfull #bnav{display:none}body.gbfull #gbView{bottom:0!important}body.adm{padding-bottom:0}
 .today .td-tb button.td-play{flex:1;background:var(--maroon);color:var(--on-accent);border-color:var(--maroon);font-size:calc(15px * var(--fs));padding:10px 4px}
 .today .td-tb button.ic{flex:0 0 42px;font-size:calc(16px * var(--fs));padding:8px 0}
 .today{position:relative;border-left:5px solid var(--maroon);border-width:1px 1px 1px 5px;border-style:solid;border-color:var(--rule) var(--rule) var(--rule) var(--maroon)}
@@ -699,7 +699,7 @@ header h1{font-size:30px;margin:0;line-height:1.3}
 .vz-rc{border:1px solid var(--rule);border-left:4px solid var(--gold);background:var(--card);border-radius:14px;padding:11px 13px;margin:0 0 10px}.vz-rt{display:flex;justify-content:space-between;align-items:baseline}.vz-rt b{font-size:calc(22px * var(--fs));color:var(--maroon)}.vz-rt small,.vz-rs{color:var(--ink-2);font-size:calc(13px * var(--fs))}
 .vz-rc p{margin:6px 0 9px;font-size:calc(15px * var(--fs));line-height:1.5;color:var(--ink)}.vz-ra{display:flex;gap:7px}.vz-ra button,.vz-mv button{flex:1;border:1px solid var(--rule);background:var(--paper);color:var(--ink);border-radius:12px;padding:9px 4px;font-family:var(--gu);font-size:calc(14px * var(--fs));cursor:pointer}.vz-ra .ok,.vz-mv .ok{background:var(--maroon);color:var(--on-accent);border-color:var(--maroon)}
 .vz-mv{display:flex;gap:6px;margin-top:8px}.vz-mv select{flex:2;min-width:0;border:1px solid var(--rule);border-radius:10px;padding:8px;background:var(--paper);color:var(--ink);font-family:var(--gu)}
-#gbView{position:fixed;left:0;right:0;top:0;bottom:calc(62px + env(safe-area-inset-bottom,0px));z-index:30;background:var(--bg,#f4ead6)}#gbView iframe{position:absolute;inset:0;width:100%;height:100%;border:0}#gbView iframe[hidden]{display:none}
+#gbView{position:fixed;left:0;right:0;top:0;bottom:var(--bnh,calc(56px + env(safe-area-inset-bottom,0px)));z-index:30;background:var(--bg,#f4ead6)}#gbView iframe{position:absolute;inset:0;width:100%;height:100%;border:0}#gbView iframe[hidden]{display:none}#gbView.gbswap iframe{visibility:hidden}#gbView[hidden]{display:block!important;visibility:hidden;pointer-events:none;z-index:-1}
 .vg-seg{display:flex;background:#e7d8bd;border-radius:999px;padding:3px;margin:8px 0 12px}.vg-seg button{flex:1;border:0;background:none;padding:8px 0;border-radius:999px;font-family:var(--gu);font-size:calc(14px * var(--fs));color:var(--ink-2)}.vg-seg button.on{background:var(--maroon);color:var(--on-accent,#fbf1e4);font-weight:700;box-shadow:0 2px 6px rgba(110,31,20,.35)}.vg-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.vg-c{text-align:left;border:1px solid var(--rule);background:var(--card);border-radius:18px;padding:12px;box-shadow:0 2px 8px rgba(60,30,10,.07);font-family:var(--gu);color:var(--ink)}.vg-c i{font-style:normal;font-size:26px;display:block}.vg-c b{display:block;color:var(--maroon);font-size:calc(15.5px * var(--fs));margin-top:2px}.vg-c small{color:var(--ink-2);font-size:calc(11.5px * var(--fs))}
 .bh-land{display:block}.vg-qr{display:flex;gap:8px;margin:0 0 10px}.vg-qr button{flex:1;border:1px solid var(--rule);border-left:4px solid var(--gold);background:var(--card);border-radius:14px;padding:10px;font-family:var(--gu);font-size:calc(14px * var(--fs));color:var(--ink)}.vg-q{display:flex;gap:7px;overflow-x:auto;padding:2px 0 10px;margin:0 -2px}.vg-q button{flex:none;border:1px solid var(--rule);background:var(--card);border-radius:999px;padding:7px 14px;font-family:var(--gu);font-size:calc(13.5px * var(--fs));color:var(--ink)}.bh-tiles2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 /* શબ્દ ભંડાર "મારું અને આજે": નાનાં, માપસર બટન, એક જ સ્ક્રીનમાં */
@@ -2040,13 +2040,15 @@ function bnLabels() { const L = BN[ui] || BN.en; $("#bnB").textContent = L[1]; $
 function bnState() { const h = location.hash; document.body.classList.toggle("adm", h === "#admin"); document.querySelectorAll("#bnav [data-n]").forEach((b) => b.classList.toggle("on", (b.dataset.n === "bh" && (h === "#bhandar" || h === "#shabd")) || (b.dataset.n === "gb" && h === "#shastra") || (b.dataset.n === "home" && h !== "#bhandar" && h !== "#shastra" && h !== "#shabd"))); }
 document.querySelectorAll("#bnav [data-n]").forEach((b) => b.onclick = () => {
   const n = b.dataset.n;
-  if (n === "home") { if (location.hash) goTab("home"); else { scrollTo({ top: 0, behavior: "smooth" }); $("#q").focus(); } }
+  try { if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur(); } catch (e) {}
+  if (n === "home") { if (location.hash) goTab("home"); else { scrollTo({ top: 0, behavior: "smooth" }); } }
   else if (n === "bh") goTab("sb");
   else if (n === "gb" || n === "yt") goTab(n);
   else openSettings(true);
 });
 function route() {
   const isAdmin = location.hash === "#admin", isBh = location.hash === "#bhandar", isGb = location.hash === "#shastra" || location.hash === "#youtube" || location.hash === "#shabd";
+  if (!isGb) document.body.classList.remove("gbfull");
   $("#home").hidden = isAdmin || isBh || isGb; $("#adminView").hidden = !isAdmin; $("#bhandar").hidden = !isBh; $("#gbView").hidden = !isGb;
   if (isGb) { const w = location.hash === "#youtube" ? "yt" : location.hash === "#shabd" ? "sb" : "gb"; setTimeout(() => gbShow(w), 0); }
   bnState(); bnLabels();
@@ -2066,6 +2068,8 @@ window.kathaYtData = () => ytLive || (ytLive = (async () => {
   for (let from = 0; ; from += 1000) { const b = await get(`katha_passages?select=video_id,start_sec,text&hidden=not.is.true&order=video_id,start_sec&limit=1000&offset=${from}`); b.forEach((p) => { const v = by.get(p.video_id); if (v) v.passages.push({ start_sec: p.start_sec, text: p.text }); }); if (b.length < 1000) break; }
   return { videos: [...by.values()].filter((v) => v.passages.length) };
 })().catch((e) => { ytLive = null; throw e; }));
+/* શાસ્ત્રો/શબ્દ ભંડારમાંથી વીડિયો: એપનો મુખ્ય YouTube પ્લેયર જ (અલગ પાનું નહીં) */
+window.kathaPlay = (v, t, text) => play(v.youtube_id, t, { video_id: v.id, youtube_id: v.youtube_id, title: v.title, speaker: v.speaker, start_sec: t, text: text || "" });
 let gbJump = null, wantHome = false;
 const isGbH = (h) => h === "#shastra" || h === "#youtube" || h === "#shabd";
 function gbReset() { const f = $("#gbf_gb"); if (f && gbRdy) f.contentWindow.postMessage({ gq: "tab:" + (gbWant === "yt" ? "yt" : gbWant === "sb" ? "topics" : "home") }, location.origin); }
@@ -2073,7 +2077,7 @@ function subGo(h) { if (history.state && history.state.sub) history.replaceState
 function goTab(name) {
   // અંદરના પાનામાંથી બીજું ટૅબ દબાવો તો એક જ વારમાં ખૂલે: પહેલાં અંદરના પગથિયાં એક સાથે પાછાં
   if (gbDepth > 0 && isGbH(location.hash)) { gbJump = name; const k = gbDepth; gbDepth = 0; history.go(-k); return; }
-  if (name === "gb" || name === "yt" || name === "sb") { const h = name === "yt" ? "#youtube" : name === "sb" ? "#shabd" : "#shastra"; if (location.hash !== h) subGo(h); else gbReset(); return; }
+  if (name === "gb" || name === "yt" || name === "sb") { const h = name === "yt" ? "#youtube" : name === "sb" ? "#shabd" : "#shastra"; if (location.hash !== h) subGo(h); return; }
   if (name === "bh") { if (location.hash !== "#bhandar") { bhLetter = ""; bhKey = "|"; bhSec = ""; subGo("#bhandar"); } }
   else if (location.hash && location.hash !== "#admin") { if (history.state && history.state.sub) { wantHome = true; history.back(); } else { history.replaceState(null, "", location.pathname + location.search); routeIf(); } }
 }
@@ -2701,17 +2705,20 @@ async function exportKatha(limitVideos) {
 $("#exTwo").onclick = () => exportKatha(2); $("#exAll").onclick = () => exportKatha(0);
 
 /* 📖 શાસ્ત્રો અને ▶ YouTube: ગ્રંથ ભંડાર આ જ એપની અંદર (બે ફ્રેમ, એક વાર લોડ થાય) */
+function bnH() { const n = $("#bnav"); if (n) document.documentElement.style.setProperty("--bnh", Math.max(0, innerHeight - n.getBoundingClientRect().top - 2) + "px"); }
+addEventListener("resize", bnH); setTimeout(bnH, 0);
+let gbSwT = 0;
 function gbMake() {
   const box = $("#gbView"); let f = $("#gbf_gb"); if (f) return f;
   f = document.createElement("iframe"); f.id = "gbf_gb"; f.src = "granth.html?emb=home&v=15"; f.title = "granth";
   f.addEventListener("load", () => { f.dataset.ok = "1"; const l = $("#gbLoad"); if (l) l.remove(); });
-  box.appendChild(f); return f;
+  box.appendChild(f); bnH(); return f;
 }
 function gbShow(which) {
   const box = $("#gbView"); const had = !!$("#gbf_gb"); const f = gbMake();
   if (!f.dataset.ok && !$("#gbLoad")) box.insertAdjacentHTML("afterbegin", `<p class="vz-n" id="gbLoad" style="text-align:center;margin-top:40vh">⏳ ખુલે છે…</p>`);
   if (!had) gbWant = which;
-  else if (gbWant !== which) { gbWant = which; if (gbRdy) f.contentWindow.postMessage({ gq: "tab:" + (which === "yt" ? "yt" : which === "sb" ? "topics" : "home") }, location.origin); }
+  else if (gbWant !== which) { gbWant = which; if (gbRdy) { const v = $("#gbView"); v.classList.add("gbswap"); clearTimeout(gbSwT); gbSwT = setTimeout(() => v.classList.remove("gbswap"), 500); } if (gbRdy) f.contentWindow.postMessage({ gq: "tab:" + (which === "yt" ? "yt" : which === "sb" ? "topics" : "home") }, location.origin); }
 }
 window.addEventListener("message", (e) => { if (e.origin === location.origin && e.data && e.data.kg === "bhmore") goTab("bh"); });
 
@@ -2746,7 +2753,7 @@ function gbSendC() { const f = $("#gbf_gb"); if (!f || !gbRdy || !bhWords || bhW
 function gbGo(m) { goTab("gb"); Promise.all([vgBoth(), bhLoad()]).then(() => { gbSendX(); gbSendC(); const f = $("#gbf_gb"); if (f && gbRdy) f.contentWindow.postMessage({ gq: m }, location.origin); else gbPend = m; }); }
 window.addEventListener("message", (e) => {
   if (e.origin !== location.origin || !e.data) return;
-  if (e.data.kg === "depth") { const n = e.data.n | 0; if (!(location.hash === "#shastra" || location.hash === "#youtube" || location.hash === "#shabd")) return; if (n > gbDepth) { while (gbDepth < n) { gbDepth++; history.pushState({ sub: 1, gbd: gbDepth }, "", location.href); } } else if (n < gbDepth) { const k = gbDepth - n; gbDepth = n; gbIgn = true; history.go(-k); } return; }
+  if (e.data.kg === "depth") { const n = e.data.n | 0; requestAnimationFrame(() => { clearTimeout(gbSwT); $("#gbView").classList.remove("gbswap"); }); document.body.classList.toggle("gbfull", (e.data.s === "reader" || e.data.s === "ytp") && isGbH(location.hash)); if (!(location.hash === "#shastra" || location.hash === "#youtube" || location.hash === "#shabd")) return; if (n > gbDepth) { while (gbDepth < n) { gbDepth++; history.pushState({ sub: 1, gbd: gbDepth }, "", location.href); } } else if (n < gbDepth) { const k = gbDepth - n; gbDepth = n; gbIgn = true; history.go(-k); } return; }
   if (e.data.kg === "ready" && e.data.v !== 2) { const f9 = $("#gbf_gb"); if (f9 && !f9.dataset.rl) { f9.dataset.rl = "1"; gbRdy = false; f9.src = "granth.html?emb=home&v=15&r=" + Date.now(); } return; }
   if (e.data.kg === "ready") { gbRdy = true; gbSendX(); gbSendC(); Promise.all([vgBoth(), bhLoad()]).then(() => { gbSendX(); gbSendC(); }); { const f0 = $("#gbf_gb"); if (f0 && (gbWant === "yt" || gbWant === "sb") && !gbPend) f0.contentWindow.postMessage({ gq: gbWant === "yt" ? "tab:yt" : "tab:topics" }, location.origin); } if (gbPend) { const f = $("#gbf_gb"); if (f) f.contentWindow.postMessage({ gq: gbPend }, location.origin); gbPend = null; } } });
 
