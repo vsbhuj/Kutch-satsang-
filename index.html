@@ -2043,9 +2043,15 @@ function route() {
 /* Back button: one step at a time, like an app (tabs never pile up in history) */
 let lastHash = null;
 function routeIf() { if (location.hash !== lastHash) { lastHash = location.hash; route(); } }
+let gbJump = null;
+const isGbH = (h) => h === "#shastra" || h === "#youtube" || h === "#shabd";
+function gbReset() { const f = $("#gbf_gb"); if (f && gbRdy) f.contentWindow.postMessage({ gq: "tab:" + (gbWant === "yt" ? "yt" : gbWant === "sb" ? "topics" : "home") }, location.origin); }
+function subGo(h) { if (history.state && history.state.sub) history.replaceState({ sub: 1 }, "", h); else history.pushState({ sub: 1 }, "", h); routeIf(); scrollTo(0, 0); }
 function goTab(name) {
-  if (name === "gb" || name === "yt" || name === "sb") { const h = name === "yt" ? "#youtube" : name === "sb" ? "#shabd" : "#shastra"; if (location.hash !== h) { gbDepth = 0; history.pushState({ sub: 1 }, "", h); routeIf(); scrollTo(0, 0); } return; }
-  if (name === "bh") { if (location.hash !== "#bhandar") { history.pushState({ sub: 1 }, "", "#bhandar"); bhLetter = ""; bhKey = "|"; bhSec = ""; routeIf(); scrollTo(0, 0); } }
+  // અંદરના પાનામાંથી બીજું ટૅબ દબાવો તો એક જ વારમાં ખૂલે: પહેલાં અંદરના પગથિયાં એક સાથે પાછાં
+  if (gbDepth > 0 && isGbH(location.hash)) { gbJump = name; const k = gbDepth; gbDepth = 0; history.go(-k); return; }
+  if (name === "gb" || name === "yt" || name === "sb") { const h = name === "yt" ? "#youtube" : name === "sb" ? "#shabd" : "#shastra"; if (location.hash !== h) subGo(h); else gbReset(); return; }
+  if (name === "bh") { if (location.hash !== "#bhandar") { bhLetter = ""; bhKey = "|"; bhSec = ""; subGo("#bhandar"); } }
   else if (["#bhandar", "#shastra", "#youtube", "#shabd"].includes(location.hash)) { if (history.state && history.state.sub) history.back(); else { history.replaceState(null, "", location.pathname + location.search); routeIf(); } }
 }
 const LAYERS = [["#ov", "ov"], ["#sheet", "sheet"], ["#player", "player"]];
@@ -2056,6 +2062,7 @@ function layerHide(name) { if (name === "ov") $("#ov").hidden = true; else if (n
 LAYERS.forEach(([sel, name]) => { const el = $(sel); let vis = !el.hidden; new MutationObserver(() => { const v = !el.hidden; if (v === vis) return; vis = v; v ? layerOpen(name) : layerClosed(name); }).observe(el, { attributes: true, attributeFilter: ["hidden"] }); });
 window.addEventListener("popstate", (e) => {
   if (gbIgn) { gbIgn = false; return; }
+  if (gbJump) { const n = gbJump; gbJump = null; gbReset(); goTab(n); return; }
   if (gbDepth > 0 && (location.hash === "#shastra" || location.hash === "#youtube" || location.hash === "#shabd")) { const d = (e.state && e.state.gbd) || 0; if (d < gbDepth) { const k = gbDepth - d; gbDepth = d; const f = $("#gbf_gb"); if (f) f.contentWindow.postMessage({ gq: "back", n: k }, location.origin); return; } }
   if (layerStack.length) { const name = layerStack[layerStack.length - 1]; if (!(e.state && e.state.L === name)) { layerStack.pop(); layerHide(name); } return; }
   routeIf();
@@ -2672,7 +2679,7 @@ $("#exTwo").onclick = () => exportKatha(2); $("#exAll").onclick = () => exportKa
 /* 📖 શાસ્ત્રો અને ▶ YouTube: ગ્રંથ ભંડાર આ જ એપની અંદર (બે ફ્રેમ, એક વાર લોડ થાય) */
 function gbMake() {
   const box = $("#gbView"); let f = $("#gbf_gb"); if (f) return f;
-  f = document.createElement("iframe"); f.id = "gbf_gb"; f.src = "granth.html?emb=home"; f.title = "granth";
+  f = document.createElement("iframe"); f.id = "gbf_gb"; f.src = "granth.html?emb=home&v=15"; f.title = "granth"; setTimeout(() => { if (!gbRdy) f.src = "granth.html?emb=home&v=15&r=" + Date.now(); }, 9000);
   f.addEventListener("load", () => { f.dataset.ok = "1"; const l = $("#gbLoad"); if (l) l.remove(); });
   box.appendChild(f); return f;
 }
@@ -2716,6 +2723,7 @@ function gbGo(m) { goTab("gb"); Promise.all([vgBoth(), bhLoad()]).then(() => { g
 window.addEventListener("message", (e) => {
   if (e.origin !== location.origin || !e.data) return;
   if (e.data.kg === "depth") { const n = e.data.n | 0; if (!(location.hash === "#shastra" || location.hash === "#youtube" || location.hash === "#shabd")) return; if (n > gbDepth) { while (gbDepth < n) { gbDepth++; history.pushState({ sub: 1, gbd: gbDepth }, "", location.href); } } else if (n < gbDepth) { const k = gbDepth - n; gbDepth = n; gbIgn = true; history.go(-k); } return; }
+  if (e.data.kg === "ready" && e.data.v !== 2) { const f9 = $("#gbf_gb"); if (f9 && !f9.dataset.rl) { f9.dataset.rl = "1"; gbRdy = false; f9.src = "granth.html?emb=home&v=15&r=" + Date.now(); } return; }
   if (e.data.kg === "ready") { gbRdy = true; gbSendX(); gbSendC(); Promise.all([vgBoth(), bhLoad()]).then(() => { gbSendX(); gbSendC(); }); { const f0 = $("#gbf_gb"); if (f0 && (gbWant === "yt" || gbWant === "sb") && !gbPend) f0.contentWindow.postMessage({ gq: gbWant === "yt" ? "tab:yt" : "tab:topics" }, location.origin); } if (gbPend) { const f = $("#gbf_gb"); if (f) f.contentWindow.postMessage({ gq: gbPend }, location.origin); gbPend = null; } } });
 
 /* ઝડપ: શાસ્ત્રોની ફાઈલ ફક્ત ડાઉનલોડ (ખોલ્યા વગર) કરી રાખવી, જેથી ટૅબ ખોલતાં રાહ ઓછી */
